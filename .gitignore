@@ -13,5 +13,8 @@
 /*.pidb
 /*.booproj
 
+/*.sublime-project
+/*.sublime-workspace
+
 #Unity3D Generated File On Crash Reports
 sysinfo.txt
