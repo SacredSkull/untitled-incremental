@@ -14,8 +14,23 @@ public class GameController : MonoBehaviour {
         }
     }
 
-	private int researchPoints = 150;
+	private int researchPoints = 0;
+	private double processingPower = 1.23;
 	private Text score;
+	private  Research currentResearch;
+	private bool researchSet;
+
+	public bool isResearchSet(){
+		return researchSet;
+	}
+
+	public Research getCurrentResearch(){
+		return currentResearch;
+	}
+
+	public int getResearchPoints(){
+		return researchPoints;
+	}
 
     void Awake() {
         score = GameObject.FindWithTag("GUI_Score").GetComponent<Text>();
@@ -34,5 +49,20 @@ public class GameController : MonoBehaviour {
 	public void addResearchPoints(int points){
 		this.researchPoints += points;
         //score.text = this.researchPoints.ToString();
+	}
+
+	public void startResearch(Research research){
+		//TODO: Change this once Data structure has been implemented
+		researchSet = true;
+		currentResearch = research;
+	}
+
+	public void stopResearch(){
+		researchSet = false;
+		//TODO: This will not work, and the data structure for 
+		// research will need to be created before it can work.
+		//The fact that research has been completed will not be stored.
+		currentResearch.complete ();
+		currentResearch = null;
 	}
 }

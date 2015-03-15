@@ -14,7 +14,16 @@ public class ComputerOnClick : MonoBehaviour {
 	
 	}
 
+	//Basic idea is, that the player gains no benefit from clicking unless
+	//research has been set, then they produce only the points necessary to finish it.
 	void OnMouseDown(){
-        GameController.instance.addResearchPoints(researchPerClick);
+		GameController game = GameController.instance;
+		if(game.isResearchSet()&& game.getCurrentResearch().getResearchCost()> game.getResearchPoints()){
+			game.addResearchPoints(researchPerClick);
+		}
+		else if(game.isResearchSet()){
+			game.stopResearch();
+		}
+        
 	}
 }
