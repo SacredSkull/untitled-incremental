@@ -18,8 +18,8 @@ public class GameController : MonoBehaviour {
 	private double processingPower = 1.23;
 	private Text score;
 	private bool researchSet;
-	private List<Research> AllUncompleteResearch = new List<Research>();
-	private List<Research> AllCompleteResearch = new List<Research>();
+	public List<Research> AllUncompleteResearch = new List<Research>();
+	public List<Research> AllCompleteResearch = new List<Research>();
 	//May need to creat another list ordered by ID to make finding completed
 	//research more effiecient. For now though, it is not necessary.
 	//private List<Research> AllResearch = new List<Research>();
@@ -57,18 +57,31 @@ public class GameController : MonoBehaviour {
 		this.researchPoints += points;
 	}
 
+	//returns index of a paticular piece of Research in the array
+	private int getIndexOfUncompletedResearch(Research a){
+		double req = a.processingReq;
+		for(int i = 0; i<AllUncompleteResearch.Count; i++){
+			if(AllUncompleteResearch[i].ID == a.ID){
+				return i;
+			}
+		}
+		return -1;
+	}
+
 	public void startResearch(Research research){
-		//TODO: Change this once Data structure has been implemented
 		researchSet = true;
 		currentResearch = research;
 	}
 
+	//removes from UncompleteResearch, adds to completedResearch
 	public void stopResearch(){
 		researchSet = false;
-		//TODO: This will not work, and the data structure for 
-		// research will need to be created before it can work.
-		//The fact that research has been completed will not be stored.
+		int index = getIndexOfUncompletedResearch (currentResearch);
+		AllUncompleteResearch [index] = null;
+		AllUncompleteResearch.Sort ();
 		currentResearch.complete ();
+		AllCompleteResearch.Add (currentResearch);
+		AllCompleteResearch.Sort ();
 		currentResearch = null;
 	}
 

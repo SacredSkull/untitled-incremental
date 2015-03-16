@@ -5,6 +5,17 @@ using System.Collections.Generic;
 
 public class Research : MonoBehaviour, IComparable<Research>{
 
+	public Research(int ID, string name, string description, int researchCost, 
+	                int processingReq, int[] prerequisites, bool done){
+		this.ID = ID;
+		this.name = name;
+		this.description = description;
+		this.researchCost = researchCost;
+		this.processingReq = processingReq;
+		this.prerequisites = prerequisites;
+		this.done = done;
+	}
+
 	public string name;
 	public string description;
 	public int processingReq;
@@ -29,7 +40,7 @@ public class Research : MonoBehaviour, IComparable<Research>{
 		return done;
 	}
 
-	public int compareTo(Research b){
+	public int CompareTo(Research b){
 		Research a = this;
 		if (a.processingReq < b.processingReq) {
 			return -1;
