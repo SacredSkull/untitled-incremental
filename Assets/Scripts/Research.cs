@@ -5,15 +5,15 @@ public class Research : MonoBehaviour {
 
 	public string name;
 	public string description;
-	public int researchCost;
 	public int processingReq;
 	public int ID;
 	public int[] prerequisites;
 	private bool done;
 
-	public int getResearchCost(){
-		return researchCost;
-	}
+    public int researchCost {
+        get;
+        private set;
+    }
 
 	public void complete(){
 		done = true;

@@ -14,26 +14,27 @@ public class GameController : MonoBehaviour {
         }
     }
 
-	private int researchPoints = 0;
 	private double processingPower = 1.23;
 	private Text score;
-	private  Research currentResearch;
 	private bool researchSet;
 
 	public bool isResearchSet(){
 		return researchSet;
 	}
 
-	public Research getCurrentResearch(){
-		return currentResearch;
-	}
+    public Research currentResearch {
+        get;
+        private set;
+    }
 
-	public int getResearchPoints(){
-		return researchPoints;
-	}
+    public int researchPoints {
+        get;
+        private set;
+    }
 
     void Awake() {
         score = GameObject.FindWithTag("GUI_Score").GetComponent<Text>();
+        researchPoints = 0;
     }
 	// Use this for initialization
 	void Start () {
@@ -43,12 +44,10 @@ public class GameController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         score.text = researchPoints.ToString();
-        //Utility.UnityLog(researchPoints);
 	}
 
 	public void addResearchPoints(int points){
 		this.researchPoints += points;
-        //score.text = this.researchPoints.ToString();
 	}
 
 	public void startResearch(Research research){
