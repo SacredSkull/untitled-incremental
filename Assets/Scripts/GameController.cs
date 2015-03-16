@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class GameController : MonoBehaviour {
 
@@ -17,6 +18,12 @@ public class GameController : MonoBehaviour {
 	private double processingPower = 1.23;
 	private Text score;
 	private bool researchSet;
+	private List<Research> AllUncompleteResearch = new List<Research>();
+	private List<Research> AllCompleteResearch = new List<Research>();
+	//May need to creat another list ordered by ID to make finding completed
+	//research more effiecient. For now though, it is not necessary.
+	//private List<Research> AllResearch = new List<Research>();
+
 
 	public bool isResearchSet(){
 		return researchSet;
@@ -64,4 +71,53 @@ public class GameController : MonoBehaviour {
 		currentResearch.complete ();
 		currentResearch = null;
 	}
+
+	public void addNewResearch(Research a){
+		if (a.isDone ()) {
+			AllCompleteResearch.Add (a);
+			AllCompleteResearch.Sort ();
+		} else {
+			AllUncompleteResearch.Add (a);
+			AllUncompleteResearch.Sort ();
+		}
+	}
+
+	public bool hasBeenDone(int id){
+		for (int i = 0; i<AllCompleteResearch.Count; i++) {
+			if (AllCompleteResearch [i].ID == id) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public bool canBeDone(Research a){
+		if(a.processingReq > processingPower){
+			return false;
+		}
+		for (int i = 0; i<a.prerequisites.Length; i++) {
+			if(!hasBeenDone(i)){
+				return false;
+			}
+		}
+		return true;
+	}
+
+	//Only displays the research that can be done
+	public List<Research> researchUnderConsideration(){
+		List<Research> underConsideration = new List<Research> ();
+		for (int i = 0; i<AllUncompleteResearch.Count; i++) {
+			if(canBeDone(AllUncompleteResearch[i])){
+				underConsideration.Add(AllUncompleteResearch[i]);
+				underConsideration.Sort();
+			}
+			else if(AllUncompleteResearch[i].processingReq > processingPower){
+				break;
+			}
+		}
+		return underConsideration;
+	}
+
+
+
 }
