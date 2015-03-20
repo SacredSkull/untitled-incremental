@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Linq;
 
 public class GameController : MonoBehaviour {
 
@@ -15,15 +16,38 @@ public class GameController : MonoBehaviour {
         }
     }
 
+    public bool debugResearchPoints;
+
 	private double processingPower = 1.23;
 	private Text score;
+	private Text tick;
+	private Text potentialResearch;
 	private bool researchSet;
 	public List<Research> AllUncompleteResearch = new List<Research>();
 	public List<Research> AllCompleteResearch = new List<Research>();
-	//May need to creat another list ordered by ID to make finding completed
-	//research more effiecient. For now though, it is not necessary.
+	public List<Research> AllPossibleResearch;
+	//May need to create another list ordered by ID to make finding completed
+	//research more efficient. For now though, it is not necessary.
 	//private List<Research> AllResearch = new List<Research>();
 
+    // A tick is the baseline time measure but it really depends on the speed of the CPU
+    // and any lag that occurs between each frame. Delta time is basically how long the last frame
+    // took to render. Thus it accurately tells us how long that tick should be.
+    
+    // Note: This is the point ticker. See the ticker for updating GUIs/checking etc.
+    private float _incrementalTickTime;
+    public float incrementalTickTime {
+        get {
+            return _incrementalTickTime * Time.deltaTime;
+        }
+        set{
+            _incrementalTickTime = value;   
+        }
+    }
+
+    // This is that time upgrade you can buy in incrementals. By reducing the amount of iterations, you 
+    // reduce the amount of time a tick takes, thus increasing your effectivity.
+    public int incrementalTickIterations;
 
 	public bool isResearchSet(){
 		return researchSet;
@@ -39,18 +63,69 @@ public class GameController : MonoBehaviour {
         private set;
     }
 
+    private int ticker = 0;
+
     void Awake() {
-        score = GameObject.FindWithTag("GUI_Score").GetComponent<Text>();
+        score = GameObject.Find("PointsText").GetComponent<Text>();
+        tick = GameObject.Find("Ticks").GetComponent<Text>();
+        potentialResearch = GameObject.Find("Research").GetComponent<Text>();
         researchPoints = 0;
     }
 	// Use this for initialization
 	void Start () {
 
+        // XML load
+
+        incrementalTickTime = 1;
+        incrementalTickIterations = 40;
+        //requirement test1duplicate = new requirement("Lasers");
+
+        AllCompleteResearch.Add(new Research("Robotics", "Cool robots", 200, 1, new Research[]{}, true));
+        AllUncompleteResearch.Add(new Research("Computer Components", "Wow, you put together your own computer!", 100, 0, new Research[]{}, false));
+        AllUncompleteResearch.Add(new Research("Basic Physics", "Learning the basics is a step on the way to discovering the meaning of life", 300, 0, new Research[]{}, false));
+        AllUncompleteResearch.Add(new Research("Lasers", "Cool robots", 500, 1, new Research[]{Research.getResearchByName("Robotics")}, false));
+        AllUncompleteResearch.Add(new Research("PDMS", "Point defence missile system protects against enemy robots (that you invented anyway...)", 800, 1, new Research[] { Research.getResearchByName("Robotics"), Research.getResearchByName("Lasers") }, false));
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        score.text = researchPoints.ToString();
+
+        if (ticker == Priority.REALTIME) {
+            // Ticks every frame
+        }
+
+        if (ticker == Priority.HIGH) {
+            // Ticks every 5 frames
+
+        }
+
+        if (ticker == Priority.MEDIUM) {
+            // Ticks every 10 frames
+
+            AllPossibleResearch = AllUncompleteResearch.Where(x => (x.researchCost <= researchPoints) && !x.prerequisites.Except(AllCompleteResearch).Any() ).ToList();
+
+            string text = "";
+
+            foreach (Research research in AllPossibleResearch) {
+                text += research.name + "\n";
+            }
+
+            if (this.debugResearchPoints) {
+                this.addResearchPoints(10);
+            }
+
+            score.text = researchPoints.ToString();
+            potentialResearch.text = text;
+            tick.text = incrementalTickTime.ToString();
+        }
+
+        if (ticker == Priority.LOW) {
+            // Ticks every 15 frames
+
+            ticker = 0;
+        } else
+            ticker++;
+
 	}
 
 	public void addResearchPoints(int points){

@@ -111,3 +111,10 @@ public static class LogLevels{
 	public const int WARNING = 3;
 	public const int ERROR = 4;
 }
+
+public static class Priority {
+    public const int REALTIME = 1;
+    public const int HIGH = 5;
+    public const int MEDIUM = 10;
+    public const int LOW = 15;
+}

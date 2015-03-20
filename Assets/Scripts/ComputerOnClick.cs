@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class ComputerOnClick : MonoBehaviour {
-	public int researchPerClick = 10;
+	public int researchPerClick;
 
 	// Use this for initialization
 	void Start () {
@@ -18,7 +18,7 @@ public class ComputerOnClick : MonoBehaviour {
 	//research has been set, then they produce only the points necessary to finish it.
 	void OnMouseDown(){
 		GameController game = GameController.instance;
-		if(game.isResearchSet() && game.currentResearch.researchCost > game.researchPoints){
+		if((game.isResearchSet() && game.currentResearch.researchCost > game.researchPoints) || game.debugResearchPoints){
 			game.addResearchPoints(researchPerClick);
 		}
 		else if(game.isResearchSet()){
