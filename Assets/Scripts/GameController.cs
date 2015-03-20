@@ -1,9 +1,12 @@
-﻿using UnityEngine;
+﻿#define DEBUG
+using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Linq;
-
+#if DEBUG
+using System.Diagnostics;
+#endif
 public class GameController : MonoBehaviour {
 
     // See http://unitypatterns.com/singletons/ for more details. Alternatively, google C# singleton.
@@ -75,9 +78,9 @@ public class GameController : MonoBehaviour {
 	void Start () {
 
         // XML load
-
         incrementalTickTime = 1;
         incrementalTickIterations = 40;
+
         //requirement test1duplicate = new requirement("Lasers");
 
         AllCompleteResearch.Add(new Research("Robotics", "Cool robots", 200, 1, new Research[]{}, true));
@@ -103,7 +106,6 @@ public class GameController : MonoBehaviour {
             // Ticks every 10 frames
 
             AllPossibleResearch = AllUncompleteResearch.Where(x => (x.researchCost <= researchPoints) && !x.prerequisites.Except(AllCompleteResearch).Any() ).ToList();
-
             string text = "";
 
             foreach (Research research in AllPossibleResearch) {
