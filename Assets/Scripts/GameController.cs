@@ -128,8 +128,17 @@ public class GameController : MonoBehaviour {
 
 	}
 
+	//adds points if you should be able to add points:
+	//1.Research has been set
+	//2. Research hasn't been finished.
 	public void addResearchPoints(int points){
-		this.researchPoints += points;
+		if((isResearchSet() && currentResearch.researchCost > researchPoints) || debugResearchPoints){
+			this.researchPoints += points;
+		}
+		else if(isResearchSet()){
+			stopResearch();
+		}
+
 	}
 
 	//returns index of a paticular piece of Research in the array

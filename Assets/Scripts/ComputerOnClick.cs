@@ -18,12 +18,8 @@ public class ComputerOnClick : MonoBehaviour {
 	//research has been set, then they produce only the points necessary to finish it.
 	void OnMouseDown(){
 		GameController game = GameController.instance;
-		if((game.isResearchSet() && game.currentResearch.researchCost > game.researchPoints) || game.debugResearchPoints){
-			game.addResearchPoints(researchPerClick);
-		}
-		else if(game.isResearchSet()){
-			game.stopResearch();
-		}
+		game.addResearchPoints (researchPerClick);
+
         
 	}
 }
