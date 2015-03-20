@@ -17,7 +17,8 @@ public class GameController : MonoBehaviour {
     }
 
     public bool debugResearchPoints;
-
+	public int researchPerClick;
+	public double money;
 	private double processingPower = 1.23;
 	private Text score;
 	private Text tick;
@@ -34,8 +35,29 @@ public class GameController : MonoBehaviour {
     // and any lag that occurs between each frame. Delta time is basically how long the last frame
     // took to render. Thus it accurately tells us how long that tick should be.
     
-    // Note: This is the point ticker. See the ticker for updating GUIs/checking etc.
-    private float _incrementalTickTime;
+    
+	//List containing all parts
+	public List<Part> allParts = new List<Part> ();
+
+	public void buy(int index, int number){
+		if (money >= (allParts [index].price * number)) {
+			allParts[index].buy(number);
+			money-= (allParts [index].price * number);
+		}
+		else{
+			//TODO:Exceptions
+		}
+	}
+
+	public void use(int index, int number){
+		if(allParts[index].numberOwned >= number){
+			allParts[index].use(number);
+		}
+	}
+
+
+	// Note: This is the point ticker. See the ticker for updating GUIs/checking etc.
+	private float _incrementalTickTime;
     public float incrementalTickTime {
         get {
             return _incrementalTickTime * Time.deltaTime;
@@ -137,6 +159,7 @@ public class GameController : MonoBehaviour {
 		}
 		else if(isResearchSet()){
 			stopResearch();
+			this.researchPoints = 0;
 		}
 
 	}
@@ -214,6 +237,8 @@ public class GameController : MonoBehaviour {
 		}
 		return underConsideration;
 	}
+
+
 
 
 
