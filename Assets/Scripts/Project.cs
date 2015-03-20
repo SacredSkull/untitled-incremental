@@ -1,16 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
-public class Project : MonoBehaviour {
+public class Project  {
 
 	public string name;
 	public string description;
 	public int[] researchIDsRequired;
 	public int pointsPerSecond;
-	public int moneyperSecond;
-	public int oneTimeFees;
-	public int upkeepCost;
+	public double moneyperSecond;
+	//cost you have to pay to create the project
+	public double oneTimeFees;
+	public double processingBoost;
 	public int pointCost;
+	public bool done;
 
 	public bool canDo(){
 		GameController game = GameController.instance;
@@ -22,4 +25,7 @@ public class Project : MonoBehaviour {
 		return true;
 	}
 
+	public void complete(){
+		this.done = true;
+	}
 }
