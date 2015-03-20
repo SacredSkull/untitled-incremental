@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System;
+using Incremental.XML;
 
-public class HardwareProject :  Incremental.XML.Project {
+public class HardwareProject :  Part {
 
 	public List<Part> requiredParts = new List<Part>();
 

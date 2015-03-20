@@ -6,6 +6,7 @@ namespace Incremental.XML {
     public partial class Project : IStartable {
 
         public int[] researchIDsRequired;
+        private bool done;
 
         public bool canDo() {
             GameController game = GameController.instance;
@@ -24,7 +25,7 @@ namespace Incremental.XML {
 
         public void complete() {
             //TODO: This is required by interface IStartable
-	    this.done = true;
+	        this.done = true;
         }
 
         public void abandon() {
