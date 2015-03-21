@@ -6,7 +6,7 @@ public class HardwareProject :  Incremental.XML.Project {
 
 	public List<Part> requiredParts = new List<Part>();
 
-	public override void canDo(){
+	public override bool canDo(){
 		GameController game = GameController.instance;
 		for(int i = 0; i<researchIDsRequired.Length; i++){
 			if(!game.hasBeenDone(researchIDsRequired[i])){

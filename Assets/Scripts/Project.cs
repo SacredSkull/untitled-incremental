@@ -7,6 +7,15 @@ namespace Incremental.XML {
 
         public int[] researchIDsRequired;
 
+		public bool canDoMultiple{
+			get{
+				if(this.uses == -1){
+					return true;
+				}
+				else return false;
+			}
+		}
+
         public bool canDo() {
             GameController game = GameController.instance;
             for (int i = 0; i < researchIDsRequired.Length; i++) {

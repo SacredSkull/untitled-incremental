@@ -19,10 +19,12 @@ public class GameController : MonoBehaviour {
             return _instance;
         }
     }
-
+	//-----------DEBUG
     public bool debugResearchPoints;
-	public int researchPerClick;
-	public double money;
+
+	//-----------
+	public int researchPerClick = 0;
+	public double money = 0.00;
 	private double processingPower = 1.23;
 	private Text score;
 	private Text tick;
@@ -56,7 +58,7 @@ public class GameController : MonoBehaviour {
 		return false;
 	}
 
-	public void buy(int index, int number){
+	public void buyPart(int index, int number){
 		if (money >= (allParts [index].cost * number)) {
 			allParts[index].buy(number);
 			money-= (allParts [index].cost * number);
@@ -184,7 +186,6 @@ public class GameController : MonoBehaviour {
 
 	//returns index of a paticular piece of Research in the array
 	private int getIndexOfUncompletedResearch(Research a){
-		double req = a.processingLevel;
 		for(int i = 0; i<AllUncompleteResearch.Count; i++){
 			if(AllUncompleteResearch[i].ID == a.ID){
 				return i;
