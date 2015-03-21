@@ -43,6 +43,19 @@ public class GameController : MonoBehaviour {
 	//List containing all parts
 	public List<Part> allParts = new List<Part> ();
 
+	//likely a mthod to be deprecated by xml
+	public bool hasParts(string name, int number){
+		for (int i = 0; i<allParts.Count; i++) {
+			if(allParts[i].compareTo(name)){
+				if(allParts[i].numberOwned == number){
+					return true;
+				}
+				else return false;
+			}
+		}
+		return false;
+	}
+
 	public void buy(int index, int number){
 		if (money >= (allParts [index].cost * number)) {
 			allParts[index].buy(number);

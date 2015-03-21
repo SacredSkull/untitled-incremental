@@ -24,6 +24,7 @@ namespace Incremental.XML {
 
         public void complete() {
             //TODO: This is required by interface IStartable
+	    this.done = true;
         }
 
         public void abandon() {
