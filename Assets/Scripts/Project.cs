@@ -1,25 +1,37 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
-public class Project : MonoBehaviour {
+namespace Incremental.XML {
+    public partial class Project : IStartable {
 
-	public string name;
-	public string description;
-	public int[] researchIDsRequired;
-	public int pointsPerSecond;
-	public int moneyperSecond;
-	public int oneTimeFees;
-	public int upkeepCost;
-	public int pointCost;
+        public int[] researchIDsRequired;
 
-	public bool canDo(){
-		GameController game = GameController.instance;
-		for(int i = 0; i<researchIDsRequired.Length; i++){
-			if(!game.hasBeenDone(researchIDsRequired[i])){
-				return false;
-			}
-		}
-		return true;
-	}
+        public bool canDo() {
+            GameController game = GameController.instance;
+            for (int i = 0; i < researchIDsRequired.Length; i++) {
+                if (!game.hasBeenDone(researchIDsRequired[i])) {
+                    return false;
+                }
+            }
+            return true;
+        }
 
+        public Project() {
+            this.dependsOnField = new List<dependency>();
+            this.usesField = ((sbyte)(-1));
+        }
+
+        public void complete() {
+            //TODO: This is required by interface IStartable
+        }
+
+        public void abandon() {
+            //TODO: This is required by interface IStartable
+        }
+
+        public void start() {
+            //TODO: This is required by interface IStartable
+        }
+    }
 }

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class SoftwareProject :  Project{
+public class SoftwareProject : Incremental.XML.Project{
 
 
 }

@@ -4,6 +4,7 @@ using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Linq;
+using Incremental.XML;
 #if DEBUG
 using System.Diagnostics;
 #endif
@@ -28,7 +29,7 @@ public class GameController : MonoBehaviour {
 	private Text potentialResearch;
 	private bool researchSet;
 	public List<Research> AllUncompleteResearch = new List<Research>();
-	public List<Research> AllCompleteResearch = new List<Research>();
+    public List<Research> AllCompleteResearch;
 	public List<Research> AllPossibleResearch;
 	//May need to create another list ordered by ID to make finding completed
 	//research more efficient. For now though, it is not necessary.
@@ -43,12 +44,12 @@ public class GameController : MonoBehaviour {
 	public List<Part> allParts = new List<Part> ();
 
 	public void buy(int index, int number){
-		if (money >= (allParts [index].price * number)) {
+		if (money >= (allParts [index].cost * number)) {
 			allParts[index].buy(number);
-			money-= (allParts [index].price * number);
+			money-= (allParts [index].cost * number);
 		}
 		else{
-			//TODO:Exceptions
+			//TODO: Exceptions
 		}
 	}
 
@@ -103,13 +104,15 @@ public class GameController : MonoBehaviour {
         incrementalTickTime = 1;
         incrementalTickIterations = 40;
 
-        //requirement test1duplicate = new requirement("Lasers");
+        
+        ResearchRoot researchXML = ResearchRoot.LoadFromFile(@"./Assets/Data/Research.xml");
+        AllUncompleteResearch = researchXML.Research;
 
-        AllCompleteResearch.Add(new Research("Robotics", "Cool robots", 200, 1, new Research[]{}, true));
-        AllUncompleteResearch.Add(new Research("Computer Components", "Wow, you put together your own computer!", 100, 0, new Research[]{}, false));
-        AllUncompleteResearch.Add(new Research("Basic Physics", "Learning the basics is a step on the way to discovering the meaning of life", 300, 0, new Research[]{}, false));
-        AllUncompleteResearch.Add(new Research("Lasers", "Cool robots", 500, 1, new Research[]{Research.getResearchByName("Robotics")}, false));
-        AllUncompleteResearch.Add(new Research("PDMS", "Point defence missile system protects against enemy robots (that you invented anyway...)", 800, 1, new Research[] { Research.getResearchByName("Robotics"), Research.getResearchByName("Lasers") }, false));
+        //AllCompleteResearch.Add(new Research("Robotics", "Cool robots", 200, 1, new Research[]{}, true));
+        //AllUncompleteResearch.Add(new Research("Computer Components", "Wow, you put together your own computer!", 100, 0, new Research[]{}, false));
+        //AllUncompleteResearch.Add(new Research("Basic Physics", "Learning the basics is a step on the way to discovering the meaning of life", 300, 0, new Research[]{}, false));
+        //AllUncompleteResearch.Add(new Research("Lasers", "Cool robots", 500, 1, new Research[]{Research.getResearchByName("Robotics")}, false));
+        //AllUncompleteResearch.Add(new Research("PDMS", "Point defence missile system protects against enemy robots (that you invented anyway...)", 800, 1, new Research[] { Research.getResearchByName("Robotics"), Research.getResearchByName("Lasers") }, false));
 	}
 	
 	// Update is called once per frame
@@ -127,7 +130,7 @@ public class GameController : MonoBehaviour {
         if (ticker == Priority.MEDIUM) {
             // Ticks every 10 frames
 
-            AllPossibleResearch = AllUncompleteResearch.Where(x => (x.researchCost <= researchPoints) && !x.prerequisites.Except(AllCompleteResearch).Any() ).ToList();
+            AllPossibleResearch = AllUncompleteResearch.Where(x => (x.cost <= researchPoints) && !x.ResearchDependencies.Except(AllCompleteResearch).Any() ).ToList();
             string text = "";
 
             foreach (Research research in AllPossibleResearch) {
@@ -156,7 +159,7 @@ public class GameController : MonoBehaviour {
 	//1.Research has been set
 	//2. Research hasn't been finished.
 	public void addResearchPoints(int points){
-		if((isResearchSet() && currentResearch.researchCost > researchPoints) || debugResearchPoints){
+		if((isResearchSet() && currentResearch.cost > researchPoints) || debugResearchPoints){
 			this.researchPoints += points;
 		}
 		else if(isResearchSet()){
@@ -168,7 +171,7 @@ public class GameController : MonoBehaviour {
 
 	//returns index of a paticular piece of Research in the array
 	private int getIndexOfUncompletedResearch(Research a){
-		double req = a.processingReq;
+		double req = a.processingLevel;
 		for(int i = 0; i<AllUncompleteResearch.Count; i++){
 			if(AllUncompleteResearch[i].ID == a.ID){
 				return i;
@@ -214,10 +217,10 @@ public class GameController : MonoBehaviour {
 	}
 
 	public bool canBeDone(Research a){
-		if(a.processingReq > processingPower){
+		if(a.processingLevel > processingPower){
 			return false;
 		}
-		for (int i = 0; i<a.prerequisites.Length; i++) {
+		for (int i = 0; i<a.ResearchDependencies.Count; i++) {
 			if(!hasBeenDone(i)){
 				return false;
 			}
@@ -233,7 +236,7 @@ public class GameController : MonoBehaviour {
 				underConsideration.Add(AllUncompleteResearch[i]);
 				underConsideration.Sort();
 			}
-			else if(AllUncompleteResearch[i].processingReq > processingPower){
+			else if(AllUncompleteResearch[i].processingLevel > processingPower){
 				break;
 			}
 		}

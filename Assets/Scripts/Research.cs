@@ -4,72 +4,89 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public partial class Research : IComparable<Research>{
+namespace Incremental.XML {
+    public partial class Research : IComparable<Research>, IStartable {
 
-    private static List<Research> allresearch = new List<Research>();
-    private static int instances = 0;
+        private static List<Research> allresearch = new List<Research>();
+        private static int instances = 0;
 
-    public static Research getResearchByName(string name) {
-        List<Research> temp;
-        temp = allresearch.Where(x => x.name == name).ToList();
-        if (temp.Count == 1) {
-            return temp[0];
-        } else if (temp.Count == 0) {
-            return null;
-        } else {
-            Utility.UnityLog(temp[0].name + " has been defined more than once! The first parsed has been used.", LogLevels.ERROR);
-            return temp[0];
+        public static Research getResearchByName(string name) {
+            name = name.Replace(" ","_");
+            List<Research> temp;
+            temp = allresearch.Where(x => x.name == name).ToList();
+            if (temp.Count == 1) {
+                return temp[0];
+            } else if (temp.Count == 0) {
+                return null;
+            } else {
+                Utility.UnityLog(temp[0].name + " has been defined more than once! The first parsed has been used.", LogLevels.ERROR);
+                return temp[0];
+            }
+        }
+
+        public string name {
+            get {
+                return this.string_id.Replace("-", " ");
+            }
+        }
+
+        // Though research will never depend on parts, it's just more on par with other classes 
+        // to indicate this list is for research (rather than just name the list "dependencies").
+        private List<Research> _ResearchDependencies;
+
+        public List<Research> ResearchDependencies {
+            get {
+                if (_ResearchDependencies == null) {
+                    _ResearchDependencies = new List<Research>();
+                    foreach (dependency d in this.DependsOn) {
+                        if (d.type.Equals("research"))
+                            _ResearchDependencies.Add(Research.getResearchByName(d.name));
+                    }
+                }
+                return _ResearchDependencies;
+            }
+        }
+
+        public Research() {
+            this.dependsOnField = new List<dependency>();
+            allresearch.Add(this);
+            this.ID = instances;
+            instances++;
+
+            // Default values:
+            this.processingLevelField = ((short)(1));
+        }
+
+        private bool done;
+
+        public int ID {
+            get;
+            private set;
+        }
+
+        public void complete() {
+            done = true;
+        }
+
+        public void abandon() {
+            //TODO: This is required by interface IStartable
+        }
+
+        public void start() {
+            //TODO: This is required by interface IStartable
+        }
+
+        public bool isDone() {
+            return done;
+        }
+        public int CompareTo(Research b) {
+            Research a = this;
+            if (a.processingLevel < b.processingLevel) {
+                return -1;
+            } else if (a.processingLevel > b.processingLevel) {
+                return 1;
+            } else
+                return 0;
         }
     }
-
-#warning This code deprecates as soon as the XML code is live.
-    #region Deprecated
-
-    public Research(string name, string description, int researchCost, 
-	                int processingReq, Research[] prerequisites, bool done){
-		this.name = name;
-		this.description = description;
-		this.researchCost = researchCost;
-		this.processingReq = processingReq;
-		this.prerequisites = prerequisites;
-		this.done = done;
-        allresearch.Add(this);
-        this.ID = instances;
-        instances++;
-	}
-
-	public string name;
-	public string description;
-	public int processingReq;
-    public Research[] prerequisites;
-	private bool done;
-
-	public int ID {
-		get;
-		private set;
-	}
-
-    public int researchCost {
-        get;
-        private set;
-    }
-
-	public void complete(){
-		done = true;
-	}
-
-	public bool isDone(){
-		return done;
-	}
-    #endregion
-
-    public int CompareTo(Research b){
-		Research a = this;
-		if (a.processingReq < b.processingReq) {
-			return -1;
-		} else if (a.processingReq  > b.processingReq) {
-			return 1;
-		} else
-			return 0;
-	}
 }

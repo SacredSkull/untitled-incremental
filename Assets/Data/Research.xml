@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ResearchRoot>
+    <Research string_id="Basic-Computer-Systems" description="Roll your own" cost="600" processingLevel="1"/>
+
+    <Research string_id="Lasers" description="Is it class 2 or 3 that you aren't supposed to shine in people's eyes?" cost="800" processingLevel="1">
+        <DependsOn>
+            <dependency type="Research" string_id="Basic-Computer-Systems" />
+        </DependsOn>
+    </Research>
+
+    <Research string_id="Robotics" description="Warning: Starter pack does not include the three laws" cost="800" processingLevel="1">
+        <DependsOn>
+            <dependency type="Research" string_id="Basic-Computer-Systems" />
+            <dependency type="Research" string_id="Laser" />
+        </DependsOn>
+    </Research>
+</ResearchRoot>

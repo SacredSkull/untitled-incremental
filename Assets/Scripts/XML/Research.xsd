@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified">
+  <xs:include schemaLocation="Depends.xsd"/>
+  <xs:element name="ResearchRoot" type="ResearchRoot"/>
+  <xs:complexType name="Research">
+    <xs:sequence>
+      <xs:element type="DependsOn" name="DependsOn" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute type="xs:ID" name="string_id" use="required"/>
+    <xs:attribute type="xs:string" name="description" use="required"/>
+    <xs:attribute type="xs:short" name="cost" use="required"/>
+    <xs:attribute type="xs:short" name="processingLevel" />
+  </xs:complexType>
+  <xs:complexType name="ResearchRoot">
+    <xs:sequence>
+      <xs:element type="Research" name="Research" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

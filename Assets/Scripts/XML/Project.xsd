@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified">
+  <xs:include schemaLocation="Depends.xsd"/>
+  <xs:element name="ProjectRoot" type="ProjectRoot"/>
+  <xs:complexType name="Project">
+    <xs:sequence>
+      <xs:element type="DependsOn" name="DependsOn"/>
+    </xs:sequence>
+    <xs:attribute type="xs:ID" name="string_id" use="required"/>
+    <xs:attribute type="xs:string" name="description" use="required"/>
+    <xs:attribute type="xs:short" name="upfront-cost" use="required"/>
+    <xs:attribute type="xs:byte" name="uses" />
+  </xs:complexType>
+  <xs:complexType name="ProjectRoot">
+    <xs:sequence>
+      <xs:element type="Project" name="Project" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
