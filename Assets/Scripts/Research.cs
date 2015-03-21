@@ -7,6 +7,14 @@ using System.Linq;
 namespace Incremental.XML {
     public partial class Research : IComparable<Research>, IStartable {
 
+		//public string string_id;
+		//public string description;
+		//public int cost;
+		//public int processingLevel;
+		//public Research[] prerequisites;
+		//private bool done;
+		public int ID;
+
         private static List<Research> allresearch = new List<Research>();
         private static int instances = 0;
 
@@ -46,6 +54,13 @@ namespace Incremental.XML {
                 return _ResearchDependencies;
             }
         }
+
+		#if debug
+		public Research(int points){
+			this.cost = points;
+		}
+
+		#endif
 
         public Research() {
             this.dependsOnField = new List<dependency>();

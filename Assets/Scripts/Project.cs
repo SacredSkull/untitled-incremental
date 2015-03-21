@@ -4,8 +4,15 @@ using System.Collections.Generic;
 
 namespace Incremental.XML {
     public partial class Project : IStartable {
-
+		//public string name;
+		//public string description;
+		public int pointsPerSecond;
+		public int moneyperSecond;
+		//public int oneTimeFees;
+		//public int upkeepCost(will not be used);
+		public int pointCost;
         public int[] researchIDsRequired;
+		//public int uses;
 
 		public bool canDoMultiple{
 			get{
