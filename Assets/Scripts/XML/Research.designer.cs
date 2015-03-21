@@ -13,7 +13,7 @@ namespace Incremental.XML {
     using System.ComponentModel;
     using System.IO;
     using System.Text;
-    using System.Collections.Generic;\n#pragma warning disable 414, 169;
+    using System.Collections.Generic;
     
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Xsd2Code", "3.4.0.32990")]

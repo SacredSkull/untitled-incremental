@@ -248,11 +248,13 @@ public class GameController : MonoBehaviour {
 		int index = getIndexOfUncompletedHardware(a);
 		if(a.canDoMultiple()){
 			CompletedHardware.Add(a);
+			useRequiredParts(a);
 
 		}
 		else{
 			CompletedHardware.Add(a);
 			HardwareStillDoable.Remove(index);
+			useRequiredParts(a);
 		}
 
 	}

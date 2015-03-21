@@ -14,6 +14,7 @@ namespace Incremental.XML {
         public int[] researchIDsRequired;
 		//public int uses;
 
+
 		public bool canDoMultiple{
 			get{
 				if(this.uses == -1){
@@ -40,7 +41,6 @@ namespace Incremental.XML {
 
         public void complete() {
             //TODO: This is required by interface IStartable
-	    this.done = true;
         }
 
         public void abandon() {
