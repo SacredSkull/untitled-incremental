@@ -12,7 +12,6 @@ namespace Incremental.XML {
 		//public int upkeepCost(will not be used);
 		public int pointCost;
         public int[] researchIDsRequired;
-		//public int uses;
 
 
 		public bool canDoMultiple{
@@ -41,6 +40,7 @@ namespace Incremental.XML {
 
         public void complete() {
             //TODO: This is required by interface IStartable
+	        this.done = true;
         }
 
         public void abandon() {
