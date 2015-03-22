@@ -11,7 +11,7 @@ namespace Incremental.XML {
 		//public int oneTimeFees;
 		//public int upkeepCost(will not be used);
 		public int pointCost;
-        public int[] researchIDsRequired;
+        public Research[] researchIDsRequired;
 
 
 		public bool canDoMultiple{
@@ -23,10 +23,10 @@ namespace Incremental.XML {
 			}
 		}
 
-        public bool canDo() {
+        public virtual bool canDo() {
             GameController game = GameController.instance;
             for (int i = 0; i < researchIDsRequired.Length; i++) {
-                if (!game.hasBeenDone(researchIDsRequired[i])) {
+                if (!game.hasBeenDone(researchIDsRequired[i].string_id)) {
                     return false;
                 }
             }
@@ -40,8 +40,7 @@ namespace Incremental.XML {
 
         public void complete() {
             //TODO: This is required by interface IStartable
-	        this.done = true;
-        }
+	    }
 
         public void abandon() {
             //TODO: This is required by interface IStartable

@@ -68,12 +68,12 @@ namespace Incremental.XML {
             }
         }
 
-		#if debug
+
 		public Research(int points){
-			this.cost = points;
+			this.cost = (short)points;
 		}
 
-		#endif
+
 
         public Research() {
             this.dependsOnField = new List<dependency>();

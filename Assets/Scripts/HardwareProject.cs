@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System;
 using Incremental.XML;
 
-public class HardwareProject :  Part {
+public class HardwareProject :  Incremental.XML.Project {
 
 	//public string name;
 	//public string description;
@@ -24,12 +24,12 @@ public class HardwareProject :  Part {
 	public override bool canDo(){
 		GameController game = GameController.instance;
 		for(int i = 0; i<researchIDsRequired.Length; i++){
-			if(!game.hasBeenDone(researchIDsRequired[i])){
+			if(!game.hasBeenDone(researchIDsRequired[i].string_id)){
 				return false;
 			}
 		}
-		for (int j = 0; j<requiredParts.Count; j++) {
-			if(!game.hasParts(requiredParts[j].name, requiredParts.numberOwned)){
+		for (int j = 0; j<game.allParts.Count; j++) {
+			if(!game.hasParts(game.allParts[j].string_id, game.allParts[j].numberOwned)){
 				return false;
 			}
 		}
