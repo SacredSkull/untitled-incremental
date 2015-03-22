@@ -11,9 +11,22 @@ namespace Incremental.XML {
         private static int instances = 0;
 
         public static Research getResearchByName(string name) {
-            name = name.Replace(" ","_");
+            name = name.Replace(" ","-");
             List<Research> temp;
             temp = allresearch.Where(x => x.name == name).ToList();
+            if (temp.Count == 1) {
+                return temp[0];
+            } else if (temp.Count == 0) {
+                return null;
+            } else {
+                Utility.UnityLog(temp[0].name + " has been defined more than once! The first parsed has been used.", LogLevels.ERROR);
+                return temp[0];
+            }
+        }
+
+        public static Research getResearchByID(int ID){
+            List<Research> temp;
+            temp = allresearch.Where(x => x.ID == ID).ToList();
             if (temp.Count == 1) {
                 return temp[0];
             } else if (temp.Count == 0) {
@@ -39,8 +52,8 @@ namespace Incremental.XML {
                 if (_ResearchDependencies == null) {
                     _ResearchDependencies = new List<Research>();
                     foreach (dependency d in this.DependsOn) {
-                        if (d.type.Equals("research"))
-                            _ResearchDependencies.Add(Research.getResearchByName(d.name));
+                        if (d.type.Equals("Research"))
+                            _ResearchDependencies.Add(Research.getResearchByName(d.string_id));
                     }
                 }
                 return _ResearchDependencies;
@@ -61,7 +74,7 @@ namespace Incremental.XML {
 
         public int ID {
             get;
-            private set;
+            set;
         }
 
         public void complete() {

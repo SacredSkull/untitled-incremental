@@ -409,7 +409,7 @@ namespace Incremental.XML {
     public partial class dependency {
         
         [EditorBrowsable(EditorBrowsableState.Never)]
-        private string nameField;
+        private string string_idField;
         
         [EditorBrowsable(EditorBrowsableState.Never)]
         private short amountField;
@@ -423,7 +423,7 @@ namespace Incremental.XML {
     public ResourceType type {get; set;}
 
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string name {get; set;}
+    public string string_id {get; set;}
 
     [System.Xml.Serialization.XmlTextAttribute()]
     public string Value {get; set;}
