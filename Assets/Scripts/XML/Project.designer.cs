@@ -210,7 +210,25 @@ namespace Incremental.XML {
         private string descriptionField;
         
         [EditorBrowsable(EditorBrowsableState.Never)]
-        private short upfrontcostField;
+        private short pointCostField;
+
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		private short pointsPerSecondField;
+
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		private short pointMultField;
+
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		private short moneyPerSecondField;
+
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		private short moneyMultField;
+
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		private short pointsPerClickField;
+
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		private short processIncreaseField;
         
         [EditorBrowsable(EditorBrowsableState.Never)]
         private sbyte usesField;
@@ -226,8 +244,26 @@ namespace Incremental.XML {
     [System.Xml.Serialization.XmlAttributeAttribute()]
     public string description {get; set;}
 
-    [System.Xml.Serialization.XmlAttributeAttribute("upfront-cost")]
-    public short upfrontcost {get; set;}
+    	[System.Xml.Serialization.XmlAttributeAttribute()]
+    	public short pointCost {get; set;}
+			
+		[System.Xml.Serialization.XmlAttributeAttribute()]
+   		public short pointsPerSecond  {get; set;}
+
+		[System.Xml.Serialization.XmlAttributeAttribute()]
+		public short pointsPerClick {get; set;}
+
+		[System.Xml.Serialization.XmlAttributeAttribute()]
+		public short pointMult {get; set;}
+
+		[System.Xml.Serialization.XmlAttributeAttribute()]
+		public short moneyPerSecond {get; set;}
+
+		[System.Xml.Serialization.XmlAttributeAttribute()]
+		public short moneyMult {get; set;}
+
+		[System.Xml.Serialization.XmlAttributeAttribute()]
+		public short processIncrease {get; set;}
 
     [System.Xml.Serialization.XmlAttributeAttribute()]
     public sbyte uses {get; set;}

@@ -23,9 +23,9 @@ public class GameController : MonoBehaviour {
     public bool debugResearchPoints;
 
 	//-----------Incremental Values
-	public int researchPerClick = 0;
+	private int BASE_POINTS_PER_CLICK = 10;
 	public double money = 0.00;
-	private double processingPower = 1.23;
+	private double BASE_PROCESSING_POWER = 1.23;
 
 	//----------Outputs
 	private Text score;
@@ -52,6 +52,96 @@ public class GameController : MonoBehaviour {
 
 	//TODO: Calculate sum of all multipliers, points etc in projects, 
 	//TODO: Add this to the update method, then we'll have a game!
+
+	public int pointsPerSecond{
+		get{
+			int temp = 0;
+			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.pointsPerSecond> 0).ToList();
+			List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.pointsPerSecond> 0).ToList();
+			foreach(SoftwareProject item in relevantSoftware){
+				temp+=  item.pointsPerSecond;
+			}
+			foreach(HardwareProject item in relevantHardware){
+				temp+=  item.pointsPerSecond;
+			}
+			return temp;
+		}
+	}
+
+	public int pointsPerClick{
+		get{
+			int temp = BASE_POINTS_PER_CLICK;
+			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.pointsPerClick> 0).ToList();
+			List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.pointsPerClick> 0).ToList();
+			foreach(SoftwareProject item in relevantSoftware){
+				temp+=  item.pointsPerClick;
+			}
+			foreach(HardwareProject item in relevantHardware){
+				temp+=  item.pointsPerClick;
+			}
+			return temp;
+		}
+	}
+
+	public int pointsMult{
+		get{
+			int temp = BASE_POINTS_PER_CLICK;
+			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.pointMult> 0).ToList();
+			List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.pointMult> 0).ToList();
+			foreach(SoftwareProject item in relevantSoftware){
+				temp+=  item.pointMult;
+			}
+			foreach(HardwareProject item in relevantHardware){
+				temp+=  item.pointMult;
+			}
+			return temp;
+		}
+	}
+
+	public int processingPower{
+		get{
+			int temp = 0;
+			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.processIncrease> 0).ToList();
+			List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.processIncrease> 0).ToList();
+			foreach(SoftwareProject item in relevantSoftware){
+				temp+=  item.processIncrease;
+			}
+			foreach(HardwareProject item in relevantHardware){
+				temp+=  item.processIncrease;
+			}
+			return temp;
+		}
+	}
+
+	public double moneyPerSecond{
+		get{
+			int temp = 0;
+			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.moneyperSecond> 0.00).ToList();
+			List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.moneyperSecond> 0.00).ToList();
+			foreach(SoftwareProject item in relevantSoftware){
+				temp+=  item.moneyperSecond;
+			}
+			foreach(HardwareProject item in relevantHardware){
+				temp+=  item.moneyperSecond;
+			}
+			return temp;
+		}
+	}
+
+	public int moneyMultiplier{
+		get{
+			int temp = 0;
+			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.moneyMult> 0).ToList();
+			List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.moneyMult> 0).ToList();
+			foreach(SoftwareProject item in relevantSoftware){
+				temp+=  item.moneyMult;
+			}
+			foreach(HardwareProject item in relevantHardware){
+				temp+=  item.moneyMult;
+			}
+			return temp;
+		}
+	}
 
 
 	//-----------------------------------------------------RESEARCH METHODS AND DATA
@@ -333,6 +423,7 @@ public class GameController : MonoBehaviour {
 		tick = GameObject.Find("Ticks").GetComponent<Text>();
 		potentialResearch = GameObject.Find("Research").GetComponent<Text>();
 		researchPoints = 0;
+		money = 0;
 	}
 
 	// Use this for initialization
@@ -341,7 +432,13 @@ public class GameController : MonoBehaviour {
 		incrementalTickTime = 1;
 		incrementalTickIterations = 40;
 		ResearchRoot researchXML = ResearchRoot.LoadFromFile(@"./Assets/Data/Research.xml");
+		PartRoot partXML = PartRoot.LoadFromFile(@"./Assets/Data/Part.XML");
+		ProjectRoot projectXML = ProjectRoot.LoadFromFile(@"./Assets/Data/Project.XML");
 		AllUncompleteResearch = researchXML.Research;
+		allParts = partXML.Part;
+		//cause compiler errors, when code is done comment back in
+		//HardwareStillDoable = projectXML.Project;
+		//SoftwareStillDoable = projectXML.Project;
 		
 		//AllCompleteResearch.Add(new Research("Robotics", "Cool robots", 200, 1, new Research[]{}, true));
 		//AllUncompleteResearch.Add(new Research("Computer Components", "Wow, you put together your own computer!", 100, 0, new Research[]{}, false));
@@ -365,9 +462,8 @@ public class GameController : MonoBehaviour {
 			foreach (Research research in AllPossibleResearch) {
 				text += research.string_id + "\n";
 			}
-			if (this.debugResearchPoints) {
-				this.addResearchPoints (10);
-			}
+			researchPoints+= pointsPerSecond*pointsMult;
+			money+= moneyPerSecond*moneyMultiplier;
 			score.text = researchPoints.ToString ();
 			potentialResearch.text = text;
 			tick.text = incrementalTickTime.ToString ();

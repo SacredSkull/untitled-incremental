@@ -8,15 +8,15 @@ public class HardwareProject :  Incremental.XML.Project {
 
 	//public string name;
 	//public string description;
-	public int pointsPerSecond;
-	public int pointsPerClick;
-	public int moneyperSecond;
-	public int processIncrease;
-	public int moneyMult;
-	public int pointMult;
-	//public int oneTimeFees;
+	//public int pointsPerSecond;
+	//public int pointsPerClick;
+	//public int moneyperSecond;
+	//public int processIncrease;
+	//public int moneyMult;
+	//public int pointMult;
+	//public int oneTimeFees; (not currrently in use)
 	//public int upkeepCost(will not be used);
-	public int pointCost;
+	//public int pointCost;
 	//public int uses;
 
 	public Dictionary<Part, int> requiredParts = new Dictionary<Part, int>();

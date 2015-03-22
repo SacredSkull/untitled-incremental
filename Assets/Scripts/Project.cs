@@ -8,8 +8,6 @@ namespace Incremental.XML {
 		//public string description;
 		public int pointsPerSecond;
 		public int moneyperSecond;
-		//public int oneTimeFees;
-		//public int upkeepCost(will not be used);
 		public int pointCost;
         public Research[] researchIDsRequired;
 
