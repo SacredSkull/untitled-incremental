@@ -4,9 +4,16 @@ using System.Collections.Generic;
 
 namespace Incremental.XML {
     public partial class Project : IStartable {
-
+		//public string name;
+		//public string description;
+		public int pointsPerSecond;
+		public int moneyperSecond;
+		//public int oneTimeFees;
+		//public int upkeepCost(will not be used);
+		public int pointCost;
         public int[] researchIDsRequired;
-        private bool done;
+		//public int uses;
+
 
 		public bool canDoMultiple{
 			get{
@@ -34,7 +41,6 @@ namespace Incremental.XML {
 
         public void complete() {
             //TODO: This is required by interface IStartable
-	        this.done = true;
         }
 
         public void abandon() {

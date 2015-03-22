@@ -2,13 +2,21 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Linq;
 
 namespace Incremental.XML {
     public partial class Research : IComparable<Research>, IStartable {
 
+		//public string string_id;
+		//public string description;
+		//public int cost;
+		//public int processingLevel;
+		//public Research[] prerequisites;
+		//private bool done;
+
         private static List<Research> allresearch = new List<Research>();
-        private static int instances = 0;
+        private static ObjectIDGenerator _objectID = new ObjectIDGenerator();
 
         public static Research getResearchByName(string name) {
             name = name.Replace(" ","-");
@@ -43,7 +51,7 @@ namespace Incremental.XML {
             }
         }
 
-        // Though research will never depend on parts, it's just more on par with other classes 
+        // Though research will never depend on parts, it's just more on par with other classes
         // to indicate this list is for research (rather than just name the list "dependencies").
         private List<Research> _ResearchDependencies;
 
@@ -60,11 +68,19 @@ namespace Incremental.XML {
             }
         }
 
+		#if debug
+		public Research(int points){
+			this.cost = points;
+		}
+
+		#endif
+
         public Research() {
             this.dependsOnField = new List<dependency>();
             allresearch.Add(this);
-            this.ID = instances;
-            instances++;
+
+            bool known;
+            _objectID.GetId(this, out known);
 
             // Default values:
             this.processingLevelField = ((short)(1));
@@ -72,9 +88,11 @@ namespace Incremental.XML {
 
         private bool done;
 
-        public int ID {
-            get;
-            set;
+        public long ID {
+            get {
+                bool known;
+                return _objectID.GetId(this, out known);
+            }
         }
 
         public void complete() {
