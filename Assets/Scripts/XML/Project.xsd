@@ -11,6 +11,21 @@
     <xs:attribute type="xs:short" name="upfront-cost" use="required"/>
     <xs:attribute type="xs:byte" name="uses" />
   </xs:complexType>
+
+  <xs:complexType name="SoftwareProject">
+    <xs:complexContent>
+      <xs:extension base="Project">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+<xs:complexType name="HardwareProject">
+    <xs:complexContent>
+      <xs:extension base="Project">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:complexType name="ProjectRoot">
     <xs:sequence>
       <xs:element type="Project" name="Project" maxOccurs="unbounded" minOccurs="0"/>
