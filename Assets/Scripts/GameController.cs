@@ -23,9 +23,9 @@ public class GameController : MonoBehaviour {
     public bool debugResearchPoints;
 
 	//-----------Incremental Values
-	public int researchPerClick = 0;
+	private int BASE_POINTS_PER_CLICK = 10;
 	public double money = 0.00;
-	private double processingPower = 1.23;
+	private double BASE_PROCESSING_POWER = 1.23;
 
 	//----------Outputs
 	private Text score;
@@ -53,6 +53,96 @@ public class GameController : MonoBehaviour {
 	//TODO: Calculate sum of all multipliers, points etc in projects, 
 	//TODO: Add this to the update method, then we'll have a game!
 
+	public int pointsPerSecond{
+		get{
+			int temp = 0;
+			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.pointsPerSecond> 0).ToList();
+			List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.pointsPerSecond> 0).ToList();
+			foreach(SoftwareProject item in relevantSoftware){
+				temp+=  item.pointsPerSecond;
+			}
+			foreach(HardwareProject item in relevantHardware){
+				temp+=  item.pointsPerSecond;
+			}
+			return temp;
+		}
+	}
+
+	public int pointsPerClick{
+		get{
+			int temp = BASE_POINTS_PER_CLICK;
+			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.pointsPerClick> 0).ToList();
+			List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.pointsPerClick> 0).ToList();
+			foreach(SoftwareProject item in relevantSoftware){
+				temp+=  item.pointsPerClick;
+			}
+			foreach(HardwareProject item in relevantHardware){
+				temp+=  item.pointsPerClick;
+			}
+			return temp;
+		}
+	}
+
+	public int pointsMult{
+		get{
+			int temp = BASE_POINTS_PER_CLICK;
+			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.pointMult> 0).ToList();
+			List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.pointMult> 0).ToList();
+			foreach(SoftwareProject item in relevantSoftware){
+				temp+=  item.pointMult;
+			}
+			foreach(HardwareProject item in relevantHardware){
+				temp+=  item.pointMult;
+			}
+			return temp;
+		}
+	}
+
+	public int processingPower{
+		get{
+			int temp = 0;
+			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.processIncrease> 0).ToList();
+			List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.processIncrease> 0).ToList();
+			foreach(SoftwareProject item in relevantSoftware){
+				temp+=  item.processIncrease;
+			}
+			foreach(HardwareProject item in relevantHardware){
+				temp+=  item.processIncrease;
+			}
+			return temp;
+		}
+	}
+
+	public double moneyPerSecond{
+		get{
+			int temp = 0;
+			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.moneyperSecond> 0.00).ToList();
+			List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.moneyperSecond> 0.00).ToList();
+			foreach(SoftwareProject item in relevantSoftware){
+				temp+=  item.moneyperSecond;
+			}
+			foreach(HardwareProject item in relevantHardware){
+				temp+=  item.moneyperSecond;
+			}
+			return temp;
+		}
+	}
+
+	public int moneyMultiplier{
+		get{
+			int temp = 0;
+			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.moneyMult> 0).ToList();
+			List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.moneyMult> 0).ToList();
+			foreach(SoftwareProject item in relevantSoftware){
+				temp+=  item.moneyMult;
+			}
+			foreach(HardwareProject item in relevantHardware){
+				temp+=  item.moneyMult;
+			}
+			return temp;
+		}
+	}
+
 
 	//-----------------------------------------------------RESEARCH METHODS AND DATA
 	private bool researchSet;
@@ -79,7 +169,7 @@ public class GameController : MonoBehaviour {
 	//returns index of a paticular piece of Research in the array
 	private int getIndexOfUncompletedResearch(Research a){
 		for(int i = 0; i<AllUncompleteResearch.Count; i++){
-			if(AllUncompleteResearch[i].ID == a.ID){
+			if(AllUncompleteResearch[i].string_id.CompareTo(a.string_id) == 0){
 				return i;
 			}
 		}
@@ -114,9 +204,9 @@ public class GameController : MonoBehaviour {
 		}
 	}*/
 	
-	public bool hasBeenDone(int id){
+	public bool hasBeenDone(string id){
 		for (int i = 0; i<AllCompleteResearch.Count; i++) {
-			if (AllCompleteResearch [i].ID == id) {
+			if (AllCompleteResearch [i].string_id.CompareTo(id) == 0) {
 				return true;
 			}
 		}
@@ -128,7 +218,8 @@ public class GameController : MonoBehaviour {
 			return false;
 		}
 		for (int i = 0; i<a.ResearchDependencies.Count; i++) {
-			if(!hasBeenDone(i)){
+			string temp = a.ResearchDependencies[i].string_id;
+			if(!hasBeenDone(temp)){
 				return false;
 			}
 		}
@@ -165,7 +256,7 @@ public class GameController : MonoBehaviour {
 
 	public List<SoftwareProject> PossibleSoftware{
 		get{
-			List<SoftwareProject> temp = SoftwareStillDoable.Where(x => canDo(x)).ToList();
+			List<SoftwareProject> temp = SoftwareStillDoable.Where(x => x.canDo()).ToList();
 			return temp;
 		}
 	}
@@ -182,9 +273,10 @@ public class GameController : MonoBehaviour {
 		private set;
 	}
 
+
 	private int getIndexOfUncompletedSoftware(SoftwareProject a){
 		for(int i = 0; i<SoftwareStillDoable.Count; i++){
-			if(SoftwareStillDoable[i].name.CompareTo(a.name)==0){
+			if(SoftwareStillDoable[i].string_id.CompareTo(a.string_id)==0){
 				return i;
 			}
 		}
@@ -192,7 +284,7 @@ public class GameController : MonoBehaviour {
 	}
 
 	public void startSoftware(SoftwareProject a){
-		stopResearch temp = new Research (a.pointCost);
+		Research temp = new Research (a.pointCost);
 		currentSoftware = a;
 		isSoftware = true;
 		currentResearch = temp;
@@ -202,12 +294,12 @@ public class GameController : MonoBehaviour {
 
 	public void finishSoftware(){
 		int index = getIndexOfUncompletedSoftware (currentSoftware);
-		if(currentSoftware.canDoMultiple()){
+		if(currentSoftware.canDoMultiple){
 			CompletedSoftware.Add(currentSoftware);
 		}
 		else{
 			CompletedSoftware.Add(currentSoftware);
-			SoftwareStillDoable.Remove(index);
+			SoftwareStillDoable.Remove(currentSoftware);
 		}
 		currentSoftware = null;
 		isSoftware = false;
@@ -222,14 +314,14 @@ public class GameController : MonoBehaviour {
 
 	public List<HardwareProject> PossibleHardware{
 		get{
-			List<HardwareProject> temp = HardwareStillDoable.Where(x => canDo(x)).ToList();
+			List<HardwareProject> temp = HardwareStillDoable.Where(x => x.canDo()).ToList();
 			return temp;
 		}
 	}
 
 	private int getIndexOfUncompletedHardware(HardwareProject a){
 		for(int i = 0; i<HardwareStillDoable.Count; i++){
-			if(HardwareStillDoable[i].name.CompareTo(a.name)==0){
+			if(HardwareStillDoable[i].string_id.CompareTo(a.string_id)==0){
 				return i;
 			}
 		}
@@ -237,23 +329,22 @@ public class GameController : MonoBehaviour {
 	}
 
 	private void useRequiredParts(HardwareProject a){
-		foreach (var item in a.requireParts) {
+		foreach (var item in a.requiredParts) {
 			int index = indexOfPart(item.Key);
-			use(index, item.Value)
-
+			use(index, item.Value);
 		}
 	}
 
 	public void makeHardware(HardwareProject a){
 		int index = getIndexOfUncompletedHardware(a);
-		if(a.canDoMultiple()){
+		if(a.canDoMultiple){
 			CompletedHardware.Add(a);
 			useRequiredParts(a);
 
 		}
 		else{
 			CompletedHardware.Add(a);
-			HardwareStillDoable.Remove(index);
+			HardwareStillDoable.Remove(a);
 			useRequiredParts(a);
 		}
 
@@ -290,7 +381,7 @@ public class GameController : MonoBehaviour {
 	//likely a mthod to be deprecated by xml
 	public bool hasParts(string name, int number){
 		for (int i = 0; i<allParts.Count; i++) {
-			if(allParts[i].compareTo(name)){
+			if(allParts[i].string_id.CompareTo(name) == 0){
 				if(allParts[i].numberOwned == number){
 					return true;
 				}
@@ -302,7 +393,7 @@ public class GameController : MonoBehaviour {
 
 	public int indexOfPart (Part a){
 		for(int i = 0; i<allParts.Count; i++){
-			if(allParts[i].name.CompareTo(a.name)==0){
+			if(allParts[i].string_id.CompareTo(a.string_id)==0){
 				return i;
 			}
 		}
@@ -332,6 +423,7 @@ public class GameController : MonoBehaviour {
 		tick = GameObject.Find("Ticks").GetComponent<Text>();
 		potentialResearch = GameObject.Find("Research").GetComponent<Text>();
 		researchPoints = 0;
+		money = 0;
 	}
 
 	// Use this for initialization
@@ -340,7 +432,13 @@ public class GameController : MonoBehaviour {
 		incrementalTickTime = 1;
 		incrementalTickIterations = 40;
 		ResearchRoot researchXML = ResearchRoot.LoadFromFile(@"./Assets/Data/Research.xml");
+		PartRoot partXML = PartRoot.LoadFromFile(@"./Assets/Data/Part.XML");
+		ProjectRoot projectXML = ProjectRoot.LoadFromFile(@"./Assets/Data/Project.XML");
 		AllUncompleteResearch = researchXML.Research;
+		allParts = partXML.Part;
+		//cause compiler errors, when code is done comment back in
+		//HardwareStillDoable = projectXML.Project;
+		//SoftwareStillDoable = projectXML.Project;
 		
 		//AllCompleteResearch.Add(new Research("Robotics", "Cool robots", 200, 1, new Research[]{}, true));
 		//AllUncompleteResearch.Add(new Research("Computer Components", "Wow, you put together your own computer!", 100, 0, new Research[]{}, false));
@@ -362,11 +460,10 @@ public class GameController : MonoBehaviour {
 			//AllPossibleResearch = AllUncompleteResearch.Where(x => (x.cost <= researchPoints) && !x.ResearchDependencies.Except(AllCompleteResearch).Any() ).ToList();
 			string text = "";
 			foreach (Research research in AllPossibleResearch) {
-				text += research.name + "\n";
+				text += research.string_id + "\n";
 			}
-			if (this.debugResearchPoints) {
-				this.addResearchPoints (10);
-			}
+			researchPoints+= pointsPerSecond*pointsMult;
+			money+= moneyPerSecond*moneyMultiplier;
 			score.text = researchPoints.ToString ();
 			potentialResearch.text = text;
 			tick.text = incrementalTickTime.ToString ();
