@@ -7,7 +7,7 @@ interface IStartable {
     void complete();
     void abandon();
 
-    //REVIEW: Is this to necessary?
+    //REVIEW: Is this necessary?
     void start();
 }
 

@@ -210,6 +210,9 @@ namespace Incremental.XML {
         private short costField;
         
         [EditorBrowsable(EditorBrowsableState.Never)]
+        private short numberOwnedField;
+        
+        [EditorBrowsable(EditorBrowsableState.Never)]
         private string valueField;
         
         private static System.Xml.Serialization.XmlSerializer serializer;
@@ -222,6 +225,9 @@ namespace Incremental.XML {
 
     [System.Xml.Serialization.XmlAttributeAttribute()]
     public short cost {get; set;}
+
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public short numberOwned {get; set;}
 
     [System.Xml.Serialization.XmlTextAttribute()]
     public string Value {get; set;}

@@ -8,7 +8,7 @@
         <xs:attribute type="xs:ID" name="string_id" use="required"/>
         <xs:attribute type="xs:string" name="description" use="required"/>
         <xs:attribute type="xs:short" name="cost" use="required"/>
-		<xs:attribute type="xs:short"name="numberOwned"use = "required"/>
+		    <xs:attribute type="xs:short" name="numberOwned" use="required"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
