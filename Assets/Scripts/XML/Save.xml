@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Save last-opened="">
+    <CompletedResearch>
+        <Research string_id="" />
+    </CompletedResearch>
+    <CompletedSoftware>
+        <SoftwareProject string_id="" spent_uses="" />
+    </CompletedSoftware>
+    <CompletedHardware>
+        <HardwareProject string_id=""  spent_uses="" />
+    </CompletedHardware>
+</Save>

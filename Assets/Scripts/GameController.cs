@@ -119,13 +119,13 @@ public class GameController : MonoBehaviour {
 	public double moneyPerSecond{
 		get{
 			int temp = 0;
-			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.moneyperSecond> 0.00).ToList();
-			List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.moneyperSecond> 0.00).ToList();
+			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.moneyPerSecond> 0.00).ToList();
+			List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.moneyPerSecond> 0.00).ToList();
 			foreach(SoftwareProject item in relevantSoftware){
-				temp+=  item.moneyperSecond;
+				temp+=  item.moneyPerSecond;
 			}
 			foreach(HardwareProject item in relevantHardware){
-				temp+=  item.moneyperSecond;
+				temp+=  item.moneyPerSecond;
 			}
 			return temp;
 		}
@@ -254,12 +254,12 @@ public class GameController : MonoBehaviour {
 	//-----------------------------------------------------SOFTWARE
 
 	//All Projects that have not been done or are repeatable
-	public List<SoftwareProject> SoftwareStillDoable = new List<SoftwareProject> ();
+	public List<SoftwareProject> UnstartedSoftware = new List<SoftwareProject> ();
 	public List<SoftwareProject> CompletedSoftware = new List<SoftwareProject> ();
 
 	public List<SoftwareProject> PossibleSoftware{
 		get{
-			List<SoftwareProject> temp = SoftwareStillDoable.Where(x => x.canDo()).ToList();
+			List<SoftwareProject> temp = UnstartedSoftware.Where(x => x.canDo()).ToList();
 			return temp;
 		}
 	}
@@ -278,8 +278,8 @@ public class GameController : MonoBehaviour {
 
 
 	private int getIndexOfUncompletedSoftware(SoftwareProject a){
-		for(int i = 0; i<SoftwareStillDoable.Count; i++){
-			if(SoftwareStillDoable[i].string_id.CompareTo(a.string_id)==0){
+		for(int i = 0; i<UnstartedSoftware.Count; i++){
+			if(UnstartedSoftware[i].string_id.CompareTo(a.string_id)==0){
 				return i;
 			}
 		}
@@ -302,7 +302,7 @@ public class GameController : MonoBehaviour {
 		}
 		else{
 			CompletedSoftware.Add(currentSoftware);
-			SoftwareStillDoable.Remove(currentSoftware);
+			UnstartedSoftware.Remove(currentSoftware);
 		}
 		currentSoftware = null;
 		isSoftware = false;
@@ -312,19 +312,19 @@ public class GameController : MonoBehaviour {
 
 	//-----------------------------------------------------HARDWARE
 
-	public List<HardwareProject> HardwareStillDoable = new List<HardwareProject> ();
+	public List<HardwareProject> UnstartedHardware = new List<HardwareProject> ();
 	public List<HardwareProject> CompletedHardware = new List<HardwareProject> ();
 
 	public List<HardwareProject> PossibleHardware{
 		get{
-			List<HardwareProject> temp = HardwareStillDoable.Where(x => x.canDo()).ToList();
+			List<HardwareProject> temp = UnstartedHardware.Where(x => x.canDo()).ToList();
 			return temp;
 		}
 	}
 
 	private int getIndexOfUncompletedHardware(HardwareProject a){
-		for(int i = 0; i<HardwareStillDoable.Count; i++){
-			if(HardwareStillDoable[i].string_id.CompareTo(a.string_id)==0){
+		for(int i = 0; i<UnstartedHardware.Count; i++){
+			if(UnstartedHardware[i].string_id.CompareTo(a.string_id)==0){
 				return i;
 			}
 		}
@@ -333,8 +333,8 @@ public class GameController : MonoBehaviour {
 
 	private void useRequiredParts(HardwareProject a){
 		foreach (var item in a.requiredParts) {
-			int index = indexOfPart(item.Key);
-			use(index, item.Value);
+			//int index = indexOfPart(item.Key);
+			//use(index, item.Value);
 		}
 	}
 
@@ -347,7 +347,7 @@ public class GameController : MonoBehaviour {
 		}
 		else{
 			CompletedHardware.Add(a);
-			HardwareStillDoable.Remove(a);
+			UnstartedHardware.Remove(a);
 			useRequiredParts(a);
 		}
 
