@@ -213,30 +213,27 @@ namespace Incremental.XML {
         
         [EditorBrowsable(EditorBrowsableState.Never)]
         private short pointCostField;
-
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		private short pointsPerSecondField;
-
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		private short pointMultField;
-
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		private short moneyPerSecondField;
-
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		private short moneyMultField;
-
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		private short pointsPerClickField;
-
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		private short processIncreaseField;
+        
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        private short pointsPerSecondField;
+        
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        private short pointsPerClickField;
+        
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        private short pointMultField;
+        
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        private short moneyPerSecondField;
+        
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        private short moneyMultField;
         
         [EditorBrowsable(EditorBrowsableState.Never)]
         private sbyte usesField;
         
         [EditorBrowsable(EditorBrowsableState.Never)]
-        private bool usesFieldSpecified;
+        private short processIncreaseField;
         
         private static System.Xml.Serialization.XmlSerializer serializer;
         
@@ -246,32 +243,29 @@ namespace Incremental.XML {
     [System.Xml.Serialization.XmlAttributeAttribute()]
     public string description {get; set;}
 
-    	[System.Xml.Serialization.XmlAttributeAttribute()]
-    	public short pointCost {get; set;}
-			
-		[System.Xml.Serialization.XmlAttributeAttribute()]
-   		public short pointsPerSecond  {get; set;}
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public short pointCost {get; set;}
 
-		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public short pointsPerClick {get; set;}
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public short pointsPerSecond {get; set;}
 
-		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public short pointMult {get; set;}
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public short pointsPerClick {get; set;}
 
-		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public short moneyPerSecond {get; set;}
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public short pointMult {get; set;}
 
-		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public short moneyMult {get; set;}
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public short moneyPerSecond {get; set;}
 
-		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public short processIncrease {get; set;}
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public short moneyMult {get; set;}
 
     [System.Xml.Serialization.XmlAttributeAttribute()]
     public sbyte uses {get; set;}
 
-    [System.Xml.Serialization.XmlIgnoreAttribute()]
-    public bool usesSpecified {get; set;}
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public short processIncrease {get; set;}
 
         
         [System.Xml.Serialization.XmlArrayItemAttribute(IsNullable=false)]

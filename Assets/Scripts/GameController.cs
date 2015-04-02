@@ -10,6 +10,9 @@ using System.Diagnostics;
 #endif
 public class GameController : MonoBehaviour {
 
+    List<Project> allProjects;
+    List<Research> allResearch;
+
     // See http://unitypatterns.com/singletons/ for more details. Alternatively, google C# singleton.
     private static GameController _instance;
     public static GameController instance {
@@ -217,8 +220,8 @@ public class GameController : MonoBehaviour {
 		if(a.processingLevel > processingPower){
 			return false;
 		}
-		for (int i = 0; i<a.ResearchDependencies.Count; i++) {
-			string temp = a.ResearchDependencies[i].string_id;
+		for (int i = 0; i<a.Dependencies.Count; i++) {
+            string temp = a.Dependencies[i].name;
 			if(!hasBeenDone(temp)){
 				return false;
 			}
@@ -251,12 +254,12 @@ public class GameController : MonoBehaviour {
 	//-----------------------------------------------------SOFTWARE
 
 	//All Projects that have not been done or are repeatable
-	public List<SoftwareProject> SoftwareStillDoable = new List<SoftwareProject> ();
+	public List<SoftwareProject> UnstartedSoftware = new List<SoftwareProject> ();
 	public List<SoftwareProject> CompletedSoftware = new List<SoftwareProject> ();
 
 	public List<SoftwareProject> PossibleSoftware{
 		get{
-			List<SoftwareProject> temp = SoftwareStillDoable.Where(x => x.canDo()).ToList();
+			List<SoftwareProject> temp = UnstartedSoftware.Where(x => x.canDo()).ToList();
 			return temp;
 		}
 	}
@@ -275,8 +278,8 @@ public class GameController : MonoBehaviour {
 
 
 	private int getIndexOfUncompletedSoftware(SoftwareProject a){
-		for(int i = 0; i<SoftwareStillDoable.Count; i++){
-			if(SoftwareStillDoable[i].string_id.CompareTo(a.string_id)==0){
+		for(int i = 0; i<UnstartedSoftware.Count; i++){
+			if(UnstartedSoftware[i].string_id.CompareTo(a.string_id)==0){
 				return i;
 			}
 		}
@@ -299,7 +302,7 @@ public class GameController : MonoBehaviour {
 		}
 		else{
 			CompletedSoftware.Add(currentSoftware);
-			SoftwareStillDoable.Remove(currentSoftware);
+			UnstartedSoftware.Remove(currentSoftware);
 		}
 		currentSoftware = null;
 		isSoftware = false;
@@ -309,19 +312,19 @@ public class GameController : MonoBehaviour {
 
 	//-----------------------------------------------------HARDWARE
 
-	public List<HardwareProject> HardwareStillDoable = new List<HardwareProject> ();
+	public List<HardwareProject> UnstartedHardware = new List<HardwareProject> ();
 	public List<HardwareProject> CompletedHardware = new List<HardwareProject> ();
 
 	public List<HardwareProject> PossibleHardware{
 		get{
-			List<HardwareProject> temp = HardwareStillDoable.Where(x => x.canDo()).ToList();
+			List<HardwareProject> temp = UnstartedHardware.Where(x => x.canDo()).ToList();
 			return temp;
 		}
 	}
 
 	private int getIndexOfUncompletedHardware(HardwareProject a){
-		for(int i = 0; i<HardwareStillDoable.Count; i++){
-			if(HardwareStillDoable[i].string_id.CompareTo(a.string_id)==0){
+		for(int i = 0; i<UnstartedHardware.Count; i++){
+			if(UnstartedHardware[i].string_id.CompareTo(a.string_id)==0){
 				return i;
 			}
 		}
@@ -330,8 +333,8 @@ public class GameController : MonoBehaviour {
 
 	private void useRequiredParts(HardwareProject a){
 		foreach (var item in a.requiredParts) {
-			int index = indexOfPart(item.Key);
-			use(index, item.Value);
+			//int index = indexOfPart(item.Key);
+			//use(index, item.Value);
 		}
 	}
 
@@ -344,7 +347,7 @@ public class GameController : MonoBehaviour {
 		}
 		else{
 			CompletedHardware.Add(a);
-			HardwareStillDoable.Remove(a);
+			UnstartedHardware.Remove(a);
 			useRequiredParts(a);
 		}
 
@@ -434,12 +437,10 @@ public class GameController : MonoBehaviour {
 		ResearchRoot researchXML = ResearchRoot.LoadFromFile(@"./Assets/Data/Research.xml");
 		PartRoot partXML = PartRoot.LoadFromFile(@"./Assets/Data/Part.XML");
 		ProjectRoot projectXML = ProjectRoot.LoadFromFile(@"./Assets/Data/Project.XML");
-		AllUncompleteResearch = researchXML.Research;
+		allResearch = researchXML.Research;
+        allProjects = projectXML.Project;
 		allParts = partXML.Part;
-		//cause compiler errors, when code is done comment back in
-		//HardwareStillDoable = projectXML.Project;
-		//SoftwareStillDoable = projectXML.Project;
-		
+
 		//AllCompleteResearch.Add(new Research("Robotics", "Cool robots", 200, 1, new Research[]{}, true));
 		//AllUncompleteResearch.Add(new Research("Computer Components", "Wow, you put together your own computer!", 100, 0, new Research[]{}, false));
 		//AllUncompleteResearch.Add(new Research("Basic Physics", "Learning the basics is a step on the way to discovering the meaning of life", 300, 0, new Research[]{}, false));
@@ -457,7 +458,7 @@ public class GameController : MonoBehaviour {
 		}
 		if (ticker == Priority.MEDIUM) {
 			// Ticks every 10 frames
-			//AllPossibleResearch = AllUncompleteResearch.Where(x => (x.cost <= researchPoints) && !x.ResearchDependencies.Except(AllCompleteResearch).Any() ).ToList();
+			//AllPossibleResearch = AllUncompleteResearch.Where(x => (x.cost <= researchPoints) && !x.Dependencies.Except(AllCompleteResearch).Any() ).ToList();
 			string text = "";
 			foreach (Research research in AllPossibleResearch) {
 				text += research.string_id + "\n";

@@ -409,6 +409,9 @@ namespace Incremental.XML {
     public partial class dependency {
         
         [EditorBrowsable(EditorBrowsableState.Never)]
+        private string typeField;
+        
+        [EditorBrowsable(EditorBrowsableState.Never)]
         private string string_idField;
         
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -420,7 +423,7 @@ namespace Incremental.XML {
         private static System.Xml.Serialization.XmlSerializer serializer;
         
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public ResourceType type {get; set;}
+    public string type {get; set;}
 
     [System.Xml.Serialization.XmlAttributeAttribute()]
     public string string_id {get; set;}
@@ -596,16 +599,5 @@ namespace Incremental.XML {
             }
         }
         #endregion
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Xsd2Code", "3.4.0.32990")]
-    [System.SerializableAttribute()]
-    public enum ResourceType {
-        
-        /// <remarks/>
-        Research,
-        
-        /// <remarks/>
-        Part,
     }
 }
