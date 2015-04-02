@@ -98,11 +98,11 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
-	public int processingPower{
+	public double processingPower{
 		get{
-			int temp = 0;
-			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.processIncrease> 0).ToList();
-			List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.processIncrease> 0).ToList();
+			double temp = BASE_PROCESSING_POWER;
+			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.processIncrease> 0.00).ToList();
+			List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.processIncrease> 0.00).ToList();
 			foreach(SoftwareProject item in relevantSoftware){
 				temp+=  item.processIncrease;
 			}
@@ -116,13 +116,13 @@ public class GameController : MonoBehaviour {
 	public double moneyPerSecond{
 		get{
 			int temp = 0;
-			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.moneyperSecond> 0.00).ToList();
-			List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.moneyperSecond> 0.00).ToList();
+			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.moneyPerSecond> 0.00).ToList();
+			List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.moneyPerSecond> 0.00).ToList();
 			foreach(SoftwareProject item in relevantSoftware){
-				temp+=  item.moneyperSecond;
+				temp+=  item.moneyPerSecond;
 			}
 			foreach(HardwareProject item in relevantHardware){
-				temp+=  item.moneyperSecond;
+				temp+=  item.moneyPerSecond;
 			}
 			return temp;
 		}

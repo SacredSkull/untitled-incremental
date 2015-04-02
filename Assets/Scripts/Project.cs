@@ -6,9 +6,9 @@ namespace Incremental.XML {
     public partial class Project : IStartable {
 		//public string name;
 		//public string description;
-		public int pointsPerSecond;
-		public int moneyperSecond;
-		public int pointCost;
+		//public int pointsPerSecond;
+		//public int moneyperSecond;
+		//public int pointCost;
         public Research[] researchIDsRequired;
 
 
