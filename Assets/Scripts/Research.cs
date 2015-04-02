@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 using System.Linq;
 
 namespace Incremental.XML {
-    public partial class Research : IComparable<Research>, IStartable {
+    public partial class Research : Startable, IComparable<Research> {
 
 		//public string string_id;
 		//public string description;
@@ -15,6 +15,7 @@ namespace Incremental.XML {
 		//public Research[] prerequisites;
 		//private bool done;
 
+        [NonSerialized]
         private static List<Research> allresearch = new List<Research>();
         private static ObjectIDGenerator _objectID = new ObjectIDGenerator();
 
@@ -45,26 +46,28 @@ namespace Incremental.XML {
             }
         }
 
-        public string name {
+        public override string name {
             get {
-                return this.string_id.Replace("-", " ");
+                return this.string_id;
             }
-        }
+            set {
+                this.string_id = value.Replace(" ", "-");
+            }
+        } 
 
-        // Though research will never depend on parts, it's just more on par with other classes
-        // to indicate this list is for research (rather than just name the list "dependencies").
-        private List<Research> _ResearchDependencies;
-
-        public List<Research> ResearchDependencies {
+        // Research will never contain parts
+        [NonSerialized]
+        private List<Startable> _Dependencies = null;
+        public List<Startable> Dependencies {
             get {
-                if (_ResearchDependencies == null) {
-                    _ResearchDependencies = new List<Research>();
+                if (_Dependencies == null && this.string_id != null && this.string_id.Length > 0) {
+                    _Dependencies = new List<Startable>();
                     foreach (dependency d in this.DependsOn) {
                         if (d.type.Equals("Research"))
-                            _ResearchDependencies.Add(Research.getResearchByName(d.string_id));
+                            _Dependencies.Add(Research.getResearchByName(d.string_id));
                     }
                 }
-                return _ResearchDependencies;
+                return _Dependencies;
             }
         }
 
@@ -76,7 +79,6 @@ namespace Incremental.XML {
 
 
         public Research() {
-            this.dependsOnField = new List<dependency>();
             allresearch.Add(this);
 
             bool known;
@@ -87,7 +89,6 @@ namespace Incremental.XML {
         }
 
         private bool done;
-
         public long ID {
             get {
                 bool known;
@@ -95,16 +96,22 @@ namespace Incremental.XML {
             }
         }
 
-        public void complete() {
+        public override void complete() {
             done = true;
         }
 
-        public void abandon() {
-            //TODO: This is required by interface IStartable
+        public override void abandon() {
+            //TODO: This is required by interface Startable
+            throw new NotImplementedException();
         }
 
-        public void start() {
-            //TODO: This is required by interface IStartable
+        public override void start() {
+            //TODO: This is required by interface Startable
+            throw new NotImplementedException();
+        }
+
+        public List<Startable> getDependencies() {
+            return this.Dependencies;
         }
 
         public bool isDone() {

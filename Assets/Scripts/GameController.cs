@@ -10,6 +10,9 @@ using System.Diagnostics;
 #endif
 public class GameController : MonoBehaviour {
 
+    List<Project> allProjects;
+    List<Research> allResearch;
+
     // See http://unitypatterns.com/singletons/ for more details. Alternatively, google C# singleton.
     private static GameController _instance;
     public static GameController instance {
@@ -217,8 +220,8 @@ public class GameController : MonoBehaviour {
 		if(a.processingLevel > processingPower){
 			return false;
 		}
-		for (int i = 0; i<a.ResearchDependencies.Count; i++) {
-			string temp = a.ResearchDependencies[i].string_id;
+		for (int i = 0; i<a.Dependencies.Count; i++) {
+            string temp = a.Dependencies[i].name;
 			if(!hasBeenDone(temp)){
 				return false;
 			}
@@ -434,12 +437,10 @@ public class GameController : MonoBehaviour {
 		ResearchRoot researchXML = ResearchRoot.LoadFromFile(@"./Assets/Data/Research.xml");
 		PartRoot partXML = PartRoot.LoadFromFile(@"./Assets/Data/Part.XML");
 		ProjectRoot projectXML = ProjectRoot.LoadFromFile(@"./Assets/Data/Project.XML");
-		AllUncompleteResearch = researchXML.Research;
+		allResearch = researchXML.Research;
+        allProjects = projectXML.Project;
 		allParts = partXML.Part;
-		//cause compiler errors, when code is done comment back in
-		//HardwareStillDoable = projectXML.Project;
-		//SoftwareStillDoable = projectXML.Project;
-		
+
 		//AllCompleteResearch.Add(new Research("Robotics", "Cool robots", 200, 1, new Research[]{}, true));
 		//AllUncompleteResearch.Add(new Research("Computer Components", "Wow, you put together your own computer!", 100, 0, new Research[]{}, false));
 		//AllUncompleteResearch.Add(new Research("Basic Physics", "Learning the basics is a step on the way to discovering the meaning of life", 300, 0, new Research[]{}, false));
@@ -457,7 +458,7 @@ public class GameController : MonoBehaviour {
 		}
 		if (ticker == Priority.MEDIUM) {
 			// Ticks every 10 frames
-			//AllPossibleResearch = AllUncompleteResearch.Where(x => (x.cost <= researchPoints) && !x.ResearchDependencies.Except(AllCompleteResearch).Any() ).ToList();
+			//AllPossibleResearch = AllUncompleteResearch.Where(x => (x.cost <= researchPoints) && !x.Dependencies.Except(AllCompleteResearch).Any() ).ToList();
 			string text = "";
 			foreach (Research research in AllPossibleResearch) {
 				text += research.string_id + "\n";

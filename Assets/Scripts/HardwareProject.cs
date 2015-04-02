@@ -23,11 +23,11 @@ public class HardwareProject :  Incremental.XML.Project {
 
 	public override bool canDo(){
 		GameController game = GameController.instance;
-		for(int i = 0; i<researchIDsRequired.Length; i++){
-			if(!game.hasBeenDone(researchIDsRequired[i].string_id)){
-				return false;
-			}
-		}
+		//for(int i = 0; i<researchIDsRequired.Length; i++){
+		//	if(!game.hasBeenDone(researchIDsRequired[i].string_id)){
+				//return false;
+		//	}
+		//}
 		for (int j = 0; j<game.allParts.Count; j++) {
 			if(!game.hasParts(game.allParts[j].string_id, game.allParts[j].numberOwned)){
 				return false;
