@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<PartRoot>
-    <Part string_id="Computer-Parts" description="A pile of mstring_id-range components" cost="50" />
-    <Part string_id="Building-Materials" description="Assorted construction equipment and resources" cost="150" />
-    <!-- Part must implement stock count. -->
-</PartRoot>
