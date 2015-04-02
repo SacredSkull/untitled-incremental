@@ -14,4 +14,10 @@ public abstract class Startable {
         get;
         set;
     }
+
+    public abstract int number
+    {
+        get;
+        set;
+    }
 }

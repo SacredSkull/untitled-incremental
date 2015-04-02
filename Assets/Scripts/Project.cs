@@ -5,19 +5,19 @@ using System;
 
 namespace Incremental.XML {
     public partial class Project : Startable {
-		//public string name;
-		//public string description;
-		//public int pointsPerSecond;
-<<<<<<< HEAD
-		//public int moneyperSecond;
-		//public int pointCost;
-        public Research[] researchIDsRequired;
-
-=======
-		public int moneyperSecond;
-		//public int pointCost;
-        //public Research[] researchIDsRequired;
->>>>>>> origin/master
+        //public string name;
+        //public string description;
+        //public int pointsPerSecond;
+        //public int pointsPerClick;
+        //public int moneyPerSecond;
+        //public int processIncrease;
+        //public int moneyMult;
+        //public int pointMult;
+        //public int oneTimeFees; (not currrently in use)
+        //public int upkeepCost(will not be used);
+        //public int pointCost;
+        //public int uses;
+        //public List<Part> requiredParts = new List<Part>();
 
 		public bool canDoMultiple{
 			get{
@@ -27,16 +27,6 @@ namespace Incremental.XML {
 				else return false;
 			}
 		}
-
-        public virtual bool canDo() {
-            GameController game = GameController.instance;
-            //for (int i = 0; i < researchIDsRequired.Length; i++) {
-                //if (!game.hasBeenDone(researchIDsRequired[i].string_id)) {
-                //    return false;
-                //}
-            //}
-            return true;
-        }
 
         public Project() {
             this.dependsOnField = new List<dependency>();
@@ -69,19 +59,69 @@ namespace Incremental.XML {
 
         [NonSerialized]
         private List<Startable> _Dependencies = null;
-        public List<Startable> Dependencies {
+        private List<Startable> Dependencies {
             get {
                 if (_Dependencies == null && this.string_id != null && this.string_id.Length > 0) {
                     _Dependencies = new List<Startable>();
+                    Part temp = new Part();
                     foreach (dependency d in this.DependsOn) {
                         if (d.type.Equals("Research"))
                             _Dependencies.Add(Research.getResearchByName(d.string_id));
                         if (d.type.Equals("Part"))
-                            _Dependencies.Add(Part.getPartByName(d.string_id));
+                             temp = new Part(d.string_id, d.amount);
+                            _Dependencies.Add(temp);
                     }
                 }
                 return _Dependencies;
             }
+        }
+
+        public Dictionary<Part,int> partDependencies {
+            get {
+                List<Startable> temp = Dependencies;
+                Dictionary<Part,int> parts = new Dictionary<Part,int>();
+                foreach (Startable s in temp) {
+                    if (s.GetType().Equals("Part")) { 
+                        parts.Add(Part.getPartByName(s.name), s.number);
+                    }
+                }
+                return parts;
+            }
+        }
+
+        public List<Research> researchDependencies {
+            get {
+                List<Startable> temp = Dependencies;
+                List<Research> research = new List<Research>();
+                foreach (Startable s in temp) {
+                    if (s.GetType().Equals("Research")) { 
+                        research.Add(Research.getResearchByName(s.name));
+                    }
+                }
+                return research;
+            }
+        }
+
+        public bool canDo()
+        {
+            GameController game = GameController.instance;
+            List<Research> research = researchDependencies;
+            foreach (var thing in research) {
+                if (!game.hasBeenDone(thing.name)) {
+                    return false;
+                }
+            }
+            if (this.type.Equals("Part")) {
+                Dictionary<Part, int> temp = partDependencies;
+                foreach (var item in temp)
+                {
+                    if (!game.hasParts(item.Key.name, item.Value))
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
     }
 }

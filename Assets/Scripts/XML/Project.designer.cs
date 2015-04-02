@@ -206,6 +206,9 @@ namespace Incremental.XML {
         private List<dependency> dependsOnField;
         
         [EditorBrowsable(EditorBrowsableState.Never)]
+        private string typeField;
+        
+        [EditorBrowsable(EditorBrowsableState.Never)]
         private string string_idField;
         
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -237,6 +240,9 @@ namespace Incremental.XML {
         
         private static System.Xml.Serialization.XmlSerializer serializer;
         
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string type {get; set;}
+
     [System.Xml.Serialization.XmlAttributeAttribute(DataType="ID")]
     public string string_id {get; set;}
 

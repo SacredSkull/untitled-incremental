@@ -59,8 +59,8 @@ public class GameController : MonoBehaviour {
 	public int pointsPerSecond{
 		get{
 			int temp = 0;
-			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.pointsPerSecond> 0).ToList();
-			List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.pointsPerSecond> 0).ToList();
+			List<Project> relevantSoftware = CompletedSoftware.Where(x => x.pointsPerSecond> 0).ToList();
+			List<Project> relevantHardware = CompletedHardware.Where(x => x.pointsPerSecond> 0).ToList();
 			foreach(SoftwareProject item in relevantSoftware){
 				temp+=  item.pointsPerSecond;
 			}
@@ -74,12 +74,12 @@ public class GameController : MonoBehaviour {
 	public int pointsPerClick{
 		get{
 			int temp = BASE_POINTS_PER_CLICK;
-			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.pointsPerClick> 0).ToList();
-			List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.pointsPerClick> 0).ToList();
-			foreach(SoftwareProject item in relevantSoftware){
+			List<Project> relevantSoftware = CompletedSoftware.Where(x => x.pointsPerClick> 0).ToList();
+			List<Project> relevantHardware = CompletedHardware.Where(x => x.pointsPerClick> 0).ToList();
+			foreach(Project item in relevantSoftware){
 				temp+=  item.pointsPerClick;
 			}
-			foreach(HardwareProject item in relevantHardware){
+			foreach(Project item in relevantHardware){
 				temp+=  item.pointsPerClick;
 			}
 			return temp;
@@ -89,12 +89,12 @@ public class GameController : MonoBehaviour {
 	public int pointsMult{
 		get{
 			int temp = BASE_POINTS_PER_CLICK;
-			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.pointMult> 0).ToList();
-			List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.pointMult> 0).ToList();
-			foreach(SoftwareProject item in relevantSoftware){
+			List<Project> relevantSoftware = CompletedSoftware.Where(x => x.pointMult> 0).ToList();
+			List<Project> relevantHardware = CompletedHardware.Where(x => x.pointMult> 0).ToList();
+			foreach(Project item in relevantSoftware){
 				temp+=  item.pointMult;
 			}
-			foreach(HardwareProject item in relevantHardware){
+			foreach(Project item in relevantHardware){
 				temp+=  item.pointMult;
 			}
 			return temp;
@@ -104,12 +104,12 @@ public class GameController : MonoBehaviour {
 	public double processingPower{
 		get{
 			double temp = BASE_PROCESSING_POWER;
-			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.processIncrease> 0.00).ToList();
-			List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.processIncrease> 0.00).ToList();
-			foreach(SoftwareProject item in relevantSoftware){
+			List<Project> relevantSoftware = CompletedSoftware.Where(x => x.processIncrease> 0.00).ToList();
+			List<Project> relevantHardware = CompletedHardware.Where(x => x.processIncrease> 0.00).ToList();
+			foreach(Project item in relevantSoftware){
 				temp+=  item.processIncrease;
 			}
-			foreach(HardwareProject item in relevantHardware){
+			foreach(Project item in relevantHardware){
 				temp+=  item.processIncrease;
 			}
 			return temp;
@@ -119,12 +119,12 @@ public class GameController : MonoBehaviour {
 	public double moneyPerSecond{
 		get{
 			int temp = 0;
-			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.moneyPerSecond> 0.00).ToList();
-			List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.moneyPerSecond> 0.00).ToList();
-			foreach(SoftwareProject item in relevantSoftware){
+			List<Project> relevantSoftware = CompletedSoftware.Where(x => x.moneyPerSecond> 0.00).ToList();
+			List<Project> relevantHardware = CompletedHardware.Where(x => x.moneyPerSecond> 0.00).ToList();
+			foreach(Project item in relevantSoftware){
 				temp+=  item.moneyPerSecond;
 			}
-			foreach(HardwareProject item in relevantHardware){
+			foreach(Project item in relevantHardware){
 				temp+=  item.moneyPerSecond;
 			}
 			return temp;
@@ -134,8 +134,8 @@ public class GameController : MonoBehaviour {
 	public int moneyMultiplier{
 		get{
 			int temp = 0;
-			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.moneyMult> 0).ToList();
-			List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.moneyMult> 0).ToList();
+			List<Project> relevantSoftware = CompletedSoftware.Where(x => x.moneyMult> 0).ToList();
+			List<Project> relevantHardware = CompletedHardware.Where(x => x.moneyMult> 0).ToList();
 			foreach(SoftwareProject item in relevantSoftware){
 				temp+=  item.moneyMult;
 			}
@@ -254,12 +254,23 @@ public class GameController : MonoBehaviour {
 	//-----------------------------------------------------SOFTWARE
 
 	//All Projects that have not been done or are repeatable
-	public List<SoftwareProject> UnstartedSoftware = new List<SoftwareProject> ();
-	public List<SoftwareProject> CompletedSoftware = new List<SoftwareProject> ();
+    public List<Project> UnstartedSoftware
+    {
+        get {
+            List<Project> temp = new List<Project>();
+            foreach (var item in allProjects) { 
+                if(item.type.Equals("Software")&& item.uses > 0){
+                    temp.Add(item);
+                }
+            }
+            return temp;
+        }
+    }
+	public List<Project> CompletedSoftware = new List<Project> ();
 
-	public List<SoftwareProject> PossibleSoftware{
+	public List<Project> PossibleSoftware{
 		get{
-			List<SoftwareProject> temp = UnstartedSoftware.Where(x => x.canDo()).ToList();
+			List<Project> temp = UnstartedSoftware.Where(x => x.canDo()).ToList();
 			return temp;
 		}
 	}
@@ -302,7 +313,7 @@ public class GameController : MonoBehaviour {
 		}
 		else{
 			CompletedSoftware.Add(currentSoftware);
-			UnstartedSoftware.Remove(currentSoftware);
+            allProjects[index].uses--;
 		}
 		currentSoftware = null;
 		isSoftware = false;
@@ -312,12 +323,24 @@ public class GameController : MonoBehaviour {
 
 	//-----------------------------------------------------HARDWARE
 
-	public List<HardwareProject> UnstartedHardware = new List<HardwareProject> ();
-	public List<HardwareProject> CompletedHardware = new List<HardwareProject> ();
+    public List<Project> UnstartedHardware {
+        get {
+            List<Project> temp = new List<Project>();
+            foreach (var item in allProjects)
+            {
+                if (item.type.Equals("Hardware") && item.uses > 0)
+                {
+                    temp.Add(item);
+                }
+            }
+            return temp;
+        }
+    }
+	public List<Project> CompletedHardware = new List<Project> ();
 
-	public List<HardwareProject> PossibleHardware{
+	public List<Project> PossibleHardware{
 		get{
-			List<HardwareProject> temp = UnstartedHardware.Where(x => x.canDo()).ToList();
+			List<Project> temp = UnstartedHardware.Where(x => x.canDo()).ToList();
 			return temp;
 		}
 	}
@@ -332,9 +355,9 @@ public class GameController : MonoBehaviour {
 	}
 
 	private void useRequiredParts(HardwareProject a){
-		foreach (var item in a.requiredParts) {
-			//int index = indexOfPart(item.Key);
-			//use(index, item.Value);
+		foreach (var item in a.partDependencies) {
+			int index = indexOfPart(item.Key);
+			use(index, item.Value);
 		}
 	}
 
@@ -347,7 +370,7 @@ public class GameController : MonoBehaviour {
 		}
 		else{
 			CompletedHardware.Add(a);
-			UnstartedHardware.Remove(a);
+            allProjects[index].uses--;
 			useRequiredParts(a);
 		}
 

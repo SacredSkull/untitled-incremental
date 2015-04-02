@@ -126,5 +126,11 @@ namespace Incremental.XML {
             } else
                 return 0;
         }
+
+        public int number {
+            get {
+                return 0;
+            }
+        }
     }
 }

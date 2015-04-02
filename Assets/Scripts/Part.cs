@@ -50,6 +50,11 @@ namespace Incremental.XML {
             }
         }
 
+        public Part(string name, int amount) {
+            this.name = name;
+            this.number = amount;
+        }
+
         public Part() {
             allparts.Add(this);
 
@@ -98,6 +103,15 @@ namespace Incremental.XML {
             }
             set {
                 this.string_id = value.Replace(" ", "-");
+            }
+        }
+
+        public override int number {
+            get {
+                return this.amount;            
+            }
+            set {
+                this.amount = (short)value;
             }
         }
 
