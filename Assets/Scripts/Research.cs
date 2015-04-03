@@ -53,13 +53,26 @@ namespace Incremental.XML {
             set {
                 this.string_id = value.Replace(" ", "-");
             }
-        } 
+        }
+
+        public override int number
+        {
+            get
+            {
+                return 0;
+            }
+            set
+            {
+                this.number = 0;
+            }
+        }
 
         // Research will never contain parts
         [NonSerialized]
         private List<Startable> _Dependencies = null;
         public List<Startable> Dependencies {
             get {
+                Utility.UnityLog("Hi! Dependencies");
                 if (_Dependencies == null && this.string_id != null && this.string_id.Length > 0) {
                     _Dependencies = new List<Startable>();
                     foreach (dependency d in this.DependsOn) {
@@ -127,10 +140,6 @@ namespace Incremental.XML {
                 return 0;
         }
 
-        public int number {
-            get {
-                return 0;
-            }
-        }
+        
     }
 }
