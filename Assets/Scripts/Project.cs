@@ -57,6 +57,15 @@ namespace Incremental.XML {
             }
         }
 
+        public override int number {
+            get {
+                return 0;
+            }
+            set {
+                this.number = 0;
+            }
+        }
+
         [NonSerialized]
         private List<Startable> _Dependencies = null;
         private List<Startable> Dependencies {

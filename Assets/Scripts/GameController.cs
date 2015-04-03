@@ -208,6 +208,7 @@ public class GameController : MonoBehaviour {
 	}*/
 	
 	public bool hasBeenDone(string id){
+        Utility.UnityLog("  ");
 		for (int i = 0; i<AllCompleteResearch.Count; i++) {
 			if (AllCompleteResearch [i].string_id.CompareTo(id) == 0) {
 				return true;
@@ -217,23 +218,25 @@ public class GameController : MonoBehaviour {
 	}
 	
 	public bool canBeDone(Research a){
-		if(a.processingLevel > processingPower){
-			return false;
+        if(a.processingLevel > processingPower){
+           return false;
 		}
-		for (int i = 0; i<a.Dependencies.Count; i++) {
+       for (int i = 0; i<a.Dependencies.Count; i++) {
             string temp = a.Dependencies[i].name;
 			if(!hasBeenDone(temp)){
-				return false;
+                return false;
 			}
 		}
-		return true;
+        return true;
 	}
 	
 	//Only displays the research that can be done
 	public List<Research> AllPossibleResearch{
 		get{
-			List<Research> temp = AllUncompleteResearch.Where(x => canBeDone(x)).ToList();
+            Utility.UnityLog("Before:" + AllUncompleteResearch.Count);
+            List<Research> temp = AllUncompleteResearch.Where(x => canBeDone(x)).ToList();
 			temp.Sort();
+            Utility.UnityLog("After:"+temp.Count);
 			return temp;
 			
 		}
@@ -460,9 +463,10 @@ public class GameController : MonoBehaviour {
 		ResearchRoot researchXML = ResearchRoot.LoadFromFile(@"./Assets/Data/Research.xml");
 		PartRoot partXML = PartRoot.LoadFromFile(@"./Assets/Data/Part.XML");
 		ProjectRoot projectXML = ProjectRoot.LoadFromFile(@"./Assets/Data/Project.XML");
-		allResearch = researchXML.Research;
+		AllUncompleteResearch = researchXML.Research;
         allProjects = projectXML.Project;
 		allParts = partXML.Part;
+        
 
 		//AllCompleteResearch.Add(new Research("Robotics", "Cool robots", 200, 1, new Research[]{}, true));
 		//AllUncompleteResearch.Add(new Research("Computer Components", "Wow, you put together your own computer!", 100, 0, new Research[]{}, false));
@@ -473,7 +477,7 @@ public class GameController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (ticker == Priority.REALTIME) {
+        if (ticker == Priority.REALTIME) {
 			// Ticks every frame
 		}
 		if (ticker == Priority.HIGH) {
@@ -483,7 +487,8 @@ public class GameController : MonoBehaviour {
 			// Ticks every 10 frames
 			//AllPossibleResearch = AllUncompleteResearch.Where(x => (x.cost <= researchPoints) && !x.Dependencies.Except(AllCompleteResearch).Any() ).ToList();
 			string text = "";
-			foreach (Research research in AllPossibleResearch) {
+            List<Research> temp = AllPossibleResearch;
+			foreach (Research research in temp) {
 				text += research.string_id + "\n";
 			}
 			researchPoints+= pointsPerSecond*pointsMult;
