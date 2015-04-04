@@ -10,6 +10,10 @@ using System.Diagnostics;
 #endif
 public class GameController : MonoBehaviour {
 
+	//! Main controller and singleton instance of the entire game.
+
+	/** This class is a singleton (See http://unitypatterns.com/singletons/) and can only have one instance. */
+
     List<Project> allProjects;
     List<Research> allResearch;
 
@@ -50,21 +54,21 @@ public class GameController : MonoBehaviour {
 			finishSoftware();
 			this.researchPoints = 0;
 		}
-		
+
 	}
 
-	//TODO: Calculate sum of all multipliers, points etc in projects, 
-	//TODO: Add this to the update method, then we'll have a game!
+	// \todo Calculate sum of all multipliers, points etc in projects,
+	// \todo Add this to the update method, then we'll have a game!
 
 	public int pointsPerSecond{
 		get{
 			int temp = 0;
 			List<Project> relevantSoftware = CompletedSoftware.Where(x => x.pointsPerSecond> 0).ToList();
 			List<Project> relevantHardware = CompletedHardware.Where(x => x.pointsPerSecond> 0).ToList();
-			foreach(SoftwareProject item in relevantSoftware){
+			foreach(Project item in relevantSoftware){
 				temp+=  item.pointsPerSecond;
 			}
-			foreach(HardwareProject item in relevantHardware){
+			foreach(Project item in relevantHardware){
 				temp+=  item.pointsPerSecond;
 			}
 			return temp;
@@ -136,10 +140,10 @@ public class GameController : MonoBehaviour {
 			int temp = 0;
 			List<Project> relevantSoftware = CompletedSoftware.Where(x => x.moneyMult> 0).ToList();
 			List<Project> relevantHardware = CompletedHardware.Where(x => x.moneyMult> 0).ToList();
-			foreach(SoftwareProject item in relevantSoftware){
+			foreach(Project item in relevantSoftware){
 				temp+=  item.moneyMult;
 			}
-			foreach(HardwareProject item in relevantHardware){
+			foreach(Project item in relevantHardware){
 				temp+=  item.moneyMult;
 			}
 			return temp;
@@ -163,7 +167,7 @@ public class GameController : MonoBehaviour {
 		get;
 		private set;
 	}
-	
+
 	public int researchPoints {
 		get;
 		private set;
@@ -178,12 +182,12 @@ public class GameController : MonoBehaviour {
 		}
 		return -1;
 	}
-	
+
 	public void startResearch(Research research){
 		researchSet = true;
 		currentResearch = research;
 	}
-	
+
 	//removes from UncompleteResearch, adds to completedResearch
 	public void stopResearch(){
 		researchSet = false;
@@ -206,7 +210,7 @@ public class GameController : MonoBehaviour {
 			AllUncompleteResearch.Sort ();
 		}
 	}*/
-	
+
 	public bool hasBeenDone(string id){
         Utility.UnityLog("  ");
 		for (int i = 0; i<AllCompleteResearch.Count; i++) {
@@ -216,7 +220,7 @@ public class GameController : MonoBehaviour {
 		}
 		return false;
 	}
-	
+
 	public bool canBeDone(Research a){
         if(a.processingLevel > processingPower){
            return false;
@@ -229,7 +233,7 @@ public class GameController : MonoBehaviour {
 		}
         return true;
 	}
-	
+
 	//Only displays the research that can be done
 	public List<Research> AllPossibleResearch{
 		get{
@@ -238,7 +242,7 @@ public class GameController : MonoBehaviour {
 			temp.Sort();
             Utility.UnityLog("After:"+temp.Count);
 			return temp;
-			
+
 		}
 		/*List<Research> underConsideration = new List<Research> ();
 		for (int i = 0; i<AllUncompleteResearch.Count; i++) {
@@ -261,7 +265,7 @@ public class GameController : MonoBehaviour {
     {
         get {
             List<Project> temp = new List<Project>();
-            foreach (var item in allProjects) { 
+            foreach (var item in allProjects) {
                 if(item.type.Equals("Software")&& item.uses > 0){
                     temp.Add(item);
                 }
@@ -278,20 +282,20 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
-	//used in ComputerOnClick, tells the method 
+	//used in ComputerOnClick, tells the method
 	//not to treat it as research
 	public bool isSoftware {
 		get;
 		private set;
 	}
 
-	public SoftwareProject currentSoftware {
+	public Project currentSoftware {
 		get;
 		private set;
 	}
 
 
-	private int getIndexOfUncompletedSoftware(SoftwareProject a){
+	private int getIndexOfUncompletedSoftware(Project a){
 		for(int i = 0; i<UnstartedSoftware.Count; i++){
 			if(UnstartedSoftware[i].string_id.CompareTo(a.string_id)==0){
 				return i;
@@ -300,7 +304,7 @@ public class GameController : MonoBehaviour {
 		return -1;
 	}
 
-	public void startSoftware(SoftwareProject a){
+	public void startSoftware(Project a){
 		Research temp = new Research (a.pointCost);
 		currentSoftware = a;
 		isSoftware = true;
@@ -348,7 +352,7 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
-	private int getIndexOfUncompletedHardware(HardwareProject a){
+	private int getIndexOfUncompletedHardware(Project a){
 		for(int i = 0; i<UnstartedHardware.Count; i++){
 			if(UnstartedHardware[i].string_id.CompareTo(a.string_id)==0){
 				return i;
@@ -357,14 +361,14 @@ public class GameController : MonoBehaviour {
 		return -1;
 	}
 
-	private void useRequiredParts(HardwareProject a){
+	private void useRequiredParts(Project a){
 		foreach (var item in a.partDependencies) {
 			int index = indexOfPart(item.Key);
 			use(index, item.Value);
 		}
 	}
 
-	public void makeHardware(HardwareProject a){
+	public void makeHardware(Project a){
 		int index = getIndexOfUncompletedHardware(a);
 		if(a.canDoMultiple){
 			CompletedHardware.Add(a);
@@ -393,20 +397,20 @@ public class GameController : MonoBehaviour {
 			return _incrementalTickTime * Time.deltaTime;
 		}
 		set{
-			_incrementalTickTime = value;   
+			_incrementalTickTime = value;
 		}
 	}
-	
-	// This is that time upgrade you can buy in incrementals. By reducing the amount of iterations, you 
+
+	// This is that time upgrade you can buy in incrementals. By reducing the amount of iterations, you
 	// reduce the amount of time a tick takes, thus increasing your effectivity.
 	public int incrementalTickIterations;
-	
+
 
 	//-----------------------------------------------------PARTS METHODS AND DATA
 
 	//List containing all parts
 	public List<Part> allParts = new List<Part> ();
-	
+
 	//likely a mthod to be deprecated by xml
 	public bool hasParts(string name, int number){
 		for (int i = 0; i<allParts.Count; i++) {
@@ -428,17 +432,17 @@ public class GameController : MonoBehaviour {
 		}
 		return -1;
 	}
-	
+
 	public void buyPart(int index, int number){
 		if (money >= (allParts [index].cost * number)) {
 			allParts[index].buy(number);
 			money-= (allParts [index].cost * number);
 		}
 		else{
-			//TODO: Exceptions
+			// \todo Exceptions
 		}
 	}
-	
+
 	public void use(int index, int number){
 		if(allParts[index].numberOwned >= number){
 			allParts[index].use(number);
@@ -446,7 +450,7 @@ public class GameController : MonoBehaviour {
 	}
 
 	//-----------------------------------------BASIC METHODS
-    
+
 	void Awake() {
 		score = GameObject.Find("PointsText").GetComponent<Text>();
 		tick = GameObject.Find("Ticks").GetComponent<Text>();
@@ -466,7 +470,7 @@ public class GameController : MonoBehaviour {
 		AllUncompleteResearch = researchXML.Research;
         allProjects = projectXML.Project;
 		allParts = partXML.Part;
-        
+
 
 		//AllCompleteResearch.Add(new Research("Robotics", "Cool robots", 200, 1, new Research[]{}, true));
 		//AllUncompleteResearch.Add(new Research("Computer Components", "Wow, you put together your own computer!", 100, 0, new Research[]{}, false));
@@ -474,7 +478,7 @@ public class GameController : MonoBehaviour {
 		//AllUncompleteResearch.Add(new Research("Lasers", "Cool robots", 500, 1, new Research[]{Research.getResearchByName("Robotics")}, false));
 		//AllUncompleteResearch.Add(new Research("PDMS", "Point defence missile system protects against enemy robots (that you invented anyway...)", 800, 1, new Research[] { Research.getResearchByName("Robotics"), Research.getResearchByName("Lasers") }, false));
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
         if (ticker == Priority.REALTIME) {

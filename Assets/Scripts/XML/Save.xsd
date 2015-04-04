@@ -1,45 +1,34 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <xs:schema id="NewDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-  <xs:element name="Save">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element name="CompletedResearch" minOccurs="0" maxOccurs="unbounded">
-          <xs:complexType>
-            <xs:sequence>
-              <xs:element name="Research" minOccurs="0" maxOccurs="unbounded">
-                <xs:complexType>
-                  <xs:attribute name="string_id" type="xs:ID" />
-                </xs:complexType>
-              </xs:element>
-            </xs:sequence>
-          </xs:complexType>
-        </xs:element>
-        <xs:element name="CompletedSoftware" minOccurs="0" maxOccurs="unbounded">
-          <xs:complexType>
-            <xs:sequence>
-              <xs:element name="SoftwareProject" minOccurs="0" maxOccurs="unbounded">
-                <xs:complexType>
-                  <xs:attribute name="string_id" type="xs:ID" />
-                  <xs:attribute name="spent_uses" type="xs:short" />
-                </xs:complexType>
-              </xs:element>
-            </xs:sequence>
-          </xs:complexType>
-        </xs:element>
-        <xs:element name="CompletedHardware" minOccurs="0" maxOccurs="unbounded">
-          <xs:complexType>
-            <xs:sequence>
-              <xs:element name="HardwareProject" minOccurs="0" maxOccurs="unbounded">
-                <xs:complexType>
-                  <xs:attribute name="string_id" type="xs:ID" />
-                  <xs:attribute name="spent_uses" type="xs:short" />
-                </xs:complexType>
-              </xs:element>
-            </xs:sequence>
-          </xs:complexType>
-        </xs:element>
-      </xs:sequence>
-      <xs:attribute name="last-opened" type="xs:date" />
-    </xs:complexType>
-  </xs:element>
+
+  <xs:element type="Save" name="Save" />
+
+  <xs:complexType name="Save">
+    <xs:sequence>
+      <xs:element name="CompletedResearch" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element type="Research" name="Research" maxOccurs="unbounded" minOccurs="0"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="CompletedProjects" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element type="Project" name="Project" maxOccurs="unbounded" minOccurs="0"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute type="xs:date" name="last-opened"/>
+  </xs:complexType>
+
+  <xs:complexType name="Project">
+    <xs:attribute type="xs:ID" name="string_id" use="required"/>
+    <xs:attribute type="xs:byte" name="spent-uses" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="Research">
+    <xs:attribute type="xs:ID" name="string_id" use="required"/>
+  </xs:complexType>
 </xs:schema>
