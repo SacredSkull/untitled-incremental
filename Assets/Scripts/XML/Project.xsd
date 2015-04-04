@@ -6,7 +6,7 @@
     <xs:sequence>
       <xs:element type="DependsOn" name="DependsOn"/>
     </xs:sequence>
-	<xs:attribute type="xs:string" name="type" use="required"/>
+	  <xs:attribute type="xs:string" name="type" use="required"/>
     <xs:attribute type="xs:ID" name="string_id" use="required"/>
     <xs:attribute type="xs:string" name="description" use="required"/>
     <xs:attribute type="xs:short" name="pointCost" use="required"/>
@@ -17,20 +17,6 @@
     <xs:attribute type="xs:short" name="moneyMult" use="required"/>
     <xs:attribute type="xs:byte" name="uses" use="required"/>
     <xs:attribute type="xs:short" name="processIncrease" use="required"/>
-  </xs:complexType>
-
-  <xs:complexType name="SoftwareProject">
-    <xs:complexContent>
-      <xs:extension base="Project">
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-<xs:complexType name="HardwareProject">
-    <xs:complexContent>
-      <xs:extension base="Project">
-      </xs:extension>
-    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="ProjectRoot">

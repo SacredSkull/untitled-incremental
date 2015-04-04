@@ -61,10 +61,10 @@ public class GameController : MonoBehaviour {
 			int temp = 0;
 			List<Project> relevantSoftware = CompletedSoftware.Where(x => x.pointsPerSecond> 0).ToList();
 			List<Project> relevantHardware = CompletedHardware.Where(x => x.pointsPerSecond> 0).ToList();
-			foreach(SoftwareProject item in relevantSoftware){
+			foreach(Project item in relevantSoftware){
 				temp+=  item.pointsPerSecond;
 			}
-			foreach(HardwareProject item in relevantHardware){
+			foreach(Project item in relevantHardware){
 				temp+=  item.pointsPerSecond;
 			}
 			return temp;
@@ -136,10 +136,10 @@ public class GameController : MonoBehaviour {
 			int temp = 0;
 			List<Project> relevantSoftware = CompletedSoftware.Where(x => x.moneyMult> 0).ToList();
 			List<Project> relevantHardware = CompletedHardware.Where(x => x.moneyMult> 0).ToList();
-			foreach(SoftwareProject item in relevantSoftware){
+			foreach(Project item in relevantSoftware){
 				temp+=  item.moneyMult;
 			}
-			foreach(HardwareProject item in relevantHardware){
+			foreach(Project item in relevantHardware){
 				temp+=  item.moneyMult;
 			}
 			return temp;
@@ -285,13 +285,13 @@ public class GameController : MonoBehaviour {
 		private set;
 	}
 
-	public SoftwareProject currentSoftware {
+	public Project currentSoftware {
 		get;
 		private set;
 	}
 
 
-	private int getIndexOfUncompletedSoftware(SoftwareProject a){
+	private int getIndexOfUncompletedSoftware(Project a){
 		for(int i = 0; i<UnstartedSoftware.Count; i++){
 			if(UnstartedSoftware[i].string_id.CompareTo(a.string_id)==0){
 				return i;
@@ -300,7 +300,7 @@ public class GameController : MonoBehaviour {
 		return -1;
 	}
 
-	public void startSoftware(SoftwareProject a){
+	public void startSoftware(Project a){
 		Research temp = new Research (a.pointCost);
 		currentSoftware = a;
 		isSoftware = true;
@@ -348,7 +348,7 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
-	private int getIndexOfUncompletedHardware(HardwareProject a){
+	private int getIndexOfUncompletedHardware(Project a){
 		for(int i = 0; i<UnstartedHardware.Count; i++){
 			if(UnstartedHardware[i].string_id.CompareTo(a.string_id)==0){
 				return i;
@@ -357,14 +357,14 @@ public class GameController : MonoBehaviour {
 		return -1;
 	}
 
-	private void useRequiredParts(HardwareProject a){
+	private void useRequiredParts(Project a){
 		foreach (var item in a.partDependencies) {
 			int index = indexOfPart(item.Key);
 			use(index, item.Value);
 		}
 	}
 
-	public void makeHardware(HardwareProject a){
+	public void makeHardware(Project a){
 		int index = getIndexOfUncompletedHardware(a);
 		if(a.canDoMultiple){
 			CompletedHardware.Add(a);
