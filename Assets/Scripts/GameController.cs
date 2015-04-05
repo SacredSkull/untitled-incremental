@@ -8,17 +8,34 @@ using Incremental.XML;
 #if DEBUG
 using System.Diagnostics;
 #endif
+
+/**
+ * @class   GameController
+ *
+ * @brief   This is the main class of the game, and thus handles all of the top level logic.
+ *          
+ * @details This class is a singleton (See http://unitypatterns.com/singletons/) and can only have one instance.
+ *
+ * @author  Peter
+ * @author  Conal
+ * @date    20/03/2015
+ */
+
 public class GameController : MonoBehaviour {
-
-	//! Main controller and singleton instance of the entire game.
-
-	/** This class is a singleton (See http://unitypatterns.com/singletons/) and can only have one instance. */
 
     List<Project> allProjects;
     List<Research> allResearch;
 
     // See http://unitypatterns.com/singletons/ for more details. Alternatively, google C# singleton.
     private static GameController _instance;
+
+    /**
+     * @property    public static GameController instance
+     *
+     * @brief   Gets the singleton instance of the GameController (this) class.
+     * @return  The instance.
+     */
+
     public static GameController instance {
         get {
             if (_instance == null)
@@ -31,6 +48,7 @@ public class GameController : MonoBehaviour {
 
 	//-----------Incremental Values
 	private int BASE_POINTS_PER_CLICK = 10;
+	/** @brief   Current money of the player. */
 	public double money = 0.00;
 	private double BASE_PROCESSING_POWER = 1.23;
 
@@ -44,11 +62,25 @@ public class GameController : MonoBehaviour {
 	//adds points if you should be able to add points:
 	//1.Research has been set
 	//2. Research hasn't been finished.
+
+    /**
+     * @fn  public void addResearchPoints(int points)
+     *
+     * @brief   Adds research points.
+     *          
+     * @details Adds research points if the research you are currently researching costs more than you currently have. If it costs less and isn't software, your current research is halted and your research points are set to zero. Finally, if any other condition (should only be software research) , your software is finished and points are set to zero.
+     *
+     * @author  Conal
+     * @date    05/04/2015
+     *
+     * @param   points  The points to add.
+     */
+
 	public void addResearchPoints(int points){
 		if ((isResearchSet () && currentResearch.cost > researchPoints) || debugResearchPoints) {
 			this.researchPoints += points;
 		} else if (isResearchSet () && !isSoftware) {
-			stopResearch ();
+			finishResearch ();
 			this.researchPoints = 0;
 		} else {
 			finishSoftware();
@@ -57,10 +89,25 @@ public class GameController : MonoBehaviour {
 
 	}
 
-	// \todo Calculate sum of all multipliers, points etc in projects,
-	// \todo Add this to the update method, then we'll have a game!
+	// 
+	// 
 
-	public int pointsPerSecond{
+    /**
+     * @property    public int pointsPerSecond
+     *
+     * @brief   Adds up and returns the points per second of all completed software/hardware research.
+     *          
+     * 
+     * @todo    Calculate sum of all multipliers, points etc in projects,
+     *          
+     * 
+     * @todo    Add this to the update method, then we'll have a game!
+     *          
+     * 
+     * @return  The points per second.
+     */
+
+    public int pointsPerSecond{
 		get{
 			int temp = 0;
 			List<Project> relevantSoftware = CompletedSoftware.Where(x => x.pointsPerSecond> 0).ToList();
@@ -74,6 +121,14 @@ public class GameController : MonoBehaviour {
 			return temp;
 		}
 	}
+
+    /**
+     * @property    public int pointsPerClick
+     *
+     * @brief   Gets the points per click.
+     *
+     * @return  The points per click.
+     */
 
 	public int pointsPerClick{
 		get{
@@ -90,6 +145,14 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
+    /**
+     * @property    public int pointsMult
+     *
+     * @brief   Gets the points multiplier.
+     *
+     * @return  The points multiplier.
+     */
+
 	public int pointsMult{
 		get{
 			int temp = BASE_POINTS_PER_CLICK;
@@ -104,6 +167,14 @@ public class GameController : MonoBehaviour {
 			return temp;
 		}
 	}
+
+    /**
+     * @property    public double processingPower
+     *
+     * @brief   Gets the processing power.
+     *
+     * @return  The processing power.
+     */
 
 	public double processingPower{
 		get{
@@ -120,6 +191,14 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
+    /**
+     * @property    public double moneyPerSecond
+     *
+     * @brief   Gets money per second.
+     *
+     * @return  The money per second.
+     */
+
 	public double moneyPerSecond{
 		get{
 			int temp = 0;
@@ -134,6 +213,14 @@ public class GameController : MonoBehaviour {
 			return temp;
 		}
 	}
+
+    /**
+     * @property    public int moneyMultiplier
+     *
+     * @brief   Gets the money multiplier.
+     *
+     * @return  The money multiplier.
+     */
 
 	public int moneyMultiplier{
 		get{
@@ -152,12 +239,16 @@ public class GameController : MonoBehaviour {
 
 
 	//-----------------------------------------------------RESEARCH METHODS AND DATA
+	/** @brief   If research is set or not */
 	private bool researchSet;
+	/** @brief   All uncomplete research. */
 	public List<Research> AllUncompleteResearch = new List<Research>();
+	/** @brief   All complete research. */
 	public List<Research> AllCompleteResearch;
 	//May need to create another list ordered by ID to make finding completed
 	//research more efficient. For now though, it is not necessary.
 	//private List<Research> AllResearch = new List<Research>();
+
 
 	public bool isResearchSet(){
 		return researchSet;
@@ -168,20 +259,43 @@ public class GameController : MonoBehaviour {
 		private set;
 	}
 
-	public int researchPoints {
+    public int researchPoints {
 		get;
 		private set;
 	}
 
-	//returns index of a paticular piece of Research in the array
-	private int getIndexOfUncompletedResearch(Research a){
+    /**
+     * @fn  private int getIndexOfUncompletedResearch(Research a)
+     *
+     * @brief   Gets the index of uncompleted research, using a passed Research object.
+     *
+     * @author  Conal
+     * @date    05/04/2015
+     *
+     * @param   r   The Research to process.
+     *
+     * @return  The index of uncompleted research.
+     */
+
+	private int getIndexOfUncompletedResearch(Research r){
 		for(int i = 0; i<AllUncompleteResearch.Count; i++){
-			if(AllUncompleteResearch[i].string_id.CompareTo(a.string_id) == 0){
+			if(AllUncompleteResearch[i].string_id.CompareTo(r.string_id) == 0){
 				return i;
 			}
 		}
 		return -1;
 	}
+
+    /**
+     * @fn  public void startResearch(Research research)
+     *
+     * @brief   Starts research.
+     *
+     * @author  Conal
+     * @date    05/04/2015
+     *
+     * @param   research    The research to start.
+     */
 
 	public void startResearch(Research research){
 		researchSet = true;
@@ -189,7 +303,17 @@ public class GameController : MonoBehaviour {
 	}
 
 	//removes from UncompleteResearch, adds to completedResearch
-	public void stopResearch(){
+
+    /**
+     * @fn  public void finishResearch()
+     *
+     * @brief   Finishes research, removing it from uncompleted research and adding it into the completed list.
+     *
+     * @author  Conal
+     * @date    01/04/2015
+     */
+
+	public void finishResearch(){
 		researchSet = false;
 		int index = getIndexOfUncompletedResearch (currentResearch);
 		AllUncompleteResearch [index] = null;
@@ -211,8 +335,21 @@ public class GameController : MonoBehaviour {
 		}
 	}*/
 
+    /**
+     * @fn  public bool hasBeenDone(string id)
+     *
+     * @brief   Query if research of string_id 'id' has been done.
+     *
+     * @author  Conal
+     * @date    01/04/2015
+     *
+     * @param   id  The string_id identifier of the research.
+     *
+     * @return  true if been done, false if not.
+     */
+
 	public bool hasBeenDone(string id){
-        Utility.UnityLog("  ");
+        //Utility.UnityLog("  ");
 		for (int i = 0; i<AllCompleteResearch.Count; i++) {
 			if (AllCompleteResearch [i].string_id.CompareTo(id) == 0) {
 				return true;
@@ -221,12 +358,25 @@ public class GameController : MonoBehaviour {
 		return false;
 	}
 
-	public bool canBeDone(Research a){
-        if(a.processingLevel > processingPower){
+    /**
+     * @fn  public bool canBeDone(Research r)
+     *
+     * @brief   Determine if Research 'r' can be done.
+     *
+     * @author  Conal
+     * @date    01/04/2015
+     *
+     * @param   r   The Research to process.
+     *
+     * @return  true if we can be done, false if not.
+     */
+
+	public bool canBeDone(Research r){
+        if(r.processingLevel > processingPower){
            return false;
 		}
-       for (int i = 0; i<a.Dependencies.Count; i++) {
-            string temp = a.Dependencies[i].name;
+       for (int i = 0; i<r.Dependencies.Count; i++) {
+            string temp = r.Dependencies[i].name;
 			if(!hasBeenDone(temp)){
                 return false;
 			}
@@ -234,7 +384,14 @@ public class GameController : MonoBehaviour {
         return true;
 	}
 
-	//Only displays the research that can be done
+    /**
+     * @property    public List<Research> AllPossibleResearch
+     *
+     * @brief   Gets all possible research that canBeDone().
+     *
+     * @return  all possible research.
+     */
+
 	public List<Research> AllPossibleResearch{
 		get{
             Utility.UnityLog("Before:" + AllUncompleteResearch.Count);
@@ -260,7 +417,14 @@ public class GameController : MonoBehaviour {
 
 	//-----------------------------------------------------SOFTWARE
 
-	//All Projects that have not been done or are repeatable
+    /**
+     * @property    public List<Project> UnstartedSoftware
+     *
+     * @brief   All Projects that have not been done or are repeatable
+     *
+     * @return  The unstarted software.
+     */
+
     public List<Project> UnstartedSoftware
     {
         get {
@@ -282,8 +446,14 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
-	//used in ComputerOnClick, tells the method
-	//not to treat it as research
+    /**
+     * @property    public bool isSoftware
+     *
+     * @brief   Used by ComputerOnClick. Gets or privately sets a value indicating whether this object is software.
+     *
+     * @return  true if this object is software, false if not.
+     */
+
 	public bool isSoftware {
 		get;
 		private set;
