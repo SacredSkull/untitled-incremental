@@ -59,7 +59,7 @@ namespace Incremental.XML {
          *
          * @param   ID  The identifier.
          *
-         * @return  The part identified (or null).
+         * @return  The part identified or null, if no part could be identified.
          */
 
         public static Part getPartByID(int ID) {
@@ -93,7 +93,7 @@ namespace Incremental.XML {
          *
          * @param   name    The name.
          *
-         * @return  The part.
+         * @return  The part, or null, if none could be found.
          */
 
         public static Part getPartByName(string name) {
@@ -113,10 +113,7 @@ namespace Incremental.XML {
         /**
          * @fn  public Part(string name, int amount)
          *
-         * @brief   Debugging constructor.
-         *          
-         * @deprecated  This isn't meant for use other than directly inserting values for testing.
-         *              As the Part.xml file populates Part objects, there shouldn't be many real needs to use this.
+         * @brief   Direct creation/debugging constructor.
          *
          * @author  Peter
          * @date    25/03/2015

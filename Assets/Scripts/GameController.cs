@@ -441,7 +441,7 @@ public class GameController : MonoBehaviour {
 
 	public List<Project> PossibleSoftware{
 		get{
-			List<Project> temp = UnstartedSoftware.Where(x => x.canDo()).ToList();
+			List<Project> temp = UnstartedSoftware.Where(x => x.possible()).ToList();
 			return temp;
 		}
 	}
@@ -517,7 +517,7 @@ public class GameController : MonoBehaviour {
 
 	public List<Project> PossibleHardware{
 		get{
-			List<Project> temp = UnstartedHardware.Where(x => x.canDo()).ToList();
+			List<Project> temp = UnstartedHardware.Where(x => x.possible()).ToList();
 			return temp;
 		}
 	}
@@ -579,7 +579,9 @@ public class GameController : MonoBehaviour {
 	//-----------------------------------------------------PARTS METHODS AND DATA
 
 	//List containing all parts
-	public List<Part> allParts = new List<Part> ();
+	public List<Part> allParts = new List<Part>();
+
+    public Dictionary<long, int> partInventory = new Dictionary<long, int>();
 
 	//likely a mthod to be deprecated by xml
 	public bool hasParts(string name, int number){
@@ -603,10 +605,12 @@ public class GameController : MonoBehaviour {
 		return -1;
 	}
 
-	public void buyPart(int index, int number){
-		if (money >= (allParts [index].cost * number)) {
-			allParts[index].buy(number);
-			money-= (allParts [index].cost * number);
+	public void buyPart(int id, int number){
+        Part p = Part.getPartByID(id);
+		if (money >= (p.cost * number)) {
+			p.buy(number);
+			money-= (p.cost * number);
+            partInventory[(long)id] += number;
 		}
 		else{
 			// \todo Exceptions
