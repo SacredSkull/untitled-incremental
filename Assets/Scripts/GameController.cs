@@ -1,12 +1,13 @@
 ﻿#define DEBUG
 using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Incremental.XML;
+using Incremental.Database;
 #if DEBUG
-using System.Diagnostics;
+//using System.Diagnostics;
 #endif
 
 /**
@@ -19,11 +20,13 @@ using System.Diagnostics;
  * @author  Peter
  * @author  Conal
  * @date    20/03/2015
+ * @updated 26/06/2015
  */
 
 public class GameController : MonoBehaviour {
 
-    List<Project> allProjects;
+    List<HardwareProject>  allHardwareProjects;
+    List<SoftwareProject>  allSoftwareProjects;
     List<Research> allResearch;
 
     // See http://unitypatterns.com/singletons/ for more details. Alternatively, google C# singleton.
@@ -47,12 +50,12 @@ public class GameController : MonoBehaviour {
     public bool debugResearchPoints;
 
 	//-----------Incremental Values
-	private int BASE_POINTS_PER_CLICK = 10;
-	/** @brief   Current money of the player. */
+    private const int BASE_POINTS_PER_CLICK = 10;
+    private const double BASE_PROCESSING_POWER = 1.23;
+    /** @brief   Current money of the player. */
 	public double money = 0.00;
-	private double BASE_PROCESSING_POWER = 1.23;
 
-	//----------Outputs
+    //----------Outputs
 	private Text score;
 	private Text tick;
 	private Text potentialResearch;
@@ -93,7 +96,7 @@ public class GameController : MonoBehaviour {
 	// 
 
     /**
-     * @property    public int pointsPerSecond
+     * @property    public int pointsPerTick
      *
      * @brief   Adds up and returns the points per second of all completed software/hardware research.
      *          
@@ -107,16 +110,16 @@ public class GameController : MonoBehaviour {
      * @return  The points per second.
      */
 
-    public int pointsPerSecond{
+    int pointsPerSecond{
 		get{
 			int temp = 0;
-			List<Project> relevantSoftware = CompletedSoftware.Where(x => x.pointsPerSecond> 0).ToList();
-			List<Project> relevantHardware = CompletedHardware.Where(x => x.pointsPerSecond> 0).ToList();
-			foreach(Project item in relevantSoftware){
-				temp+=  item.pointsPerSecond;
+			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.pointsPerTick> 0).ToList();
+			List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.pointsPerTick> 0).ToList();
+			foreach(SoftwareProject project in relevantSoftware){
+				temp += project.pointsPerTick;
 			}
-			foreach(Project item in relevantHardware){
-				temp+=  item.pointsPerSecond;
+			foreach(HardwareProject project in relevantHardware){
+				temp += project.pointsPerTick;
 			}
 			return temp;
 		}
@@ -130,15 +133,15 @@ public class GameController : MonoBehaviour {
      * @return  The points per click.
      */
 
-	public int pointsPerClick{
+	 public int pointsPerClick{
 		get{
 			int temp = BASE_POINTS_PER_CLICK;
-			List<Project> relevantSoftware = CompletedSoftware.Where(x => x.pointsPerClick> 0).ToList();
-			List<Project> relevantHardware = CompletedHardware.Where(x => x.pointsPerClick> 0).ToList();
-			foreach(Project item in relevantSoftware){
+			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.pointsPerClick> 0).ToList();
+			List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.pointsPerClick> 0).ToList();
+			foreach(SoftwareProject item in relevantSoftware){
 				temp+=  item.pointsPerClick;
 			}
-			foreach(Project item in relevantHardware){
+			foreach(HardwareProject item in relevantHardware){
 				temp+=  item.pointsPerClick;
 			}
 			return temp;
@@ -153,16 +156,16 @@ public class GameController : MonoBehaviour {
      * @return  The points multiplier.
      */
 
-	public int pointsMult{
+    int pointsMult{
 		get{
 			int temp = BASE_POINTS_PER_CLICK;
-			List<Project> relevantSoftware = CompletedSoftware.Where(x => x.pointMult> 0).ToList();
-			List<Project> relevantHardware = CompletedHardware.Where(x => x.pointMult> 0).ToList();
-			foreach(Project item in relevantSoftware){
-				temp+=  item.pointMult;
+			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.pointMult> 0).ToList();
+            List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.pointMult > 0).ToList();
+			foreach(SoftwareProject item in relevantSoftware){
+				temp += item.pointMult;
 			}
-			foreach(Project item in relevantHardware){
-				temp+=  item.pointMult;
+			foreach(HardwareProject item in relevantHardware){
+				temp += item.pointMult;
 			}
 			return temp;
 		}
@@ -176,39 +179,39 @@ public class GameController : MonoBehaviour {
      * @return  The processing power.
      */
 
-	public double processingPower{
+	double processingPower{
 		get{
 			double temp = BASE_PROCESSING_POWER;
-			List<Project> relevantSoftware = CompletedSoftware.Where(x => x.processIncrease> 0.00).ToList();
-			List<Project> relevantHardware = CompletedHardware.Where(x => x.processIncrease> 0.00).ToList();
-			foreach(Project item in relevantSoftware){
-				temp+=  item.processIncrease;
+			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.processIncrease> 0.00).ToList();
+			List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.processIncrease> 0.00).ToList();
+			foreach(SoftwareProject item in relevantSoftware){
+				temp += item.processIncrease;
 			}
-			foreach(Project item in relevantHardware){
-				temp+=  item.processIncrease;
+			foreach(HardwareProject item in relevantHardware){
+				temp += item.processIncrease;
 			}
 			return temp;
 		}
 	}
 
     /**
-     * @property    public double moneyPerSecond
+     * @property    public double moneyPerTick
      *
      * @brief   Gets money per second.
      *
      * @return  The money per second.
      */
 
-	public double moneyPerSecond{
+	double moneyPerSecond{
 		get{
 			int temp = 0;
-			List<Project> relevantSoftware = CompletedSoftware.Where(x => x.moneyPerSecond> 0.00).ToList();
-			List<Project> relevantHardware = CompletedHardware.Where(x => x.moneyPerSecond> 0.00).ToList();
-			foreach(Project item in relevantSoftware){
-				temp+=  item.moneyPerSecond;
+			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.moneyPerTick> 0.00).ToList();
+            List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.moneyPerTick > 0.00).ToList();
+			foreach(SoftwareProject item in relevantSoftware){
+				temp+=  item.moneyPerTick;
 			}
-			foreach(Project item in relevantHardware){
-				temp+=  item.moneyPerSecond;
+			foreach(HardwareProject item in relevantHardware){
+				temp+=  item.moneyPerTick;
 			}
 			return temp;
 		}
@@ -222,15 +225,15 @@ public class GameController : MonoBehaviour {
      * @return  The money multiplier.
      */
 
-	public int moneyMultiplier{
+	int moneyMultiplier{
 		get{
 			int temp = 0;
-			List<Project> relevantSoftware = CompletedSoftware.Where(x => x.moneyMult> 0).ToList();
-			List<Project> relevantHardware = CompletedHardware.Where(x => x.moneyMult> 0).ToList();
-			foreach(Project item in relevantSoftware){
+			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.moneyMult> 0).ToList();
+            List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.moneyMult > 0).ToList();
+			foreach(SoftwareProject item in relevantSoftware){
 				temp+=  item.moneyMult;
 			}
-			foreach(Project item in relevantHardware){
+			foreach(HardwareProject item in relevantHardware){
 				temp+=  item.moneyMult;
 			}
 			return temp;
@@ -242,9 +245,9 @@ public class GameController : MonoBehaviour {
 	/** @brief   If research is set or not */
 	private bool researchSet;
 	/** @brief   All uncomplete research. */
-	public List<Research> AllUncompleteResearch = new List<Research>();
-	/** @brief   All complete research. */
-	public List<Research> AllCompleteResearch;
+    Dictionary<int, Research> AllUncompleteResearch = new Dictionary<int, Research>();
+	/** @brief   All complete research- key = ResearchID, value = Research*/
+    Dictionary<int, Research> AllCompleteResearch = new Dictionary<int, Research>();
 	//May need to create another list ordered by ID to make finding completed
 	//research more efficient. For now though, it is not necessary.
 	//private List<Research> AllResearch = new List<Research>();
@@ -279,7 +282,7 @@ public class GameController : MonoBehaviour {
 
 	private int getIndexOfUncompletedResearch(Research r){
 		for(int i = 0; i<AllUncompleteResearch.Count; i++){
-			if(AllUncompleteResearch[i].string_id.CompareTo(r.string_id) == 0){
+			if(AllUncompleteResearch[i].stringID.CompareTo(r.stringID) == 0){
 				return i;
 			}
 		}
@@ -315,12 +318,10 @@ public class GameController : MonoBehaviour {
 
 	public void finishResearch(){
 		researchSet = false;
-		int index = getIndexOfUncompletedResearch (currentResearch);
-		AllUncompleteResearch [index] = null;
-		AllUncompleteResearch.Sort ();
-		currentResearch.complete ();
-		AllCompleteResearch.Add (currentResearch);
-		AllCompleteResearch.Sort ();
+	    int index = currentResearch.ID;
+		AllUncompleteResearch[index] = null;
+		currentResearch.complete();
+		AllCompleteResearch.Add(currentResearch.ID, currentResearch);
 		currentResearch = null;
 	}
 
@@ -338,24 +339,20 @@ public class GameController : MonoBehaviour {
     /**
      * @fn  public bool hasBeenDone(string id)
      *
-     * @brief   Query if research of string_id 'id' has been done.
+     * @brief   Query if research of stringID 'id' has been done.
      *
      * @author  Conal
+     * @author  Peter
      * @date    01/04/2015
+     * @updated 27/06/2015
      *
-     * @param   id  The string_id identifier of the research.
+     * @param   id  The stringID identifier of the research.
      *
      * @return  true if been done, false if not.
      */
 
-	public bool hasBeenDone(string id){
-        //Utility.UnityLog("  ");
-		for (int i = 0; i<AllCompleteResearch.Count; i++) {
-			if (AllCompleteResearch [i].string_id.CompareTo(id) == 0) {
-				return true;
-			}
-		}
-		return false;
+	public bool hasBeenDone(Research r) {
+	    return AllCompleteResearch.ContainsKey(r.ID);
 	}
 
     /**
@@ -374,15 +371,29 @@ public class GameController : MonoBehaviour {
 	public bool canBeDone(Research r){
         if(r.processingLevel > processingPower){
            return false;
-		}
-       for (int i = 0; i<r.Dependencies.Count; i++) {
-            string temp = r.Dependencies[i].name;
-			if(!hasBeenDone(temp)){
-                return false;
-			}
-		}
-        return true;
+	    }
+       foreach (Research depends in r.Dependencies) {
+           if(!hasBeenDone(depends)){
+               return false;
+           }
+       }
+       return true;
 	}
+    // Currently causes unity to crash... needs some work.
+//    public bool recursiveCanBeDone(Research r, out List<Research> missingResearch) {
+//        missingResearch = new List<Research>();
+//        bool hasDependencies = false;
+//        foreach (Research depends in r.Dependencies) {
+//            if (!hasBeenDone(depends)) {
+//                hasDependencies = true;
+//                missingResearch.Add(depends);
+//                List<Research> childDepend = new List<Research>();
+//                recursiveCanBeDone(depends, out childDepend);
+//                missingResearch.AddRange(childDepend);
+//            }
+//        }
+//        return !hasDependencies;
+//    }
 
     /**
      * @property    public List<Research> AllPossibleResearch
@@ -395,7 +406,7 @@ public class GameController : MonoBehaviour {
 	public List<Research> AllPossibleResearch{
 		get{
             Utility.UnityLog("Before:" + AllUncompleteResearch.Count);
-            List<Research> temp = AllUncompleteResearch.Where(x => canBeDone(x)).ToList();
+            List<Research> temp = AllUncompleteResearch.Values.Where(x => canBeDone(x)).ToList();
 			temp.Sort();
             Utility.UnityLog("After:"+temp.Count);
 			return temp;
@@ -425,23 +436,24 @@ public class GameController : MonoBehaviour {
      * @return  The unstarted software.
      */
 
-    public List<Project> UnstartedSoftware
+    public List<SoftwareProject> UnstartedSoftware
     {
         get {
-            List<Project> temp = new List<Project>();
-            foreach (var item in allProjects) {
-                if(item.type.Equals("Software")&& item.uses > 0){
-                    temp.Add(item);
+            List<SoftwareProject> temp = new List<SoftwareProject>();
+            foreach (SoftwareProject item in allSoftwareProjects) {
+                if(item.uses > 0 || item.uses == -1){
+                    temp.Add((SoftwareProject)item);
                 }
             }
             return temp;
         }
     }
-	public List<Project> CompletedSoftware = new List<Project> ();
+    public List<SoftwareProject> CompletedSoftware = new List<SoftwareProject>();
 
-	public List<Project> PossibleSoftware{
+	public List<SoftwareProject> PossibleSoftware{
 		get{
-			List<Project> temp = UnstartedSoftware.Where(x => x.possible()).ToList();
+            List<Startable> requirements = new List<Startable>();
+			List<SoftwareProject> temp = UnstartedSoftware.Where(x => x.possible(out requirements)).ToList();
 			return temp;
 		}
 	}
@@ -459,38 +471,26 @@ public class GameController : MonoBehaviour {
 		private set;
 	}
 
-	public Project currentSoftware {
+	public SoftwareProject currentSoftware {
 		get;
 		private set;
 	}
 
-
-	private int getIndexOfUncompletedSoftware(Project a){
-		for(int i = 0; i<UnstartedSoftware.Count; i++){
-			if(UnstartedSoftware[i].string_id.CompareTo(a.string_id)==0){
-				return i;
-			}
-		}
-		return -1;
-	}
-
-	public void startSoftware(Project a){
-		Research temp = new Research (a.pointCost);
-		currentSoftware = a;
+	public void startSoftware(SoftwareProject project){
+		Research temp = new Research (project.pointCost);
+		currentSoftware = project;
 		isSoftware = true;
 		currentResearch = temp;
 		researchSet = true;
-
 	}
 
 	public void finishSoftware(){
-		int index = getIndexOfUncompletedSoftware (currentSoftware);
 		if(currentSoftware.canDoMultiple){
 			CompletedSoftware.Add(currentSoftware);
 		}
 		else{
 			CompletedSoftware.Add(currentSoftware);
-            allProjects[index].uses--;
+            allHardwareProjects[currentResearch.ID].uses--;
 		}
 		currentSoftware = null;
 		isSoftware = false;
@@ -500,56 +500,60 @@ public class GameController : MonoBehaviour {
 
 	//-----------------------------------------------------HARDWARE
 
-    public List<Project> UnstartedHardware {
+    public List<HardwareProject> UnstartedHardware {
         get {
-            List<Project> temp = new List<Project>();
-            foreach (var item in allProjects)
+            List<HardwareProject> temp = new List<HardwareProject>();
+            foreach (var item in allHardwareProjects)
             {
-                if (item.type.Equals("Hardware") && item.uses > 0)
+                if (item.uses > 0 || item.uses == -1)
                 {
-                    temp.Add(item);
+                    temp.Add((HardwareProject)item);
                 }
             }
             return temp;
         }
     }
-	public List<Project> CompletedHardware = new List<Project> ();
+    public List<HardwareProject> CompletedHardware = new List<HardwareProject>();
 
-	public List<Project> PossibleHardware{
+	public List<HardwareProject> PossibleHardware{
 		get{
-			List<Project> temp = UnstartedHardware.Where(x => x.possible()).ToList();
+            // Note: out parameters are not optional by design, so we actually need to create this.
+            // The alternative is overloading possible(), with a method that does not compute missing requirements.
+            List<Startable> requirements = new List<Startable>();
+			List<HardwareProject> temp = UnstartedHardware.Where(x => x.possible(out requirements)).ToList();
 			return temp;
 		}
 	}
 
 	private int getIndexOfUncompletedHardware(Project a){
 		for(int i = 0; i<UnstartedHardware.Count; i++){
-			if(UnstartedHardware[i].string_id.CompareTo(a.string_id)==0){
+			if(UnstartedHardware[i].stringID.CompareTo(a.stringID)==0){
 				return i;
 			}
 		}
 		return -1;
 	}
 
-	private void useRequiredParts(Project a){
-		foreach (var item in a.partDependencies) {
-			int index = indexOfPart(item.Key);
-			use(index, item.Value);
-		}
+	private void useRequiredParts(HardwareProject project){
+        throw new NotImplementedException();
+//		foreach (var item in project.partDependencies) {
+//			int index = indexOfPart(item.Key);
+//			use(index, item.Value);
+//		}
 	}
 
-	public void makeHardware(Project a){
-		int index = getIndexOfUncompletedHardware(a);
-		if(a.canDoMultiple){
-			CompletedHardware.Add(a);
-			useRequiredParts(a);
-
+	public void makeHardware(HardwareProject project){
+        if (project.canDoMultiple) {
+            CompletedHardware.Add(project);
+            useRequiredParts(project);
 		}
 		else{
-			CompletedHardware.Add(a);
-            allProjects[index].uses--;
-			useRequiredParts(a);
-		}
+            if (allHardwareProjects[project.ID].uses > 0) {
+                CompletedHardware.Add(project);
+                allHardwareProjects[project.ID].uses--;
+                useRequiredParts(project);
+            }
+        }
 
 	}
 
@@ -581,49 +585,33 @@ public class GameController : MonoBehaviour {
 	//List containing all parts
 	public List<Part> allParts = new List<Part>();
 
-    public Dictionary<long, int> partInventory = new Dictionary<long, int>();
+    // Dictionary containing the part ID and quantity
+    public readonly Dictionary<int, int> partInventory = new Dictionary<int, int>();
 
-	//likely a mthod to be deprecated by xml
-	public bool hasParts(string name, int number){
-		for (int i = 0; i<allParts.Count; i++) {
-			if(allParts[i].string_id.CompareTo(name) == 0){
-				if(allParts[i].numberOwned == number){
-					return true;
-				}
-				else return false;
-			}
-		}
-		return false;
+	bool hasParts(Part p, int number) {
+	    return partInventory[p.ID] >= number;
 	}
 
-	public int indexOfPart (Part a){
-		for(int i = 0; i<allParts.Count; i++){
-			if(allParts[i].string_id.CompareTo(a.string_id)==0){
-				return i;
-			}
-		}
-		return -1;
-	}
-
-	public void buyPart(int id, int number){
-        Part p = Part.getPartByID(id);
+	public void buyPart(Part p, int number){
 		if (money >= (p.cost * number)) {
-			p.buy(number);
 			money-= (p.cost * number);
-            partInventory[(long)id] += number;
+            partInventory[p.ID] += number;
 		}
 		else{
 			// \todo Exceptions
 		}
 	}
 
-	public void use(int index, int number){
-		if(allParts[index].numberOwned >= number){
-			allParts[index].use(number);
-		}
+	public void use(Part p, int number){
+	    if (!hasParts(p, number))
+	        return;
+	    partInventory[p.ID] -= number;
+	    if (partInventory[p.ID] < 0) {
+	        partInventory[p.ID] = 0;
+	    }
 	}
 
-	//-----------------------------------------BASIC METHODS
+	//-----------------------------------------UNITY METHODS
 
 	void Awake() {
 		score = GameObject.Find("PointsText").GetComponent<Text>();
@@ -638,22 +626,46 @@ public class GameController : MonoBehaviour {
 		// XML load
 		incrementalTickTime = 1;
 		incrementalTickIterations = 40;
-		ResearchRoot researchXML = ResearchRoot.LoadFromFile(@"./Assets/Data/Research.xml");
-		PartRoot partXML = PartRoot.LoadFromFile(@"./Assets/Data/Part.XML");
-		ProjectRoot projectXML = ProjectRoot.LoadFromFile(@"./Assets/Data/Project.XML");
-		AllUncompleteResearch = researchXML.Research;
-        allProjects = projectXML.Project;
-		allParts = partXML.Part;
+//		ResearchRoot researchXML = ResearchRoot.LoadFromFile(@"./Assets/Data/Research.xml");
+//		PartRoot partXML = PartRoot.LoadFromFile(@"./Assets/Data/Part.XML");
+//		ProjectRoot projectXML = ProjectRoot.LoadFromFile(@"./Assets/Data/Project.XML");
+//		AllUncompleteResearch = researchXML.Research;
+//        allProjects = projectXML.Project;
+//		allParts = partXML.Part;
+	    using (DatabaseConnection connection = new DatabaseConnection()) {
+	        allHardwareProjects = connection.GetAllHardwareProjects().ToList();
+	        allSoftwareProjects = connection.GetAllSoftwareProjects().ToList();
+	        allResearch = connection.GetAllResearch().ToList();
+	        allParts = connection.GetAllParts().ToList();
+	    }
 
+	    foreach (var project in allHardwareProjects) {
+            Utility.UnityLog("Hardware Project '" + project.stringID + "' needs the following research:");
+	        foreach (var r in project.Research) {
+	            Utility.UnityLog(r.stringID);
+	        }
+            Utility.UnityLog("...And parts:");
+            foreach (var p in project.Parts) {
+                Utility.UnityLog(p.stringID);
+            }
+	    }
+        List<Research> required = new List<Research>();
 
-		//AllCompleteResearch.Add(new Research("Robotics", "Cool robots", 200, 1, new Research[]{}, true));
-		//AllUncompleteResearch.Add(new Research("Computer Components", "Wow, you put together your own computer!", 100, 0, new Research[]{}, false));
-		//AllUncompleteResearch.Add(new Research("Basic Physics", "Learning the basics is a step on the way to discovering the meaning of life", 300, 0, new Research[]{}, false));
-		//AllUncompleteResearch.Add(new Research("Lasers", "Cool robots", 500, 1, new Research[]{Research.getResearchByName("Robotics")}, false));
-		//AllUncompleteResearch.Add(new Research("PDMS", "Point defence missile system protects against enemy robots (that you invented anyway...)", 800, 1, new Research[] { Research.getResearchByName("Robotics"), Research.getResearchByName("Lasers") }, false));
+	    recursiveCanBeDone(allResearch[4], out required);
+
+        Utility.UnityLog(allResearch[4].stringID + " requires:");
+	    foreach (var r in required) {
+	        Utility.UnityLog(r.stringID);
+	    }
+
+	    //AllCompleteResearch.Add(new Research("Robotics", "Cool robots", 200, 1, new Research[]{}, true));
+	    //AllUncompleteResearch.Add(new Research("Computer Components", "Wow, you put together your own computer!", 100, 0, new Research[]{}, false));
+	    //AllUncompleteResearch.Add(new Research("Basic Physics", "Learning the basics is a step on the way to discovering the meaning of life", 300, 0, new Research[]{}, false));
+	    //AllUncompleteResearch.Add(new Research("Lasers", "Cool robots", 500, 1, new Research[]{Research.getResearchByName("Robotics")}, false));
+	    //AllUncompleteResearch.Add(new Research("PDMS", "Point defence missile system protects against enemy robots (that you invented anyway...)", 800, 1, new Research[] { Research.getResearchByName("Robotics"), Research.getResearchByName("Lasers") }, false));
 	}
 
-	// Update is called once per frame
+    // Update is called once per frame
 	void Update () {
         if (ticker == Priority.REALTIME) {
 			// Ticks every frame
@@ -663,14 +675,14 @@ public class GameController : MonoBehaviour {
 		}
 		if (ticker == Priority.MEDIUM) {
 			// Ticks every 10 frames
-			//AllPossibleResearch = AllUncompleteResearch.Where(x => (x.cost <= researchPoints) && !x.Dependencies.Except(AllCompleteResearch).Any() ).ToList();
 			string text = "";
             List<Research> temp = AllPossibleResearch;
 			foreach (Research research in temp) {
-				text += research.string_id + "\n";
+				text += research.stringID + "\n";
 			}
-			researchPoints+= pointsPerSecond*pointsMult;
-			money+= moneyPerSecond*moneyMultiplier;
+
+			researchPoints += pointsPerSecond * pointsMult;
+			money += moneyPerSecond * moneyMultiplier;
 			score.text = researchPoints.ToString ();
 			potentialResearch.text = text;
 			tick.text = incrementalTickTime.ToString ();

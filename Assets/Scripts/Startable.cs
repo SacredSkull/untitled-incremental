@@ -19,12 +19,12 @@ public abstract class Startable {
     // \todo Is this method necessary?
     public abstract void start();
 
-    public abstract string name {
+    public virtual string name {
         get;
         set;
     }
 
-    public abstract int number
+    public virtual int number
     {
         get;
         set;
