@@ -379,21 +379,37 @@ public class GameController : MonoBehaviour {
        }
        return true;
 	}
-    // Currently causes unity to crash... needs some work.
-//    public bool recursiveCanBeDone(Research r, out List<Research> missingResearch) {
-//        missingResearch = new List<Research>();
-//        bool hasDependencies = false;
-//        foreach (Research depends in r.Dependencies) {
-//            if (!hasBeenDone(depends)) {
-//                hasDependencies = true;
-//                missingResearch.Add(depends);
-//                List<Research> childDepend = new List<Research>();
-//                recursiveCanBeDone(depends, out childDepend);
-//                missingResearch.AddRange(childDepend);
-//            }
-//        }
-//        return !hasDependencies;
-//    }
+
+    /**
+ * @fn  public bool canBeDone(Research r, ref List<Research> missingResearch)
+ *
+ * @brief   Recursive variant of canBeDone(Research r) which goes up the entire chain of dependencies, 
+ * filling a list that must be met before this can be done. 
+ *
+ * One particular use in mind for this function (and those like it for Projects, etc.) is that of the hierarchy list, which would high
+ * -light the required nodes needed to start this research. 
+ * 
+ * @author  Peter
+ * @date    28/06/2015
+ *
+ * @param   r   The Research to process.
+ * @param   missingResearch Reference to the List<Research> of requirements not met. As a ref, 
+ * this must be instantiated BEFORE passing it into the method.
+ * 
+ * @warning This method iterates into each unfilled dependency, and walks out its unfilled dependencies and so on, which obviously
+ * results in a longer processing time than the standard canBeDone(Research r).
+ * 
+ * @return  true if there are no dependencies to fullfil, false if requirements are not met. The missingResearch list (empty or not) is always returned.
+ */
+    public bool canBeDone(Research r, ref List<Research> missingResearch) {
+        foreach (Research depends in r.Dependencies) {
+            if (!hasBeenDone(depends)) {
+                missingResearch.Add(depends);
+                recursiveCanBeDone(depends, ref missingResearch);
+            }
+        }
+        return missingResearch.Count == 0;
+    }
 
     /**
      * @property    public List<Research> AllPossibleResearch
@@ -649,9 +665,9 @@ public class GameController : MonoBehaviour {
                 Utility.UnityLog(p.stringID);
             }
 	    }
-        List<Research> required = new List<Research>();
 
-	    recursiveCanBeDone(allResearch[4], out required);
+        List<Research> required = new List<Research>();
+	    recursiveCanBeDone(allResearch[4], ref required);
 
         Utility.UnityLog(allResearch[4].stringID + " requires:");
 	    foreach (var r in required) {

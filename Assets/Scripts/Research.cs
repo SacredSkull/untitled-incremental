@@ -89,13 +89,13 @@ public class Research : Startable, IComparable<Research> {
             if (_Dependencies == null) {
                 using (DatabaseConnection con = new DatabaseConnection()) {
                     _Dependencies = new List<Research>();
-                    const string sql = @"SELECT ID FROM Research as r 
+                    const string sql = @"SELECT ID, name, description, cost FROM Research as r 
                                 INNER JOIN(
 	                                SELECT rJunction.ResearchChildID 
 	                                FROM Research_Dependencies as rJunction 
-	                                WHERE rJunction.ResearchParentID = 3
+	                                WHERE rJunction.ResearchParentID = @RID
                                 ) as rJunction ON rJunction.ResearchChildID = r.ID;";
-                    _Dependencies = con.connection.Query<Research>(sql, new { ID = this.ID }).ToList();
+                    _Dependencies = con.connection.Query<Research>(sql, new { RID = ID }).ToList();
                 }
             }
             return _Dependencies;
