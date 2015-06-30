@@ -8,10 +8,8 @@ public class SoftwareProject : Project {
 
     public override bool possible(out List<Startable> missingRequirements) {
         missingRequirements = new List<Startable>();
-        GameController game = GameController.instance;
-
         foreach (Research r in this.Research) {
-            if (!game.hasBeenDone(r)) {
+            if (!r.hasBeenDone()) {
                 missingRequirements.Add(r);
             }
         }

@@ -46,6 +46,7 @@ public class GameController : MonoBehaviour {
             return _instance;
         }
     }
+
 	//-----------DEBUG
     public bool debugResearchPoints;
 
@@ -92,17 +93,12 @@ public class GameController : MonoBehaviour {
 
 	}
 
-	// 
-	// 
-
     /**
      * @property    public int pointsPerTick
      *
-     * @brief   Adds up and returns the points per second of all completed software/hardware research.
-     *          
+     * @brief   Adds up and returns the points per second of all completed software/hardware research.     
      * 
-     * @todo    Calculate sum of all multipliers, points etc in projects,
-     *          
+     * @todo    Calculate sum of all multipliers, points etc in projects,      
      * 
      * @todo    Add this to the update method, then we'll have a game!
      *          
@@ -156,7 +152,7 @@ public class GameController : MonoBehaviour {
      * @return  The points multiplier.
      */
 
-    int pointsMult{
+    public int pointsMult{
 		get{
 			int temp = BASE_POINTS_PER_CLICK;
 			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.pointMult> 0).ToList();
@@ -179,7 +175,7 @@ public class GameController : MonoBehaviour {
      * @return  The processing power.
      */
 
-	double processingPower{
+    public double processingPower{
 		get{
 			double temp = BASE_PROCESSING_POWER;
 			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.processIncrease> 0.00).ToList();
@@ -202,7 +198,7 @@ public class GameController : MonoBehaviour {
      * @return  The money per second.
      */
 
-	double moneyPerSecond{
+	public double moneyPerSecond{
 		get{
 			int temp = 0;
 			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.moneyPerTick> 0.00).ToList();
@@ -225,7 +221,7 @@ public class GameController : MonoBehaviour {
      * @return  The money multiplier.
      */
 
-	int moneyMultiplier{
+	public int moneyMultiplier{
 		get{
 			int temp = 0;
 			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.moneyMult> 0).ToList();
@@ -247,7 +243,7 @@ public class GameController : MonoBehaviour {
 	/** @brief   All uncomplete research. */
     Dictionary<int, Research> AllUncompleteResearch = new Dictionary<int, Research>();
 	/** @brief   All complete research- key = ResearchID, value = Research*/
-    Dictionary<int, Research> AllCompleteResearch = new Dictionary<int, Research>();
+    public Dictionary<int, Research> AllCompleteResearch = new Dictionary<int, Research>();
 	//May need to create another list ordered by ID to make finding completed
 	//research more efficient. For now though, it is not necessary.
 	//private List<Research> AllResearch = new List<Research>();
@@ -265,28 +261,6 @@ public class GameController : MonoBehaviour {
     public int researchPoints {
 		get;
 		private set;
-	}
-
-    /**
-     * @fn  private int getIndexOfUncompletedResearch(Research a)
-     *
-     * @brief   Gets the index of uncompleted research, using a passed Research object.
-     *
-     * @author  Conal
-     * @date    05/04/2015
-     *
-     * @param   r   The Research to process.
-     *
-     * @return  The index of uncompleted research.
-     */
-
-	private int getIndexOfUncompletedResearch(Research r){
-		for(int i = 0; i<AllUncompleteResearch.Count; i++){
-			if(AllUncompleteResearch[i].stringID.CompareTo(r.stringID) == 0){
-				return i;
-			}
-		}
-		return -1;
 	}
 
     /**
@@ -337,117 +311,34 @@ public class GameController : MonoBehaviour {
 	}*/
 
     /**
-     * @fn  public bool hasBeenDone(string id)
-     *
-     * @brief   Query if research of stringID 'id' has been done.
-     *
-     * @author  Conal
-     * @author  Peter
-     * @date    01/04/2015
-     * @updated 27/06/2015
-     *
-     * @param   id  The stringID identifier of the research.
-     *
-     * @return  true if been done, false if not.
-     */
-
-	public bool hasBeenDone(Research r) {
-	    return AllCompleteResearch.ContainsKey(r.ID);
-	}
-
-    /**
-     * @fn  public bool canBeDone(Research r)
-     *
-     * @brief   Determine if Research 'r' can be done.
-     *
-     * @author  Conal
-     * @date    01/04/2015
-     *
-     * @param   r   The Research to process.
-     *
-     * @return  true if we can be done, false if not.
-     */
-
-	public bool canBeDone(Research r){
-        if(r.processingLevel > processingPower){
-           return false;
-	    }
-       foreach (Research depends in r.Dependencies) {
-           if(!hasBeenDone(depends)){
-               return false;
-           }
-       }
-       return true;
-	}
-
-    /**
- * @fn  public bool canBeDone(Research r, ref List<Research> missingResearch)
- *
- * @brief   Recursive variant of canBeDone(Research r) which goes up the entire chain of dependencies, 
- * filling a list that must be met before this can be done. 
- *
- * One particular use in mind for this function (and those like it for Projects, etc.) is that of the hierarchy list, which would high
- * -light the required nodes needed to start this research. 
- * 
- * @author  Peter
- * @date    28/06/2015
- *
- * @param   r   The Research to process.
- * @param   missingResearch Reference to the List<Research> of requirements not met. As a ref, 
- * this must be instantiated BEFORE passing it into the method.
- * 
- * @warning This method iterates into each unfilled dependency, and walks out its unfilled dependencies and so on, which obviously
- * results in a longer processing time than the standard canBeDone(Research r).
- * 
- * @return  true if there are no dependencies to fullfil, false if requirements are not met. The missingResearch list (empty or not) is always returned.
- */
-    public bool canBeDone(Research r, ref List<Research> missingResearch) {
-        foreach (Research depends in r.Dependencies) {
-            if (!hasBeenDone(depends)) {
-                missingResearch.Add(depends);
-                recursiveCanBeDone(depends, ref missingResearch);
-            }
-        }
-        return missingResearch.Count == 0;
-    }
-
-    /**
      * @property    public List<Research> AllPossibleResearch
      *
      * @brief   Gets all possible research that canBeDone().
-     *
+     * 
+     * @warning Iterator; should not be called every tick!
+     * 
      * @return  all possible research.
      */
 
-	public List<Research> AllPossibleResearch{
+    public List<Research> AllPossibleResearch{
 		get{
             Utility.UnityLog("Before:" + AllUncompleteResearch.Count);
-            List<Research> temp = AllUncompleteResearch.Values.Where(x => canBeDone(x)).ToList();
+            List<Research> temp = AllUncompleteResearch.Values.Where(x => x.canBeDone()).ToList();
 			temp.Sort();
             Utility.UnityLog("After:"+temp.Count);
 			return temp;
 
 		}
-		/*List<Research> underConsideration = new List<Research> ();
-		for (int i = 0; i<AllUncompleteResearch.Count; i++) {
-			if(canBeDone(AllUncompleteResearch[i])){
-				underConsideration.Add(AllUncompleteResearch[i]);
-				underConsideration.Sort();
-			}
-			else if(AllUncompleteResearch[i].processingLevel > processingPower){
-				break;
-			}
-		}
-		return underConsideration;*/
-
 	}
 
 	//-----------------------------------------------------SOFTWARE
 
     /**
-     * @property    public List<Project> UnstartedSoftware
+     * @property    public List<SoftwawreProject> UnstartedSoftware
      *
-     * @brief   All Projects that have not been done or are repeatable
+     * @brief   All SoftwareProjects that have not been completed or are repeatable
+     * 
+     * @warning Iterator; should not be called every tick!
      *
      * @return  The unstarted software.
      */
@@ -466,7 +357,17 @@ public class GameController : MonoBehaviour {
     }
     public List<SoftwareProject> CompletedSoftware = new List<SoftwareProject>();
 
-	public List<SoftwareProject> PossibleSoftware{
+    /**
+    * @property    public List<SoftwareProject> PossibleSoftware
+    *
+    * @brief   All Software that has its dependencies filled
+    *          
+    * @warning Iterator; should not be called every tick!
+    *
+    * @return  The potential software.
+    */
+
+    public List<SoftwareProject> PossibleSoftware{
 		get{
             List<Startable> requirements = new List<Startable>();
 			List<SoftwareProject> temp = UnstartedSoftware.Where(x => x.possible(out requirements)).ToList();
@@ -493,11 +394,8 @@ public class GameController : MonoBehaviour {
 	}
 
 	public void startSoftware(SoftwareProject project){
-		Research temp = new Research (project.pointCost);
 		currentSoftware = project;
 		isSoftware = true;
-		currentResearch = temp;
-		researchSet = true;
 	}
 
 	public void finishSoftware(){
@@ -541,16 +439,7 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
-	private int getIndexOfUncompletedHardware(Project a){
-		for(int i = 0; i<UnstartedHardware.Count; i++){
-			if(UnstartedHardware[i].stringID.CompareTo(a.stringID)==0){
-				return i;
-			}
-		}
-		return -1;
-	}
-
-	private void useRequiredParts(HardwareProject project){
+    private void useRequiredParts(HardwareProject project){
         throw new NotImplementedException();
 //		foreach (var item in project.partDependencies) {
 //			int index = indexOfPart(item.Key);
@@ -577,7 +466,7 @@ public class GameController : MonoBehaviour {
 	//-----------------------------------------------------TICK METHODS AND DATA
 	// A tick is the baseline time measure but it really depends on the speed of the CPU
 	// and any lag that occurs between each frame. Delta time is basically how long the last frame
-	// took to render. Thus it accurately tells us how long that tick should be.
+	// took to render; it accurately tells us how long that tick should be.
 
 	// Note: This is the point ticker. See the ticker for updating GUIs/checking etc.
 	private int ticker = 0;
@@ -667,7 +556,7 @@ public class GameController : MonoBehaviour {
 	    }
 
         List<Research> required = new List<Research>();
-	    recursiveCanBeDone(allResearch[4], ref required);
+	    allResearch[4].canBeDone(ref required);
 
         Utility.UnityLog(allResearch[4].stringID + " requires:");
 	    foreach (var r in required) {
@@ -679,6 +568,11 @@ public class GameController : MonoBehaviour {
 	    //AllUncompleteResearch.Add(new Research("Basic Physics", "Learning the basics is a step on the way to discovering the meaning of life", 300, 0, new Research[]{}, false));
 	    //AllUncompleteResearch.Add(new Research("Lasers", "Cool robots", 500, 1, new Research[]{Research.getResearchByName("Robotics")}, false));
 	    //AllUncompleteResearch.Add(new Research("PDMS", "Point defence missile system protects against enemy robots (that you invented anyway...)", 800, 1, new Research[] { Research.getResearchByName("Robotics"), Research.getResearchByName("Lasers") }, false));
+
+	    foreach (var r in allResearch) {
+	        
+	    }
+
 	}
 
     // Update is called once per frame
