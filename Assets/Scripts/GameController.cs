@@ -28,6 +28,9 @@ public class GameController : MonoBehaviour {
     List<HardwareProject>  allHardwareProjects;
     List<SoftwareProject>  allSoftwareProjects;
     List<Research> allResearch;
+	public int researchPage = 0;
+	//Have you changed page in the last 15 frames?
+	public bool flicked = false;
 
     // See http://unitypatterns.com/singletons/ for more details. Alternatively, google C# singleton.
     private static GameController _instance;
@@ -48,7 +51,7 @@ public class GameController : MonoBehaviour {
     }
 
 	//-----------DEBUG
-    public bool debugResearchPoints;
+	public bool debugResearchPoints;
 
 	//-----------Incremental Values
     private const int BASE_POINTS_PER_CLICK = 10;
@@ -60,6 +63,11 @@ public class GameController : MonoBehaviour {
 	private Text score;
 	private Text tick;
 	private Text potentialResearch;
+	private Text r1;
+	private Text r2;
+	private Text r3;
+	public List<Text> outResearch = new List<Text>();
+
 
 	//-----------------------------------------------------CORE METHODS
 
@@ -72,7 +80,10 @@ public class GameController : MonoBehaviour {
      *
      * @brief   Adds research points.
      *          
-     * @details Adds research points if the research you are currently researching costs more than you currently have. If it costs less and isn't software, your current research is halted and your research points are set to zero. Finally, if any other condition (should only be software research) , your software is finished and points are set to zero.
+     * @details Adds research points if the research you are currently researching costs 
+     * more than you currently have. If it costs less and isn't software, your current research 
+     * is halted and your research points are set to zero. Finally, if any other 
+     * condition (should only be software research) , your software is finished and points are set to zero.
      *
      * @author  Conal
      * @date    05/04/2015
@@ -81,15 +92,18 @@ public class GameController : MonoBehaviour {
      */
 
 	public void addResearchPoints(int points){
-		if ((isResearchSet () && currentResearch.cost > researchPoints) || debugResearchPoints) {
-			this.researchPoints += points;
-		} else if (isResearchSet () && !isSoftware) {
-			finishResearch ();
-			this.researchPoints = 0;
-		} else {
-			finishSoftware();
-			this.researchPoints = 0;
+		if(isResearchSet()){
+			if ((currentResearch.cost > researchPoints) || debugResearchPoints) {
+				this.researchPoints += points;
+			} else if (!isSoftware) {
+				finishResearch ();
+				this.researchPoints = 0;
+			} else {
+				finishSoftware();
+				this.researchPoints = 0;
+			}
 		}
+
 
 	}
 
@@ -239,7 +253,7 @@ public class GameController : MonoBehaviour {
 
 	//-----------------------------------------------------RESEARCH METHODS AND DATA
 	/** @brief   If research is set or not */
-	private bool researchSet;
+	private bool researchSet = false;
 	/** @brief   All uncomplete research. */
     Dictionary<int, Research> AllUncompleteResearch = new Dictionary<int, Research>();
 	/** @brief   All complete research- key = ResearchID, value = Research*/
@@ -404,7 +418,7 @@ public class GameController : MonoBehaviour {
 		}
 		else{
 			CompletedSoftware.Add(currentSoftware);
-            allHardwareProjects[currentResearch.ID].uses--;
+            allSoftwareProjects[currentResearch.ID].uses--;
 		}
 		currentSoftware = null;
 		isSoftware = false;
@@ -515,6 +529,21 @@ public class GameController : MonoBehaviour {
 	        partInventory[p.ID] = 0;
 	    }
 	}
+	//-----------------------------------------MISC
+
+	public int pageNumber(){
+		return researchPage;
+	}
+
+	public void next(){
+		researchPage+=1;
+		flicked = true;
+	}
+
+	public void previous(){
+		researchPage -= 1;
+		flicked = true;
+	}
 
 	//-----------------------------------------UNITY METHODS
 
@@ -522,6 +551,9 @@ public class GameController : MonoBehaviour {
 		score = GameObject.Find("PointsText").GetComponent<Text>();
 		tick = GameObject.Find("Ticks").GetComponent<Text>();
 		potentialResearch = GameObject.Find("Research").GetComponent<Text>();
+		r1 = GameObject.Find ("r1").GetComponent<Text> ();
+		r2 = GameObject.Find ("r2").GetComponent<Text> ();
+		r3 = GameObject.Find ("r3").GetComponent<Text> ();
 		researchPoints = 0;
 		money = 0;
 	}
@@ -531,6 +563,9 @@ public class GameController : MonoBehaviour {
 		// XML load
 		incrementalTickTime = 1;
 		incrementalTickIterations = 40;
+		outResearch.Add (r1);
+		outResearch.Add (r2);
+		outResearch.Add (r3);
 //		ResearchRoot researchXML = ResearchRoot.LoadFromFile(@"./Assets/Data/Research.xml");
 //		PartRoot partXML = PartRoot.LoadFromFile(@"./Assets/Data/Part.XML");
 //		ProjectRoot projectXML = ProjectRoot.LoadFromFile(@"./Assets/Data/Project.XML");
@@ -577,8 +612,35 @@ public class GameController : MonoBehaviour {
 
     // Update is called once per frame
 	void Update () {
+		List<Research> temp = AllPossibleResearch;
         if (ticker == Priority.REALTIME) {
 			// Ticks every frame
+			int i = 0;
+			foreach(Text field in outResearch){
+				int position = 0+(researchPage*3)+i;
+				field.text = temp[position].name + ": " +temp[position].cost;
+				i++;
+			}
+			if(researchPage == 0){
+				GameObject button; 
+				button = GameObject.Find("Previous");
+				button.GetComponent<CanvasGroup>().alpha = 0;
+				button.GetComponent<Button>().interactable = false;
+				button.GetComponent<CanvasGroup>().interactable = false;
+			}
+			else if(researchPage != 0){
+				GameObject button; 
+				button = GameObject.Find("Previous");
+				button.GetComponent<CanvasGroup>().alpha = 0;
+				button.GetComponent<Button>().interactable = false;
+				button.GetComponent<CanvasGroup>().interactable = false;
+				if(temp.Count >= 3+(researchPage*3)){
+					button = GameObject.Find("Next");
+					button.GetComponent<CanvasGroup>().alpha = 0;
+					button.GetComponent<Button>().interactable = false;
+					button.GetComponent<CanvasGroup>().interactable = false;
+				}
+			}
 		}
 		if (ticker == Priority.HIGH) {
 			// Ticks every 5 frames
@@ -586,19 +648,18 @@ public class GameController : MonoBehaviour {
 		if (ticker == Priority.MEDIUM) {
 			// Ticks every 10 frames
 			string text = "";
-            List<Research> temp = AllPossibleResearch;
-			foreach (Research research in temp) {
+            foreach (var research in temp) {
 				text += research.stringID + "\n";
 			}
 
 			researchPoints += pointsPerSecond * pointsMult;
 			money += moneyPerSecond * moneyMultiplier;
 			score.text = researchPoints.ToString ();
-			potentialResearch.text = text;
 			tick.text = incrementalTickTime.ToString ();
 		}
 		if (ticker == Priority.LOW) {
 			// Ticks every 15 frames
+			flicked = false;
 			ticker = 0;
 		} else
 			ticker++;
