@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Incremental.Database;
@@ -24,13 +25,13 @@ using Incremental.Database;
 
 public class GameController : MonoBehaviour {
 
-    public List<HardwareProject>  allHardwareProjects;
-    public List<SoftwareProject>  allSoftwareProjects;
-    public List<Research> allResearch;
-    public int researchPage = 0;
+    List<HardwareProject>  allHardwareProjects;
+    List<SoftwareProject>  allSoftwareProjects;
+    List<Research> allResearch;
+	public int researchPage = 0;
+	//Have you changed page in the last 15 frames?
+	public bool flicked = false;
 
-    //Have you changed page in the last 15 frames?
-    public bool flicked = false;
     // See http://unitypatterns.com/singletons/ for more details. Alternatively, google C# singleton.
     private static GameController _instance;
 
@@ -54,7 +55,7 @@ public class GameController : MonoBehaviour {
 
 	//-----------Incremental Values
     private const int BASE_POINTS_PER_CLICK = 10;
-    private const double BASE_PROCESSING_POWER = 1.23;
+	private const double BASE_PROCESSING_POWER = 0.00;
     /** @brief   Current money of the player. */
 	public double money = 0.00;
 
@@ -254,7 +255,7 @@ public class GameController : MonoBehaviour {
 	/** @brief   If research is set or not */
 	private bool researchSet = false;
 	/** @brief   All uncomplete research. */
-    Dictionary<int, Research> AllUncompleteResearch = new Dictionary<int, Research>();
+    public Dictionary<int, Research> AllUncompleteResearch = new Dictionary<int, Research>();
 	/** @brief   All complete research- key = ResearchID, value = Research*/
     public Dictionary<int, Research> AllCompleteResearch = new Dictionary<int, Research>();
 	//May need to create another list ordered by ID to make finding completed
@@ -310,6 +311,34 @@ public class GameController : MonoBehaviour {
 		currentResearch.complete();
 		AllCompleteResearch.Add(currentResearch.ID, currentResearch);
 		currentResearch = null;
+		List<Research> temp = AllPossibleResearch;
+		int i = 0;
+		researchPage = 0;
+		foreach(Text field in outResearch){
+			int position = 0+(researchPage*3)+i;
+			try{
+				field.text = temp[position].name + ": " +temp[position].cost;
+				field.tag = temp[position].ID.ToString();
+			}
+			catch(ArgumentOutOfRangeException){
+				field.text = "???";
+			}
+			i++;
+		}
+		if(researchPage == 0){
+			GameObject button; 
+			button = GameObject.Find("Previous");
+			button.GetComponent<CanvasGroup>().alpha = 0;
+			button.GetComponent<Button>().interactable = false;
+			button.GetComponent<CanvasGroup>().interactable = false;
+			if(temp.Count >= 3+(researchPage*3)){
+				button = GameObject.Find("Next");
+				button.GetComponent<CanvasGroup>().alpha = 0;
+				button.GetComponent<Button>().interactable = false;
+				button.GetComponent<CanvasGroup>().interactable = false;
+			}
+		}
+
 	}
 
 	//currently useless
@@ -536,11 +565,76 @@ public class GameController : MonoBehaviour {
 
 	public void next(){
 		researchPage+=1;
+		List<Research> temp = AllPossibleResearch;
+		int i = 0;
+		foreach(Text field in outResearch){
+			int position = 0+(researchPage*3)+i;
+			try{
+				field.text = temp[position].name + ": " +temp[position].cost;
+				field.tag = temp[position].ID.ToString();
+			}
+			catch(ArgumentOutOfRangeException){
+				field.text = "???";
+			}
+			i++;
+		}
+
+		GameObject button; 
+		button = GameObject.Find("Previous");
+		button.GetComponent<CanvasGroup>().alpha = 0;
+		button.GetComponent<Button>().interactable = false;
+		button.GetComponent<CanvasGroup>().interactable = false;
+		if(temp.Count <= 3+(researchPage*3)){
+			button = GameObject.Find("Next");
+			button.GetComponent<CanvasGroup>().alpha = 0;
+			button.GetComponent<Button>().interactable = false;
+			button.GetComponent<CanvasGroup>().interactable = false;
+		}
+
 		flicked = true;
 	}
 
 	public void previous(){
 		researchPage -= 1;
+		List<Research> temp = AllPossibleResearch;
+		int i = 0;
+		foreach(Text field in outResearch){
+			int position = 0+(researchPage*3)+i;
+			try{
+				field.text = temp[position].name + ": " +temp[position].cost;
+				field.tag = temp[position].ID.ToString();
+			}
+			catch(ArgumentOutOfRangeException){
+				field.text = "???";
+			}
+			i++;
+		}
+		if(researchPage == 0){
+			GameObject button; 
+			button = GameObject.Find("Previous");
+			button.GetComponent<CanvasGroup>().alpha = 0;
+			button.GetComponent<Button>().interactable = false;
+			button.GetComponent<CanvasGroup>().interactable = false;
+			if(temp.Count <= 3+(researchPage*3)){
+				button = GameObject.Find("Next");
+				button.GetComponent<CanvasGroup>().alpha = 0;
+				button.GetComponent<Button>().interactable = false;
+				button.GetComponent<CanvasGroup>().interactable = false;
+			}
+		}
+		else if(researchPage != 0){
+			GameObject button; 
+			button = GameObject.Find("Previous");
+			button.GetComponent<CanvasGroup>().alpha = 0;
+			button.GetComponent<Button>().interactable = false;
+			button.GetComponent<CanvasGroup>().interactable = false;
+			if(temp.Count <= 3+(researchPage*3)){
+				button = GameObject.Find("Next");
+				button.GetComponent<CanvasGroup>().alpha = 0;
+				button.GetComponent<Button>().interactable = false;
+				button.GetComponent<CanvasGroup>().interactable = false;
+			}
+		}
 		flicked = true;
 	}
 
@@ -565,7 +659,12 @@ public class GameController : MonoBehaviour {
 		outResearch.Add (r1);
 		outResearch.Add (r2);
 		outResearch.Add (r3);
-
+//		ResearchRoot researchXML = ResearchRoot.LoadFromFile(@"./Assets/Data/Research.xml");
+//		PartRoot partXML = PartRoot.LoadFromFile(@"./Assets/Data/Part.XML");
+//		ProjectRoot projectXML = ProjectRoot.LoadFromFile(@"./Assets/Data/Project.XML");
+//		AllUncompleteResearch = researchXML.Research;
+//        allProjects = projectXML.Project;
+//		allParts = partXML.Part;
 	    using (DatabaseConnection connection = new DatabaseConnection()) {
 	        allHardwareProjects = connection.GetAllHardwareProjects().ToList();
 	        allSoftwareProjects = connection.GetAllSoftwareProjects().ToList();
@@ -588,31 +687,36 @@ public class GameController : MonoBehaviour {
 	    allResearch[4].canBeDone(ref required);
 
         Utility.UnityLog(allResearch[4].stringID + " requires:");
-	    foreach (var r in required) {
-	        Utility.UnityLog(r.stringID);
-	    }
+		List<Research> temp = AllPossibleResearch;
+		foreach (var r in required) {
+			Utility.UnityLog(r.stringID);
+		}
+
 
 	    //AllCompleteResearch.Add(new Research("Robotics", "Cool robots", 200, 1, new Research[]{}, true));
 	    //AllUncompleteResearch.Add(new Research("Computer Components", "Wow, you put together your own computer!", 100, 0, new Research[]{}, false));
 	    //AllUncompleteResearch.Add(new Research("Basic Physics", "Learning the basics is a step on the way to discovering the meaning of life", 300, 0, new Research[]{}, false));
 	    //AllUncompleteResearch.Add(new Research("Lasers", "Cool robots", 500, 1, new Research[]{Research.getResearchByName("Robotics")}, false));
 	    //AllUncompleteResearch.Add(new Research("PDMS", "Point defence missile system protects against enemy robots (that you invented anyway...)", 800, 1, new Research[] { Research.getResearchByName("Robotics"), Research.getResearchByName("Lasers") }, false));
-
-	    foreach (var r in allResearch) {
-	        
-	    }
-
+		    
 	}
 
     // Update is called once per frame
 	void Update () {
-		List<Research> temp = AllPossibleResearch;
-        if (ticker == Priority.REALTIME) {
+		//List<Research> temp = AllPossibleResearch;
+		if (ticker == Priority.REALTIME) {
 			// Ticks every frame
+			List<Research> temp = AllPossibleResearch;
 			int i = 0;
 			foreach(Text field in outResearch){
 				int position = 0+(researchPage*3)+i;
-				field.text = temp[position].name + ": " +temp[position].cost;
+				try{
+					field.text = temp[position].name + ": " +temp[position].cost;
+					field.tag = temp[position].ID.ToString();
+				}
+				catch(ArgumentOutOfRangeException){
+					field.text = "???";
+				}
 				i++;
 			}
 			if(researchPage == 0){
@@ -621,6 +725,12 @@ public class GameController : MonoBehaviour {
 				button.GetComponent<CanvasGroup>().alpha = 0;
 				button.GetComponent<Button>().interactable = false;
 				button.GetComponent<CanvasGroup>().interactable = false;
+				if(temp.Count <= 3+(researchPage*3)){
+					button = GameObject.Find("Next");
+					button.GetComponent<CanvasGroup>().alpha = 0;
+					button.GetComponent<Button>().interactable = false;
+					button.GetComponent<CanvasGroup>().interactable = false;
+				}
 			}
 			else if(researchPage != 0){
 				GameObject button; 
@@ -628,24 +738,20 @@ public class GameController : MonoBehaviour {
 				button.GetComponent<CanvasGroup>().alpha = 0;
 				button.GetComponent<Button>().interactable = false;
 				button.GetComponent<CanvasGroup>().interactable = false;
-				if(temp.Count >= 3+(researchPage*3)){
+				if(temp.Count <= 3+(researchPage*3)){
 					button = GameObject.Find("Next");
 					button.GetComponent<CanvasGroup>().alpha = 0;
 					button.GetComponent<Button>().interactable = false;
 					button.GetComponent<CanvasGroup>().interactable = false;
 				}
 			}
+
 		}
 		if (ticker == Priority.HIGH) {
 			// Ticks every 5 frames
 		}
 		if (ticker == Priority.MEDIUM) {
 			// Ticks every 10 frames
-			string text = "";
-            foreach (var research in temp) {
-				text += research.stringID + "\n";
-			}
-
 			researchPoints += pointsPerSecond * pointsMult;
 			money += moneyPerSecond * moneyMultiplier;
 			score.text = researchPoints.ToString ();
