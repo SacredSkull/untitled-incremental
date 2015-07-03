@@ -2,7 +2,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Incremental.Database;
@@ -25,9 +24,9 @@ using Incremental.Database;
 
 public class GameController : MonoBehaviour {
 
-    List<HardwareProject>  allHardwareProjects;
-    List<SoftwareProject>  allSoftwareProjects;
-    List<Research> allResearch;
+    public List<HardwareProject>  allHardwareProjects;
+    public List<SoftwareProject>  allSoftwareProjects;
+    public List<Research> allResearch;
 
     // See http://unitypatterns.com/singletons/ for more details. Alternatively, google C# singleton.
     private static GameController _instance;
