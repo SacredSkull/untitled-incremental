@@ -20,7 +20,7 @@ public class Research : Startable, IComparable<Research> {
 	public string stringID;
 	public string description;
 	public int cost;
-	public double processingReq;
+	public int processingLevel = 1;
 	public bool done;
 
     public override string name {
@@ -134,7 +134,7 @@ public class Research : Startable, IComparable<Research> {
  */
 
     public bool canBeDone() {
-        if (this.processingReq > GameController.instance.processingPower) {
+        if (this.processingLevel > GameController.instance.processingPower) {
             return false;
         }
         foreach (Research depends in this.Dependencies) {
@@ -193,9 +193,9 @@ public class Research : Startable, IComparable<Research> {
 
     public int CompareTo(Research b) {
         Research a = this;
-        if (a.processingReq < b.processingReq) {
+        if (a.processingLevel < b.processingLevel) {
             return -1;
-        } else if (a.processingReq > b.processingReq) {
+        } else if (a.processingLevel > b.processingLevel) {
             return 1;
         } else
             return 0;

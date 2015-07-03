@@ -54,7 +54,7 @@ public class GameController : MonoBehaviour {
 
 	//-----------Incremental Values
     private const int BASE_POINTS_PER_CLICK = 10;
-	private const double BASE_PROCESSING_POWER = 0.00;
+    private const double BASE_PROCESSING_POWER = 1.23;
     /** @brief   Current money of the player. */
 	public double money = 0.00;
 
@@ -606,9 +606,8 @@ public class GameController : MonoBehaviour {
 
     // Update is called once per frame
 	void Update () {
-		//List<Research> temp = AllPossibleResearch;
 		List<Research> temp = AllPossibleResearch;
-		if (ticker == Priority.REALTIME) {
+        if (ticker == Priority.REALTIME) {
 			// Ticks every frame
 			int i = 0;
 			foreach(Text field in outResearch){
