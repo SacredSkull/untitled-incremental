@@ -20,7 +20,7 @@ public class Research : Startable, IComparable<Research> {
 	public string stringID;
 	public string description;
 	public int cost;
-	public int processingLevel = 1;
+	public double processingReq;
 	public bool done;
 
     public override string name {
@@ -51,12 +51,12 @@ public class Research : Startable, IComparable<Research> {
             if (_Dependencies == null) {
                 using (DatabaseConnection con = new DatabaseConnection()) {
                     _Dependencies = new List<Research>();
-                    const string sql = @"SELECT ID, name, description, cost FROM Research as recursionCurrentResearch 
+                    const string sql = @"SELECT ID, name, description, cost FROM Research as r 
                                 INNER JOIN(
 	                                SELECT rJunction.ResearchChildID 
 	                                FROM Research_Dependencies as rJunction 
 	                                WHERE rJunction.ResearchParentID = @RID
-                                ) as rJunction ON rJunction.ResearchChildID = recursionCurrentResearch.ID;";
+                                ) as rJunction ON rJunction.ResearchChildID = r.ID;";
                     _Dependencies = con.connection.Query<Research>(sql, new { RID = ID }).ToList();
                 }
             }
@@ -134,7 +134,7 @@ public class Research : Startable, IComparable<Research> {
  */
 
     public bool canBeDone() {
-        if (this.processingLevel > GameController.instance.processingPower) {
+        if (this.processingReq > GameController.instance.processingPower) {
             return false;
         }
         foreach (Research depends in this.Dependencies) {
@@ -158,10 +158,10 @@ public class Research : Startable, IComparable<Research> {
     * @date    28/06/2015
     *
     * @param   missingResearch Reference to the List<Research> of requirements not met. As a ref, 
-    * this must be instantiated BEFORE passing it into the method.  
+    * this must be instantiated BEFORE passing it into the method.
     * 
     * @warning This method iterates into each unfilled dependency, and walks out its unfilled dependencies and so on, which obviously
-    * results in a longer processing time than the standard canBeDone().
+    * results in a longer processing time than the standard canBeDone(Research r).
     * 
     * @return  true if there are no dependencies to fullfil, false if requirements are not met. The missingResearch list (empty or not) is always returned.
     */
@@ -170,7 +170,7 @@ public class Research : Startable, IComparable<Research> {
         foreach (Research depends in this.Dependencies) {
             if (!depends.hasBeenDone()) {
                 missingResearch.Add(depends);
-                depends.canBeDone(ref missingResearch);
+                canBeDone(ref missingResearch);
             }
         }
         return missingResearch.Count == 0;
@@ -193,9 +193,9 @@ public class Research : Startable, IComparable<Research> {
 
     public int CompareTo(Research b) {
         Research a = this;
-        if (a.processingLevel < b.processingLevel) {
+        if (a.processingReq < b.processingReq) {
             return -1;
-        } else if (a.processingLevel > b.processingLevel) {
+        } else if (a.processingReq > b.processingReq) {
             return 1;
         } else
             return 0;
