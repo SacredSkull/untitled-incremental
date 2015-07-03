@@ -2,7 +2,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Incremental.Database;
@@ -25,13 +24,13 @@ using Incremental.Database;
 
 public class GameController : MonoBehaviour {
 
-    List<HardwareProject>  allHardwareProjects;
-    List<SoftwareProject>  allSoftwareProjects;
-    List<Research> allResearch;
-	public int researchPage = 0;
-	//Have you changed page in the last 15 frames?
-	public bool flicked = false;
+    public List<HardwareProject>  allHardwareProjects;
+    public List<SoftwareProject>  allSoftwareProjects;
+    public List<Research> allResearch;
+    public int researchPage = 0;
 
+    //Have you changed page in the last 15 frames?
+    public bool flicked = false;
     // See http://unitypatterns.com/singletons/ for more details. Alternatively, google C# singleton.
     private static GameController _instance;
 
@@ -55,7 +54,7 @@ public class GameController : MonoBehaviour {
 
 	//-----------Incremental Values
     private const int BASE_POINTS_PER_CLICK = 10;
-	private const double BASE_PROCESSING_POWER = 0.00;
+    private const double BASE_PROCESSING_POWER = 1.23;
     /** @brief   Current money of the player. */
 	public double money = 0.00;
 
@@ -566,12 +565,7 @@ public class GameController : MonoBehaviour {
 		outResearch.Add (r1);
 		outResearch.Add (r2);
 		outResearch.Add (r3);
-//		ResearchRoot researchXML = ResearchRoot.LoadFromFile(@"./Assets/Data/Research.xml");
-//		PartRoot partXML = PartRoot.LoadFromFile(@"./Assets/Data/Part.XML");
-//		ProjectRoot projectXML = ProjectRoot.LoadFromFile(@"./Assets/Data/Project.XML");
-//		AllUncompleteResearch = researchXML.Research;
-//        allProjects = projectXML.Project;
-//		allParts = partXML.Part;
+
 	    using (DatabaseConnection connection = new DatabaseConnection()) {
 	        allHardwareProjects = connection.GetAllHardwareProjects().ToList();
 	        allSoftwareProjects = connection.GetAllSoftwareProjects().ToList();
@@ -612,9 +606,8 @@ public class GameController : MonoBehaviour {
 
     // Update is called once per frame
 	void Update () {
-		//List<Research> temp = AllPossibleResearch;
 		List<Research> temp = AllPossibleResearch;
-		if (ticker == Priority.REALTIME) {
+        if (ticker == Priority.REALTIME) {
 			// Ticks every frame
 			int i = 0;
 			foreach(Text field in outResearch){
