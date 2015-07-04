@@ -124,12 +124,14 @@ public class Research : Startable, IComparable<Research> {
  */
 
     public bool canBeDone() {
-        if (this.processReq > GameController.instance.processingPower) {
+		if (this.processReq > GameController.instance.processingPower) {
+			Utility.UnityLog(GameController.instance.processingPower.ToString(),1);
             return false;
         }
         foreach (Research depends in this.Dependencies) {
             if (!depends.hasBeenDone()) {
-                return false;
+				Utility.UnityLog(depends.name,1);
+				return false;
             }
         }
         return true;
