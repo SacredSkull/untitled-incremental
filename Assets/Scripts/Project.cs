@@ -32,7 +32,7 @@ public abstract class Project : Startable {
 
     //public List<Part> requiredParts = new List<Part>();
     public int ID { get; set; }
-    public string stringID { get; set; }
+    public string name { get; set; }
     public string description { get; set; }
     public int upkeep { get; set; }
     public int uses { get; set; }
@@ -102,15 +102,6 @@ public abstract class Project : Startable {
     public override void start() {
         //TODO: This is required by interface Startable
         throw new NotImplementedException();
-    }
-
-    public override string name {
-        get {
-            return this.stringID;
-        }
-        set {
-            this.stringID = value;
-        }
     }
 
     /**

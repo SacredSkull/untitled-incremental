@@ -25,8 +25,8 @@ using Incremental.Database;
 
 public class GameController : MonoBehaviour {
 
-    List<HardwareProject>  allHardwareProjects;
-    List<SoftwareProject>  allSoftwareProjects;
+    List<HardwareProject> allHardwareProjects;
+    List<SoftwareProject> allSoftwareProjects;
     List<Research> allResearch;
 	public int researchPage = 0;
 	//Have you changed page in the last 15 frames?
@@ -123,8 +123,8 @@ public class GameController : MonoBehaviour {
     int pointsPerSecond{
 		get{
 			int temp = 0;
-			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.pointsPerTick> 0).ToList();
-			List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.pointsPerTick> 0).ToList();
+			List<SoftwareProject> relevantSoftware = AllCompletedSoftware.Where(x => x.pointsPerTick> 0).ToList();
+			List<HardwareProject> relevantHardware = AllCompletedHardware.Where(x => x.pointsPerTick> 0).ToList();
 			foreach(SoftwareProject project in relevantSoftware){
 				temp += project.pointsPerTick;
 			}
@@ -146,8 +146,8 @@ public class GameController : MonoBehaviour {
 	 public int pointsPerClick{
 		get{
 			int temp = BASE_POINTS_PER_CLICK;
-			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.pointsPerClick> 0).ToList();
-			List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.pointsPerClick> 0).ToList();
+			List<SoftwareProject> relevantSoftware = AllCompletedSoftware.Where(x => x.pointsPerClick> 0).ToList();
+			List<HardwareProject> relevantHardware = AllCompletedHardware.Where(x => x.pointsPerClick> 0).ToList();
 			foreach(SoftwareProject item in relevantSoftware){
 				temp+=  item.pointsPerClick;
 			}
@@ -169,8 +169,8 @@ public class GameController : MonoBehaviour {
     public int pointsMult{
 		get{
 			int temp = BASE_POINTS_PER_CLICK;
-			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.pointMult> 0).ToList();
-            List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.pointMult > 0).ToList();
+			List<SoftwareProject> relevantSoftware = AllCompletedSoftware.Where(x => x.pointMult> 0).ToList();
+            List<HardwareProject> relevantHardware = AllCompletedHardware.Where(x => x.pointMult > 0).ToList();
 			foreach(SoftwareProject item in relevantSoftware){
 				temp += item.pointMult;
 			}
@@ -192,8 +192,8 @@ public class GameController : MonoBehaviour {
     public double processingPower{
 		get{
 			double temp = BASE_PROCESSING_POWER;
-			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.processIncrease> 0.00).ToList();
-			List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.processIncrease> 0.00).ToList();
+			List<SoftwareProject> relevantSoftware = AllCompletedSoftware.Where(x => x.processIncrease> 0.00).ToList();
+			List<HardwareProject> relevantHardware = AllCompletedHardware.Where(x => x.processIncrease> 0.00).ToList();
 			foreach(SoftwareProject item in relevantSoftware){
 				temp += item.processIncrease;
 			}
@@ -215,8 +215,8 @@ public class GameController : MonoBehaviour {
 	public double moneyPerSecond{
 		get{
 			int temp = 0;
-			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.moneyPerTick> 0.00).ToList();
-            List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.moneyPerTick > 0.00).ToList();
+			List<SoftwareProject> relevantSoftware = AllCompletedSoftware.Where(x => x.moneyPerTick> 0.00).ToList();
+            List<HardwareProject> relevantHardware = AllCompletedHardware.Where(x => x.moneyPerTick > 0.00).ToList();
 			foreach(SoftwareProject item in relevantSoftware){
 				temp+=  item.moneyPerTick;
 			}
@@ -238,8 +238,8 @@ public class GameController : MonoBehaviour {
 	public int moneyMultiplier{
 		get{
 			int temp = 0;
-			List<SoftwareProject> relevantSoftware = CompletedSoftware.Where(x => x.moneyMult> 0).ToList();
-            List<HardwareProject> relevantHardware = CompletedHardware.Where(x => x.moneyMult > 0).ToList();
+			List<SoftwareProject> relevantSoftware = AllCompletedSoftware.Where(x => x.moneyMult> 0).ToList();
+            List<HardwareProject> relevantHardware = AllCompletedHardware.Where(x => x.moneyMult > 0).ToList();
 			foreach(SoftwareProject item in relevantSoftware){
 				temp+=  item.moneyMult;
 			}
@@ -261,6 +261,15 @@ public class GameController : MonoBehaviour {
 	//May need to create another list ordered by ID to make finding completed
 	//research more efficient. For now though, it is not necessary.
 	//private List<Research> AllResearch = new List<Research>();
+	
+    // EVENTS
+    public delegate void StartedResearchHandler(Research sender, EventArgs e);
+    public delegate void StoppedResearchHandler(Research sender, EventArgs e);
+    public delegate void CompletedResearchHandler(Research sender, EventArgs e);
+
+    public event StartedResearchHandler StartedResearch;
+    public event StoppedResearchHandler StoppedResearch;
+    public event CompletedResearchHandler aCompletedResearch;
 
 
 	public bool isResearchSet(){
@@ -364,16 +373,22 @@ public class GameController : MonoBehaviour {
 
     public List<Research> AllPossibleResearch{
 		get{
-            Utility.UnityLog("Before:" + AllUncompleteResearch.Count);
             List<Research> temp = AllUncompleteResearch.Values.Where(x => x.canBeDone()).ToList();
-			temp.Sort();
-            Utility.UnityLog("After:"+temp.Count);
 			return temp;
 
 		}
 	}
 
 	//-----------------------------------------------------SOFTWARE
+
+    // EVENTS
+    public delegate void StartedSoftwareHandler(SoftwareProject sender, EventArgs e);
+    public delegate void StoppedSoftwareHandler(SoftwareProject sender, EventArgs e);
+    public delegate void CompletedSoftwareHandler(SoftwareProject sender, EventArgs e);
+
+    public event StartedSoftwareHandler StartedSoftware;
+    public event StoppedSoftwareHandler StoppedSoftware;
+    public event CompletedSoftwareHandler CompletedSoftware;
 
     /**
      * @property    public List<SoftwawreProject> UnstartedSoftware
@@ -397,7 +412,7 @@ public class GameController : MonoBehaviour {
             return temp;
         }
     }
-    public List<SoftwareProject> CompletedSoftware = new List<SoftwareProject>();
+    public List<SoftwareProject> AllCompletedSoftware = new List<SoftwareProject>();
 
     /**
     * @property    public List<SoftwareProject> PossibleSoftware
@@ -442,10 +457,10 @@ public class GameController : MonoBehaviour {
 
 	public void finishSoftware(){
 		if(currentSoftware.canDoMultiple){
-			CompletedSoftware.Add(currentSoftware);
+			AllCompletedSoftware.Add(currentSoftware);
 		}
 		else{
-			CompletedSoftware.Add(currentSoftware);
+			AllCompletedSoftware.Add(currentSoftware);
             allSoftwareProjects[currentResearch.ID].uses--;
 		}
 		currentSoftware = null;
@@ -456,6 +471,15 @@ public class GameController : MonoBehaviour {
 
 	//-----------------------------------------------------HARDWARE
 
+    // HardwareProject
+    public delegate void StartedHardwareHandler(HardwareProject sender, EventArgs e);
+    public delegate void StoppedHardwareHandler(HardwareProject sender, EventArgs e);
+    public delegate void CompletedHardwareHandler(HardwareProject sender, EventArgs e);
+
+    public event StartedHardwareHandler StartedHardware;
+    public event StoppedHardwareHandler StoppedHardware;
+    public event CompletedHardwareHandler CompletedHardware;
+
     public List<HardwareProject> UnstartedHardware {
         get {
             List<HardwareProject> temp = new List<HardwareProject>();
@@ -463,13 +487,13 @@ public class GameController : MonoBehaviour {
             {
                 if (item.uses > 0 || item.uses == -1)
                 {
-                    temp.Add((HardwareProject)item);
+                    temp.Add(item);
                 }
             }
             return temp;
         }
     }
-    public List<HardwareProject> CompletedHardware = new List<HardwareProject>();
+    public List<HardwareProject> AllCompletedHardware = new List<HardwareProject>();
 
 	public List<HardwareProject> PossibleHardware{
 		get{
@@ -491,12 +515,12 @@ public class GameController : MonoBehaviour {
 
 	public void makeHardware(HardwareProject project){
         if (project.canDoMultiple) {
-            CompletedHardware.Add(project);
+            AllCompletedHardware.Add(project);
             useRequiredParts(project);
 		}
 		else{
             if (allHardwareProjects[project.ID].uses > 0) {
-                CompletedHardware.Add(project);
+                AllCompletedHardware.Add(project);
                 allHardwareProjects[project.ID].uses--;
                 useRequiredParts(project);
             }
@@ -673,9 +697,9 @@ public class GameController : MonoBehaviour {
 	    }
 
 	    foreach (var project in allHardwareProjects) {
-            Utility.UnityLog("Hardware Project '" + project.stringID + "' needs the following research:");
+            Utility.UnityLog("Hardware Project '" + project.name + "' needs the following research:");
 	        foreach (var r in project.Research) {
-	            Utility.UnityLog(r.stringID);
+	            Utility.UnityLog(r.name);
 	        }
             Utility.UnityLog("...And parts:");
             foreach (var p in project.Parts) {
@@ -686,10 +710,10 @@ public class GameController : MonoBehaviour {
         List<Research> required = new List<Research>();
 	    allResearch[4].canBeDone(ref required);
 
-        Utility.UnityLog(allResearch[4].stringID + " requires:");
+        Utility.UnityLog(allResearch[4].name + " requires:");
 		List<Research> temp = AllPossibleResearch;
 		foreach (var r in required) {
-			Utility.UnityLog(r.stringID);
+			Utility.UnityLog(r.name);
 		}
 
 
