@@ -55,7 +55,7 @@ public class GameController : MonoBehaviour {
 
 	//-----------Incremental Values
     private const int BASE_POINTS_PER_CLICK = 10;
-	private const double BASE_PROCESSING_POWER = 0.00;
+	private const double BASE_PROCESSING_POWER = 1.00;
     /** @brief   Current money of the player. */
 	public double money = 0.00;
 
@@ -373,7 +373,13 @@ public class GameController : MonoBehaviour {
 
     public List<Research> AllPossibleResearch{
 		get{
-            List<Research> temp = AllUncompleteResearch.Values.Where(x => x.canBeDone()).ToList();
+			List<Research> temp = new List<Research>();
+			foreach(Research r in AllUncompleteResearch.Values.ToList()){
+				if(r.canBeDone()){
+					temp.Add(r);
+				}
+			}
+           
 			return temp;
 
 		}
@@ -694,26 +700,37 @@ public class GameController : MonoBehaviour {
 	        allSoftwareProjects = connection.GetAllSoftwareProjects().ToList();
 	        allResearch = connection.GetAllResearch().ToList();
 	        allParts = connection.GetAllParts().ToList();
+
 	    }
+		foreach (Research r in allResearch) {
+			AllUncompleteResearch.Add(r.ID,r);
+		} 
 
-	    foreach (var project in allHardwareProjects) {
-            Utility.UnityLog("Hardware Project '" + project.name + "' needs the following research:");
-	        foreach (var r in project.Research) {
-	            Utility.UnityLog(r.name);
-	        }
-            Utility.UnityLog("...And parts:");
-            foreach (var p in project.Parts) {
-                Utility.UnityLog(p.stringID);
-            }
-	    }
-
-        List<Research> required = new List<Research>();
-	    allResearch[4].canBeDone(ref required);
-
-        Utility.UnityLog(allResearch[4].name + " requires:");
 		List<Research> temp = AllPossibleResearch;
-		foreach (var r in required) {
-			Utility.UnityLog(r.name);
+		int i = 0;
+		foreach(Text field in outResearch){
+			int position = 0+(researchPage*3)+i;
+			try{
+				field.text = temp[position].name + ":  " +temp[position].cost;
+				field.tag = temp[position].ID.ToString();
+			}
+			catch(ArgumentOutOfRangeException){
+				field.text = "???";
+			}
+			i++;
+		}
+		if(researchPage == 0){
+			GameObject button; 
+			button = GameObject.Find("Previous");
+			button.GetComponent<CanvasGroup>().alpha = 0;
+			button.GetComponent<Button>().interactable = false;
+			button.GetComponent<CanvasGroup>().interactable = false;
+			if(temp.Count <= 3+(researchPage*3)){
+				button = GameObject.Find("Next");
+				button.GetComponent<CanvasGroup>().alpha = 0;
+				button.GetComponent<Button>().interactable = false;
+				button.GetComponent<CanvasGroup>().interactable = false;
+			}
 		}
 
 
@@ -730,45 +747,7 @@ public class GameController : MonoBehaviour {
 		//List<Research> temp = AllPossibleResearch;
 		if (ticker == Priority.REALTIME) {
 			// Ticks every frame
-			List<Research> temp = AllPossibleResearch;
-			int i = 0;
-			foreach(Text field in outResearch){
-				int position = 0+(researchPage*3)+i;
-				try{
-					field.text = temp[position].name + ": " +temp[position].cost;
-					field.tag = temp[position].ID.ToString();
-				}
-				catch(ArgumentOutOfRangeException){
-					field.text = "???";
-				}
-				i++;
-			}
-			if(researchPage == 0){
-				GameObject button; 
-				button = GameObject.Find("Previous");
-				button.GetComponent<CanvasGroup>().alpha = 0;
-				button.GetComponent<Button>().interactable = false;
-				button.GetComponent<CanvasGroup>().interactable = false;
-				if(temp.Count <= 3+(researchPage*3)){
-					button = GameObject.Find("Next");
-					button.GetComponent<CanvasGroup>().alpha = 0;
-					button.GetComponent<Button>().interactable = false;
-					button.GetComponent<CanvasGroup>().interactable = false;
-				}
-			}
-			else if(researchPage != 0){
-				GameObject button; 
-				button = GameObject.Find("Previous");
-				button.GetComponent<CanvasGroup>().alpha = 0;
-				button.GetComponent<Button>().interactable = false;
-				button.GetComponent<CanvasGroup>().interactable = false;
-				if(temp.Count <= 3+(researchPage*3)){
-					button = GameObject.Find("Next");
-					button.GetComponent<CanvasGroup>().alpha = 0;
-					button.GetComponent<Button>().interactable = false;
-					button.GetComponent<CanvasGroup>().interactable = false;
-				}
-			}
+
 
 		}
 		if (ticker == Priority.HIGH) {
