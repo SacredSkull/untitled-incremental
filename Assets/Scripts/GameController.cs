@@ -99,6 +99,7 @@ public class GameController : MonoBehaviour {
 			if ((currentResearch.cost > researchPoints) || debugResearchPoints) {
 				this.researchPoints += points;
 			} else if (!isSoftware) {
+				Debug.Log ("Reached");
 				finishResearch ();
 				this.researchPoints = 0;
 			} else {
@@ -319,7 +320,7 @@ public class GameController : MonoBehaviour {
 	public void finishResearch(){
 		researchSet = false;
 	    int index = currentResearch.ID;
-		AllUncompleteResearch[index] = null;
+		AllUncompleteResearch.Remove (index);
 		currentResearch.complete();
 		AllCompleteResearch.Add(currentResearch.ID, currentResearch);
 		currentResearch = null;
@@ -684,18 +685,14 @@ public class GameController : MonoBehaviour {
 		money = 0;
 	}
 
-    public void Test() {
-        Utility.UnityLog("Giggle");
-    }
-
-	// Use this for initialization
+    // Use this for initialization
 	void Start () {
 		// XML load
 
-	    EventTrigger.Entry test = new EventTrigger.Entry {eventID = EventTriggerType.PointerDown};
-	    test.callback.AddListener((eventData) => { Test();});
+	    
+	    
 
-        GameObject.Find("PlayerComputer").GetComponent<EventTrigger>().triggers.Add(test);
+        
 
 		incrementalTickTime = 1;
 		incrementalTickIterations = 40;
