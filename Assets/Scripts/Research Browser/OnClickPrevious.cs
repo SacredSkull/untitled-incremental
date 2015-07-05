@@ -15,7 +15,7 @@ public class OnClickPrevious : MonoBehaviour {
 
 	}
 
-	void OnMouseDown(){
+	public void OnMouseDown(){
 		GameController game = GameController.instance;
 		game.previous ();
 	}

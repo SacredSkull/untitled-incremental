@@ -13,7 +13,7 @@ public class ClickR2 : MonoBehaviour {
 	
 	}
 
-	void OnMouseDown(){
+	public void OnMouseDown(){
 		GameController game = GameController.instance;
 		int ID = int.Parse(GameObject.Find("r2").tag);
 		if (game.AllUncompleteResearch.ContainsKey (ID)) {

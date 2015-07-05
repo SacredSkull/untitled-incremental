@@ -14,7 +14,7 @@ public class OnClickNext : MonoBehaviour {
 	
 	}
 
-	void OnMouseDown(){
+	public void OnMouseDown(){
 		GameController game = GameController.instance;
 		game.next ();
 	}
