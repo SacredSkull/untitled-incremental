@@ -6,6 +6,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Incremental.Database;
+
+using UnityEngine.EventSystems;
+
 #if DEBUG
 //using System.Diagnostics;
 #endif
@@ -681,9 +684,19 @@ public class GameController : MonoBehaviour {
 		money = 0;
 	}
 
+    public void Test() {
+        Utility.UnityLog("Giggle");
+    }
+
 	// Use this for initialization
 	void Start () {
 		// XML load
+
+	    EventTrigger.Entry test = new EventTrigger.Entry {eventID = EventTriggerType.PointerDown};
+	    test.callback.AddListener((eventData) => { Test();});
+
+        GameObject.Find("PlayerComputer").GetComponent<EventTrigger>().triggers.Add(test);
+
 		incrementalTickTime = 1;
 		incrementalTickIterations = 40;
 		outResearch.Add (r1);
