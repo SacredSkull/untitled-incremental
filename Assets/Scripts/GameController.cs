@@ -57,7 +57,7 @@ public class GameController : MonoBehaviour {
 	public bool debugResearchPoints;
 
 	//-----------Incremental Values
-    private const int BASE_POINTS_PER_CLICK = 10;
+    private const int BASE_POINTS_PER_CLICK = 1;
 	private const double BASE_PROCESSING_POWER = 1.00;
     /** @brief   Current money of the player. */
 	public double money = 0.00;
@@ -96,10 +96,9 @@ public class GameController : MonoBehaviour {
 
 	public void addResearchPoints(int points){
 		if(isResearchSet()){
-			if ((currentResearch.cost > researchPoints) || debugResearchPoints) {
+			if ((currentResearch.cost > researchPoints+points) || debugResearchPoints) {
 				this.researchPoints += points;
 			} else if (!isSoftware) {
-				Debug.Log ("Reached");
 				finishResearch ();
 				this.researchPoints = 0;
 			} else {
@@ -331,7 +330,7 @@ public class GameController : MonoBehaviour {
 			int position = 0+(researchPage*3)+i;
 			try{
 				field.text = temp[position].name + ": " +temp[position].cost;
-				field.tag = temp[position].ID.ToString();
+				field.GetComponent<ResearchID>().ID = temp[position].ID;
 			}
 			catch(ArgumentOutOfRangeException){
 				field.text = "???";
@@ -611,7 +610,7 @@ public class GameController : MonoBehaviour {
 			int position = 0+(researchPage*3)+i;
 			try{
 				field.text = temp[position].name + ": " +temp[position].cost;
-				field.tag = temp[position].ID.ToString();
+				field.GetComponent<ResearchID>().ID = temp[position].ID;
 			}
 			catch(ArgumentOutOfRangeException){
 				field.text = "???";
@@ -641,7 +640,7 @@ public class GameController : MonoBehaviour {
 			int position = 0+(researchPage*3)+i;
 			try{
 				field.text = temp[position].name + ": " +temp[position].cost;
-				field.tag = temp[position].ID.ToString();
+				field.GetComponent<ResearchID>().ID = temp[position].ID;
 			}
 			catch(ArgumentOutOfRangeException){
 				field.text = "???";
@@ -739,7 +738,7 @@ public class GameController : MonoBehaviour {
 			int position = 0+(researchPage*3)+i;
 			try{
 				field.text = temp[position].name + ":  " +temp[position].cost;
-				field.tag = temp[position].ID.ToString();
+				field.GetComponent<ResearchID>().ID = temp[position].ID;
 			}
 			catch(ArgumentOutOfRangeException){
 				field.text = "???";

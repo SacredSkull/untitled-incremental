@@ -15,7 +15,7 @@ public class ClickR1 : MonoBehaviour {
 
 	public void OnMouseDown(){
 		GameController game = GameController.instance;
-		int ID = int.Parse(GameObject.Find("r1").tag);
+		int ID = GameObject.Find("r1").GetComponent<ResearchID>().ID;
 		if (game.AllUncompleteResearch.ContainsKey (ID)) {
 			game.startResearch(game.AllUncompleteResearch[ID]);
 		}
