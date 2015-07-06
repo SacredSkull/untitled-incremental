@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using Dapper;
 using Incremental.Database;
+// Required for GUI stopgap class
+using UnityEngine;
 
 public class HardwareProject : Project {
     private ICollection<Part> _Parts;
