@@ -28,6 +28,9 @@ using UnityEngine.EventSystems;
 
 public class GameController : MonoBehaviour {
 
+	private int BUTTON_COUNT = 5;
+	GameObject picker;
+	GameObject inProgress;
     List<HardwareProject> allHardwareProjects;
     List<SoftwareProject> allSoftwareProjects;
     List<Research> allResearch;
@@ -69,6 +72,8 @@ public class GameController : MonoBehaviour {
 	private Text r1;
 	private Text r2;
 	private Text r3;
+	private Text r4;
+	private Text r5;
 	public List<Text> outResearch = new List<Text>();
 
 
@@ -274,12 +279,26 @@ public class GameController : MonoBehaviour {
     public event StoppedResearchHandler StoppedResearch;
     public event CompletedResearchHandler aCompletedResearch;
 
+	public int unlockedCount {
+		get;
+		set;
+	}
 
 	public bool isResearchSet(){
 		return researchSet;
 	}
 
 	public Research currentResearch {
+		get;
+		private set;
+	}
+
+	public Research lastCompleted {
+		get;
+		set;
+	}
+
+	public int currentID {
 		get;
 		private set;
 	}
@@ -303,6 +322,11 @@ public class GameController : MonoBehaviour {
 	public void startResearch(Research research){
 		researchSet = true;
 		currentResearch = research;
+		picker.active = false;
+		inProgress.active = true;
+		//451,151,0,455,300
+		GameObject.Find ("CurrentResearch").GetComponent<Text>().text = currentResearch.name;
+		GameObject.Find ("Description").GetComponent<Text> ().text = currentResearch.description;
 	}
 
 	//removes from UncompleteResearch, adds to completedResearch
@@ -318,16 +342,20 @@ public class GameController : MonoBehaviour {
 
 	public void finishResearch(){
 		researchSet = false;
+		inProgress.active = false;
+		picker.active = true;
 	    int index = currentResearch.ID;
 		AllUncompleteResearch.Remove (index);
 		currentResearch.complete();
 		AllCompleteResearch.Add(currentResearch.ID, currentResearch);
+		lastCompleted = currentResearch;
 		currentResearch = null;
-		List<Research> temp = AllPossibleResearch;
+		AllPossibleResearchByKey = SortResearchByKey (AllPossibleResearch);
+		List<Research> temp = AllPossibleResearchByKey;
 		int i = 0;
 		researchPage = 0;
 		foreach(Text field in outResearch){
-			int position = 0+(researchPage*3)+i;
+			int position = 0+(researchPage*BUTTON_COUNT)+i;
 			try{
 				field.text = temp[position].name + ": " +temp[position].cost;
 				field.GetComponent<ResearchID>().ID = temp[position].ID;
@@ -343,7 +371,7 @@ public class GameController : MonoBehaviour {
 			button.GetComponent<CanvasGroup>().alpha = 0;
 			button.GetComponent<Button>().interactable = false;
 			button.GetComponent<CanvasGroup>().interactable = false;
-			if(temp.Count <= 3+(researchPage*3)){
+			if(temp.Count <= BUTTON_COUNT+(researchPage*BUTTON_COUNT)){
 				button = GameObject.Find("Next");
 				button.GetComponent<CanvasGroup>().alpha = 0;
 				button.GetComponent<Button>().interactable = false;
@@ -370,6 +398,24 @@ public class GameController : MonoBehaviour {
 		}
 	}*/
 
+	//Finds the Research that are in after but not in before
+	private List<Research> findNew(List<Research> before,List<Research> after){
+		List<Research> newResearch = new List<Research> ();
+		foreach(Research a in after){
+			bool found = false;
+			foreach(Research b in before){
+				if(a.ID == b.ID){
+					found = true;
+					break;
+				}
+			}
+			if(found == false){
+				newResearch.Add(a);
+			}
+		}
+		return newResearch;
+	}
+
     /**
      * @property    public List<Research> AllPossibleResearch
      *
@@ -380,18 +426,79 @@ public class GameController : MonoBehaviour {
      * @return  all possible research.
      */
 
-    public List<Research> AllPossibleResearch{
-		get{
-			List<Research> temp = new List<Research>();
-			foreach(Research r in AllUncompleteResearch.Values.ToList()){
-				if(r.canBeDone()){
-					temp.Add(r);
+	//The higher the int value the more recently the Research has been possible. In order for this to work
+	//an old version of the dictionary must be given.
+	public Dictionary<int,Research> PossibleResearch(Dictionary<int,Research> before){
+		int i;
+		Dictionary<int,Research> finalCanDo = new Dictionary<int,Research > ();
+		List<Research> canDo = new List<Research> ();
+		foreach (Research r in AllUncompleteResearch.Values.ToList()) {
+			if (r.canBeDone ()) {
+				canDo.Add (r);
+			}
+		}
+		if (before == null) {
+			i = 0;
+			foreach (Research r in canDo) {
+				finalCanDo.Add (i, r);
+				i++;
+			}
+			storePossibleResearch = finalCanDo;
+			return finalCanDo;
+		} else {
+			int high = -1;
+			//finds highest number
+			foreach (int k in before.Keys.ToList()) {
+				if (k > high) {
+					high = k;
 				}
 			}
-           
-			return temp;
-
+			List<Research> additions = findNew (before.Values.ToList (), canDo);
+			finalCanDo = before;
+			//removes the key of the last completed research. Thanks Stack Overflow! :)
+			var item = finalCanDo.First(x => x.Value.ID == lastCompleted.ID);
+			finalCanDo.Remove(item.Key);
+			foreach (Research r in additions) {
+				high++;
+				finalCanDo.Add (high, r);
+			}
+			storePossibleResearch = finalCanDo;
+			return finalCanDo;
 		}
+	}
+
+	public Dictionary<int,Research> storePossibleResearch{
+		get;
+		private set;
+	}
+	//Method to be called whenever the list is needed
+	public Dictionary<int,Research> AllPossibleResearch{
+		get{
+			return PossibleResearch(storePossibleResearch);
+		}
+	}
+	//where the sorted list is to be stored, to prevent all these bothersome
+	//methods from being repeatedly called.
+	public List<Research> AllPossibleResearchByKey {
+		get;
+		set;
+	}
+
+	//from highest to lowest
+	public List<Research> SortResearchByKey(Dictionary<int,Research> unsorted){
+		List<int> keyOrder = new List<int> ();
+		List<int> unorderedKeys = unsorted.Keys.ToList ();
+		int count = unorderedKeys.Count;
+		for (int i = 0; i<count; i++) {
+			keyOrder.Add(unorderedKeys.Max ());
+			Debug.Log (unorderedKeys.Count.ToString());
+			unorderedKeys.Remove (unorderedKeys.Max ());
+		}
+		List<Research> ordered = new List<Research> ();
+		foreach (int j in keyOrder) {
+			ordered.Add(unsorted[j]);
+		}
+		return ordered;
 	}
 
 	//-----------------------------------------------------SOFTWARE
@@ -604,10 +711,10 @@ public class GameController : MonoBehaviour {
 
 	public void next(){
 		researchPage+=1;
-		List<Research> temp = AllPossibleResearch;
+		List<Research> temp = AllPossibleResearchByKey;
 		int i = 0;
 		foreach(Text field in outResearch){
-			int position = 0+(researchPage*3)+i;
+			int position = 0+(researchPage*BUTTON_COUNT)+i;
 			try{
 				field.text = temp[position].name + ": " +temp[position].cost;
 				field.GetComponent<ResearchID>().ID = temp[position].ID;
@@ -623,7 +730,7 @@ public class GameController : MonoBehaviour {
 		button.GetComponent<CanvasGroup>().alpha = 1;
 		button.GetComponent<Button>().interactable = true;
 		button.GetComponent<CanvasGroup>().interactable = true;
-		if(temp.Count <= 3+(researchPage*3)){
+		if(temp.Count <= BUTTON_COUNT+(researchPage*BUTTON_COUNT)){
 			button = GameObject.Find("Next");
 			button.GetComponent<CanvasGroup>().alpha = 0;
 			button.GetComponent<Button>().interactable = false;
@@ -634,10 +741,10 @@ public class GameController : MonoBehaviour {
 
 	public void previous(){
 		researchPage -= 1;
-		List<Research> temp = AllPossibleResearch;
+		List<Research> temp = AllPossibleResearchByKey;
 		int i = 0;
 		foreach(Text field in outResearch){
-			int position = 0+(researchPage*3)+i;
+			int position = 0+(researchPage*BUTTON_COUNT)+i;
 			try{
 				field.text = temp[position].name + ": " +temp[position].cost;
 				field.GetComponent<ResearchID>().ID = temp[position].ID;
@@ -653,7 +760,7 @@ public class GameController : MonoBehaviour {
 			button.GetComponent<CanvasGroup>().alpha = 0;
 			button.GetComponent<Button>().interactable = false;
 			button.GetComponent<CanvasGroup>().interactable = false;
-			if(temp.Count <= 3+(researchPage*3)){
+			if(temp.Count <= BUTTON_COUNT+(researchPage*BUTTON_COUNT)){
 				button = GameObject.Find("Next");
 				button.GetComponent<CanvasGroup>().alpha = 0;
 				button.GetComponent<Button>().interactable = false;
@@ -672,7 +779,7 @@ public class GameController : MonoBehaviour {
 			button.GetComponent<CanvasGroup>().alpha = 1;
 			button.GetComponent<Button>().interactable = true;
 			button.GetComponent<CanvasGroup>().interactable = true;
-			if(temp.Count <= 3+(researchPage*3)){
+			if(temp.Count <= BUTTON_COUNT+(researchPage*BUTTON_COUNT)){
 				button = GameObject.Find("Next");
 				button.GetComponent<CanvasGroup>().alpha = 0;
 				button.GetComponent<Button>().interactable = false;
@@ -697,25 +804,25 @@ public class GameController : MonoBehaviour {
 		r1 = GameObject.Find ("r1").GetComponent<Text> ();
 		r2 = GameObject.Find ("r2").GetComponent<Text> ();
 		r3 = GameObject.Find ("r3").GetComponent<Text> ();
+		r4 = GameObject.Find ("r4").GetComponent<Text> ();
+		r5 = GameObject.Find ("r5").GetComponent<Text> ();
+		picker = GameObject.Find("Research");
+		inProgress = GameObject.Find ("ResearchInProgress");
+		inProgress.active = false;
 		researchPoints = 0;
 		money = 0;
 	}
 
     // Use this for initialization
 	void Start () {
-		// XML load
-
-	    
-	    
-
-        
-
 		incrementalTickTime = 1;
 		incrementalTickIterations = 40;
 		outResearch.Add (r1);
 		outResearch.Add (r2);
 		outResearch.Add (r3);
-//		ResearchRoot researchXML = ResearchRoot.LoadFromFile(@"./Assets/Data/Research.xml");
+		outResearch.Add (r4);
+		outResearch.Add (r5);
+		//ResearchRoot researchXML = ResearchRoot.LoadFromFile(@"./Assets/Data/Research.xml");
 //		PartRoot partXML = PartRoot.LoadFromFile(@"./Assets/Data/Part.XML");
 //		ProjectRoot projectXML = ProjectRoot.LoadFromFile(@"./Assets/Data/Project.XML");
 //		AllUncompleteResearch = researchXML.Research;
@@ -731,11 +838,11 @@ public class GameController : MonoBehaviour {
 		foreach (Research r in allResearch) {
 			AllUncompleteResearch.Add(r.ID,r);
 		} 
-
-		List<Research> temp = AllPossibleResearch;
+		AllPossibleResearchByKey = SortResearchByKey (AllPossibleResearch);
+		List<Research> temp = AllPossibleResearchByKey;
 		int i = 0;
 		foreach(Text field in outResearch){
-			int position = 0+(researchPage*3)+i;
+			int position = 0+(researchPage*BUTTON_COUNT)+i;
 			try{
 				field.text = temp[position].name + ":  " +temp[position].cost;
 				field.GetComponent<ResearchID>().ID = temp[position].ID;
@@ -751,7 +858,7 @@ public class GameController : MonoBehaviour {
 			button.GetComponent<CanvasGroup>().alpha = 0;
 			button.GetComponent<Button>().interactable = false;
 			button.GetComponent<CanvasGroup>().interactable = false;
-			if(temp.Count <= 3+(researchPage*3)){
+			if(temp.Count <= BUTTON_COUNT+(researchPage*BUTTON_COUNT)){
 				button = GameObject.Find("Next");
 				button.GetComponent<CanvasGroup>().alpha = 0;
 				button.GetComponent<Button>().interactable = false;
@@ -773,8 +880,6 @@ public class GameController : MonoBehaviour {
 		//List<Research> temp = AllPossibleResearch;
 		if (ticker == Priority.REALTIME) {
 			// Ticks every frame
-
-
 		}
 		if (ticker == Priority.HIGH) {
 			// Ticks every 5 frames

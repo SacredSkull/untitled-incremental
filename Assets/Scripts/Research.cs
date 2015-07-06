@@ -43,10 +43,10 @@ public class Research : Startable, IComparable<Research> {
                     _Dependencies = new List<Research>();
                     const string sql = @"SELECT r.* FROM Research as r 
                                 INNER JOIN(
-	                                SELECT rJunction.ResearchDependencyID 
+	                                SELECT rJunction.ResearchChildID 
 	                                FROM Research_Dependencies as rJunction 
-	                                WHERE rJunction.ResearchID = @RID
-                                ) as rJunction ON rJunction.ResearchDependencyID = r.ID;";
+	                                WHERE rJunction.ResearchParentID = @RID
+                                ) as rJunction ON rJunction.ResearchChildID = r.ID;";
                     _Dependencies = con.connection.Query<Research>(sql, new { RID = ID }).ToList();
                 }
             }
@@ -130,7 +130,6 @@ public class Research : Startable, IComparable<Research> {
         }
         foreach (Research depends in this.Dependencies) {
             if (!depends.hasBeenDone()) {
-				Utility.UnityLog(depends.name,1);
 				return false;
             }
         }
