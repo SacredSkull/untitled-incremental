@@ -344,7 +344,7 @@ public class GameController : MonoBehaviour {
 			button.GetComponent<CanvasGroup>().alpha = 0;
 			button.GetComponent<Button>().interactable = false;
 			button.GetComponent<CanvasGroup>().interactable = false;
-			if(temp.Count >= 3+(researchPage*3)){
+			if(temp.Count <= 3+(researchPage*3)){
 				button = GameObject.Find("Next");
 				button.GetComponent<CanvasGroup>().alpha = 0;
 				button.GetComponent<Button>().interactable = false;
@@ -615,16 +615,15 @@ public class GameController : MonoBehaviour {
 
 		GameObject button; 
 		button = GameObject.Find("Previous");
-		button.GetComponent<CanvasGroup>().alpha = 0;
-		button.GetComponent<Button>().interactable = false;
-		button.GetComponent<CanvasGroup>().interactable = false;
+		button.GetComponent<CanvasGroup>().alpha = 1;
+		button.GetComponent<Button>().interactable = true;
+		button.GetComponent<CanvasGroup>().interactable = true;
 		if(temp.Count <= 3+(researchPage*3)){
 			button = GameObject.Find("Next");
 			button.GetComponent<CanvasGroup>().alpha = 0;
 			button.GetComponent<Button>().interactable = false;
 			button.GetComponent<CanvasGroup>().interactable = false;
 		}
-
 		flicked = true;
 	}
 
@@ -655,18 +654,28 @@ public class GameController : MonoBehaviour {
 				button.GetComponent<Button>().interactable = false;
 				button.GetComponent<CanvasGroup>().interactable = false;
 			}
+			else{
+				button.GetComponent<CanvasGroup>().alpha = 1;
+				button.GetComponent<Button>().interactable = true;
+				button.GetComponent<CanvasGroup>().interactable = true;
+			}
 		}
 		else if(researchPage != 0){
 			GameObject button; 
 			button = GameObject.Find("Previous");
-			button.GetComponent<CanvasGroup>().alpha = 0;
-			button.GetComponent<Button>().interactable = false;
-			button.GetComponent<CanvasGroup>().interactable = false;
+			button.GetComponent<CanvasGroup>().alpha = 1;
+			button.GetComponent<Button>().interactable = true;
+			button.GetComponent<CanvasGroup>().interactable = true;
 			if(temp.Count <= 3+(researchPage*3)){
 				button = GameObject.Find("Next");
 				button.GetComponent<CanvasGroup>().alpha = 0;
 				button.GetComponent<Button>().interactable = false;
 				button.GetComponent<CanvasGroup>().interactable = false;
+			}
+			else{
+				button.GetComponent<CanvasGroup>().alpha = 1;
+				button.GetComponent<Button>().interactable = true;
+				button.GetComponent<CanvasGroup>().interactable = true;
 			}
 		}
 		flicked = true;
