@@ -43,10 +43,10 @@ public class Research : Startable, IComparable<Research> {
                     _Dependencies = new List<Research>();
                     const string sql = @"SELECT r.* FROM Research as r 
                                 INNER JOIN(
-	                                SELECT rJunction.ResearchChildID 
+	                                SELECT rJunction.ResearchDependencyID 
 	                                FROM Research_Dependencies as rJunction 
-	                                WHERE rJunction.ResearchParentID = @RID
-                                ) as rJunction ON rJunction.ResearchChildID = r.ID;";
+	                                WHERE rJunction.ResearchID = @RID
+                                ) as rJunction ON rJunction.ResearchDependencyID = r.ID;";
                     _Dependencies = con.connection.Query<Research>(sql, new { RID = ID }).ToList();
                 }
             }
