@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Dapper;
 using Incremental.Database;
+// This line is needed for the Research GUI StopGap class.
+using UnityEngine;
 
 /**
     * @class   Research

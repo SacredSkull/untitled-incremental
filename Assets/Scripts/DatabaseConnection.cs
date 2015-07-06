@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
 using Mono.Data.Sqlite;
 using Dapper;
 
 namespace Incremental.Database {
     public class DatabaseConnection : IDisposable {
 
-        private string connectionString = @"Data Source=Assets/Data/Game.db;";
+        private string connectionString = @"Data Source=Assets/Data/Game.db; FailIfMissing=True";
         public readonly SqliteConnection connection;
 
         public DatabaseConnection() {
