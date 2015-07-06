@@ -350,6 +350,12 @@ public class GameController : MonoBehaviour {
 				button.GetComponent<Button>().interactable = false;
 				button.GetComponent<CanvasGroup>().interactable = false;
 			}
+			else{
+				button = GameObject.Find("Next");
+				button.GetComponent<CanvasGroup>().alpha = 1;
+				button.GetComponent<Button>().interactable = true;
+				button.GetComponent<CanvasGroup>().interactable = true;
+			}
 		}
 
 	}
@@ -655,6 +661,7 @@ public class GameController : MonoBehaviour {
 				button.GetComponent<CanvasGroup>().interactable = false;
 			}
 			else{
+				button = GameObject.Find("Next");
 				button.GetComponent<CanvasGroup>().alpha = 1;
 				button.GetComponent<Button>().interactable = true;
 				button.GetComponent<CanvasGroup>().interactable = true;
@@ -673,6 +680,7 @@ public class GameController : MonoBehaviour {
 				button.GetComponent<CanvasGroup>().interactable = false;
 			}
 			else{
+				button = GameObject.Find("Next");
 				button.GetComponent<CanvasGroup>().alpha = 1;
 				button.GetComponent<Button>().interactable = true;
 				button.GetComponent<CanvasGroup>().interactable = true;
