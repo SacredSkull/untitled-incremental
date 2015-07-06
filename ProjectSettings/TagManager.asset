@@ -36,6 +36,8 @@ TagManager:
   - 31
   - 34
   - 35
+  - GUI_Score
+  - 23
   layers:
   - Default
   - TransparentFX
