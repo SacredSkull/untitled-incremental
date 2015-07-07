@@ -6,7 +6,7 @@ using System.Text;
 public class SoftwareProject : Project {
     public int pointCost { get; set; }
 
-    public override bool possible(out List<Startable> missingRequirements) {
+    public bool possible(out List<Startable> missingRequirements) {
         missingRequirements = new List<Startable>();
         foreach (Research r in this.Research) {
             if (!r.hasBeenDone()) {

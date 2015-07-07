@@ -134,5 +134,5 @@ public abstract class Project : Startable {
         *          False if there are missing requirements and spits out a dictionary of the missing Startable requirements, 
         *          including quantity for parts.
         */
-    public abstract bool possible(out List<Startable> missingRequirements);
+    
 }
