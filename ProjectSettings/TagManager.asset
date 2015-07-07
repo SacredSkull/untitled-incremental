@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - GUI_Score
+  - Index
   layers:
   - Default
   - TransparentFX
