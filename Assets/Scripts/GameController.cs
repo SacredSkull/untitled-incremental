@@ -77,6 +77,8 @@ public class GameController : MonoBehaviour {
 
     //----------Outputs
 	private Text score;
+	private Text moneyScore;
+	private Text powerLevel;
 	private Text potentialResearch;
 	private Text r1;
 	private Text r2;
@@ -185,7 +187,7 @@ public class GameController : MonoBehaviour {
 
     public int pointsMult{
 		get{
-			int temp = BASE_POINTS_PER_CLICK;
+			int temp = 1;
 			List<SoftwareProject> relevantSoftware = AllCompletedSoftware.Where(x => x.pointMult> 0).ToList();
             List<HardwareProject> relevantHardware = AllCompletedHardware.Where(x => x.pointMult > 0).ToList();
 			foreach(SoftwareProject item in relevantSoftware){
@@ -232,14 +234,15 @@ public class GameController : MonoBehaviour {
 	public double moneyPerSecond{
 		get{
 			int temp = 0;
-			List<SoftwareProject> relevantSoftware = AllCompletedSoftware.Where(x => x.moneyPerTick> 0.00).ToList();
-            List<HardwareProject> relevantHardware = AllCompletedHardware.Where(x => x.moneyPerTick > 0.00).ToList();
+			List<SoftwareProject> relevantSoftware = AllCompletedSoftware.Where(x => x.moneyPerTick> 0).ToList();
+            List<HardwareProject> relevantHardware = AllCompletedHardware.Where(x => x.moneyPerTick > 0).ToList();
 			foreach(SoftwareProject item in relevantSoftware){
 				temp+=  item.moneyPerTick;
 			}
 			foreach(HardwareProject item in relevantHardware){
 				temp+=  item.moneyPerTick;
 			}
+			Debug.Log (temp.ToString());
 			return temp;
 		}
 	}
@@ -254,7 +257,7 @@ public class GameController : MonoBehaviour {
 
 	public int moneyMultiplier{
 		get{
-			int temp = 0;
+			int temp = 1;
 			List<SoftwareProject> relevantSoftware = AllCompletedSoftware.Where(x => x.moneyMult> 0).ToList();
             List<HardwareProject> relevantHardware = AllCompletedHardware.Where(x => x.moneyMult > 0).ToList();
 			foreach(SoftwareProject item in relevantSoftware){
@@ -264,6 +267,17 @@ public class GameController : MonoBehaviour {
 				temp+=  item.moneyMult;
 			}
 			return temp;
+		}
+	}
+
+	public void addMoneyPerSecond(){
+		money += moneyPerSecond * moneyMultiplier;
+	}
+
+	public void addPointsPerSecond(){
+		int toAdd = pointsPerSecond * pointsMult;
+		if (researchSet) {
+			addResearchPoints(toAdd);
 		}
 	}
 
@@ -632,17 +646,15 @@ public class GameController : MonoBehaviour {
             // Note: out parameters are not optional by design, so we actually need to create this.
             // The alternative is overloading possible(), with a method that does not compute missing requirements.
             List<Startable> requirements = new List<Startable>();
-			List<HardwareProject> temp = UnstartedHardware.Values.ToList ().Where(x => x.possible(out requirements)).ToList();
+			List<HardwareProject> temp = UnstartedHardware.Values.ToList ().Where(x => x.possible()).ToList();
 			return temp;
 		}
 	}
 
     private void useRequiredParts(HardwareProject project){
-        throw new NotImplementedException();
-//		foreach (var item in project.partDependencies) {
-//			int index = indexOfPart(item.Key);
-//			use(index, item.Value);
-//		}
+       	foreach (Part item in project.Parts) {
+			use(item, item.quantity);
+		}
 	}
 
 	public void makeHardware(HardwareProject project){
@@ -710,7 +722,13 @@ public class GameController : MonoBehaviour {
 	public void buyPart(Part p, int number){
 		if (money >= (p.cost * number)) {
 			money-= (p.cost * number);
-            partInventory[p.ID] += number;
+			if(partInventory.ContainsKey(p.ID)){
+				partInventory[p.ID] += number;
+			}
+			else{
+				partInventory.Add(p.ID,number);
+			}
+            
 		}
 		else{
 			// \todo Exceptions
@@ -718,12 +736,7 @@ public class GameController : MonoBehaviour {
 	}
 
 	public void use(Part p, int number){
-	    if (!hasParts(p, number))
-	        return;
 	    partInventory[p.ID] -= number;
-	    if (partInventory[p.ID] < 0) {
-	        partInventory[p.ID] = 0;
-	    }
 	}
 	//-----------------------------------------MISC
 
@@ -1108,6 +1121,8 @@ public class GameController : MonoBehaviour {
 
 	void Awake() {
 		score = GameObject.Find("PointsText").GetComponent<Text>();
+		moneyScore = GameObject.Find ("MoneyText").GetComponent<Text> ();
+		powerLevel = GameObject.Find ("PowerText").GetComponent<Text> ();
 		potentialResearch = GameObject.Find("Picker").GetComponent<Text>();
 		r1 = GameObject.Find ("r1").GetComponent<Text> ();
 		r2 = GameObject.Find ("r2").GetComponent<Text> ();
@@ -1125,6 +1140,8 @@ public class GameController : MonoBehaviour {
 	void Start () {
 		incrementalTickTime = 1;
 		incrementalTickIterations = 40;
+		InvokeRepeating ("addMoneyPerSecond", 0f, 1.0f);
+		InvokeRepeating ("addPointsPerSecond", 0f, 1.0f);
 		outProject.Add (r1);
 		outProject.Add (r2);
 		outProject.Add (r3);
@@ -1168,9 +1185,10 @@ public class GameController : MonoBehaviour {
 		}
 		if (ticker == Priority.MEDIUM) {
 			// Ticks every 10 frames
-			researchPoints += pointsPerSecond * pointsMult;
-			money += moneyPerSecond * moneyMultiplier;
-			score.text = researchPoints.ToString ();
+			score.text = researchPoints.ToString ()+"RP";
+			moneyScore.text = "$"+ money.ToString();
+			powerLevel.text = processingPower.ToString()+"MHz";
+
 		}
 		if (ticker == Priority.LOW) {
 			// Ticks every 15 frames

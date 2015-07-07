@@ -21,12 +21,14 @@ public class HardwareProject : Project {
         }
     }
 
-    public override bool possible(out List<Startable> missingRequirements)
+	//This used to give a list of Parts and research required, no idea why
+	//Changing it for now, as it bogs the method down significantly, while
+	//the info will come in handy I don't thin it is necessary for this method.
+    public bool possible()
     {
-        missingRequirements = new List<Startable>();
         foreach (Research r in this.Research) {
             if (!r.hasBeenDone()) {
-                missingRequirements.Add(r);
+				return false;
             }
         }
         GameController game = GameController.instance;
@@ -34,18 +36,14 @@ public class HardwareProject : Project {
         {
             bool contains = game.partInventory.ContainsKey(part.ID);
             if (contains) {
-                // If the inventory of parts contains 
                 if(game.partInventory[part.ID] < part.quantity) {
-                    part.quantity -= game.partInventory[part.ID];
-                    if (part.quantity < 0)
-                        part.quantity = 0;
-                    missingRequirements.Add(part);
+					return false;
                 }
-            } else {
-                missingRequirements.Add(part);
+            }
+			else {
+				return false;
             }
         }
-    
-        return missingRequirements.Count == 0;
+		return true;
     }
 }
