@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ResearchID : MonoBehaviour {
+public class WorkID : MonoBehaviour {
 
 	public int ID {
 		get;
