@@ -98,7 +98,7 @@ GameObject:
   - 222: {fileID: 27086188}
   - 114: {fileID: 27086187}
   - 225: {fileID: 27086189}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Picker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -124,11 +124,11 @@ RectTransform:
   - {fileID: 1976590204}
   - {fileID: 469582147}
   m_Father: {fileID: 1796006194}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -3, y: -18.4999924}
-  m_SizeDelta: {x: -902, y: -228}
+  m_AnchoredPosition: {x: 11, y: -98}
+  m_SizeDelta: {x: -213, y: 79}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &27086187
 MonoBehaviour:
@@ -142,9 +142,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: .933823526, g: .0823962167, b: .0823962167, a: .39199999}
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Sprite: {fileID: 21300000, guid: e4551cd0ab484384cb80e00ab17adcb3, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -309,11 +309,11 @@ RectTransform:
   m_Children:
   - {fileID: 1841051526}
   m_Father: {fileID: 1796006194}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: -333, y: -133}
-  m_SizeDelta: {x: 512, y: 431}
+  m_AnchoredPosition: {x: -331, y: -137}
+  m_SizeDelta: {x: 512, y: 424}
   m_Pivot: {x: .5, y: .5}
 --- !u!1 &211172223
 GameObject:
@@ -541,7 +541,7 @@ GameObject:
   - 224: {fileID: 259655341}
   - 222: {fileID: 259655343}
   - 114: {fileID: 259655342}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -609,7 +609,7 @@ GameObject:
   - 114: {fileID: 354403328}
   - 114: {fileID: 354403327}
   - 225: {fileID: 354403330}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: R1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -632,7 +632,7 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: 1.69179984e-05, y: 88}
+  m_AnchoredPosition: {x: -51.9999847, y: 160}
   m_SizeDelta: {x: 160, y: 42}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &354403327
@@ -654,10 +654,10 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: .960784316, g: .960784316, b: .960784316, a: 1}
-    m_PressedColor: {r: .784313738, g: .784313738, b: .784313738, a: 1}
-    m_DisabledColor: {r: .784313738, g: .784313738, b: .784313738, a: .501960814}
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 0}
+    m_HighlightedColor: {r: .960784316, g: .960784316, b: .960784316, a: 0}
+    m_PressedColor: {r: .784313738, g: .784313738, b: .784313738, a: 0}
+    m_DisabledColor: {r: .784313738, g: .784313738, b: .784313738, a: 0}
     m_ColorMultiplier: 1
     m_FadeDuration: .100000001
   m_SpriteState:
@@ -803,7 +803,7 @@ GameObject:
   - 114: {fileID: 407668000}
   - 114: {fileID: 407667999}
   - 225: {fileID: 407668002}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: R4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -826,7 +826,7 @@ RectTransform:
   m_RootOrder: 3
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: 1.79093986e-05, y: -33}
+  m_AnchoredPosition: {x: -52.0000076, y: 44.0000076}
   m_SizeDelta: {x: 160, y: 40}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &407667999
@@ -848,10 +848,10 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: .0905060619, g: .0945978686, b: .683823526, a: 1}
-    m_PressedColor: {r: .351319164, g: .737493873, b: .838235259, a: 1}
-    m_DisabledColor: {r: .784313738, g: .784313738, b: .784313738, a: .501960814}
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 0}
+    m_HighlightedColor: {r: .0905060619, g: .0945978686, b: .683823526, a: 0}
+    m_PressedColor: {r: .351319164, g: .737493873, b: .838235259, a: 0}
+    m_DisabledColor: {r: .784313738, g: .784313738, b: .784313738, a: 0}
     m_ColorMultiplier: 2.17000008
     m_FadeDuration: .100000001
   m_SpriteState:
@@ -931,7 +931,7 @@ GameObject:
   - 114: {fileID: 469582149}
   - 114: {fileID: 469582148}
   - 225: {fileID: 469582151}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Index
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -954,7 +954,7 @@ RectTransform:
   m_RootOrder: 7
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: -73.5999985, y: 138.800003}
+  m_AnchoredPosition: {x: 30.7000008, y: 186}
   m_SizeDelta: {x: 29.7999992, y: 29.2999992}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &469582148
@@ -976,10 +976,10 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: .960784316, g: .960784316, b: .960784316, a: 1}
-    m_PressedColor: {r: .784313738, g: .784313738, b: .784313738, a: 1}
-    m_DisabledColor: {r: .784313738, g: .784313738, b: .784313738, a: .501960814}
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 0}
+    m_HighlightedColor: {r: .960784316, g: .960784316, b: .960784316, a: 0}
+    m_PressedColor: {r: .784313738, g: .784313738, b: .784313738, a: 0}
+    m_DisabledColor: {r: .784313738, g: .784313738, b: .784313738, a: 0}
     m_ColorMultiplier: 1
     m_FadeDuration: .100000001
   m_SpriteState:
@@ -1058,7 +1058,7 @@ GameObject:
   - 222: {fileID: 490742332}
   - 114: {fileID: 490742331}
   - 114: {fileID: 490742333}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: r1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1135,7 +1135,7 @@ GameObject:
   - 224: {fileID: 510824549}
   - 222: {fileID: 510824551}
   - 114: {fileID: 510824550}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1202,7 +1202,7 @@ GameObject:
   - 222: {fileID: 565988235}
   - 114: {fileID: 565988234}
   - 114: {fileID: 565988233}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: r5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1223,7 +1223,7 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 7.15260012e-06, y: -7.0999999}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &565988233
@@ -1375,7 +1375,7 @@ GameObject:
   - 222: {fileID: 610025505}
   - 114: {fileID: 610025504}
   - 225: {fileID: 610025506}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: prev
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1549,7 +1549,7 @@ RectTransform:
   m_RootOrder: 3
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -3.9100647e-05, y: 84}
+  m_AnchoredPosition: {x: -341, y: 100}
   m_SizeDelta: {x: -903, y: -433}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &660872588
@@ -1846,7 +1846,7 @@ GameObject:
   - 114: {fileID: 1056543051}
   - 114: {fileID: 1056543050}
   - 225: {fileID: 1056543054}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: R5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1872,10 +1872,10 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: .0905060619, g: .0945978686, b: .683823526, a: 1}
-    m_PressedColor: {r: .351319164, g: .737493873, b: .838235259, a: 1}
-    m_DisabledColor: {r: .784313738, g: .784313738, b: .784313738, a: .501960814}
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 0}
+    m_HighlightedColor: {r: .0905060619, g: .0945978686, b: .683823526, a: 0}
+    m_PressedColor: {r: .351319164, g: .737493873, b: .838235259, a: 0}
+    m_DisabledColor: {r: .784313738, g: .784313738, b: .784313738, a: 0}
     m_ColorMultiplier: 2.17000008
     m_FadeDuration: .100000001
   m_SpriteState:
@@ -1948,7 +1948,7 @@ RectTransform:
   m_RootOrder: 4
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: 1.33514404e-05, y: -73}
+  m_AnchoredPosition: {x: -52, y: 4}
   m_SizeDelta: {x: 160, y: 40}
   m_Pivot: {x: .5, y: .5}
 --- !u!225 &1056543054
@@ -2292,7 +2292,7 @@ GameObject:
   - 222: {fileID: 1246965234}
   - 114: {fileID: 1246965233}
   - 114: {fileID: 1246965232}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: r4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2436,7 +2436,7 @@ GameObject:
   - 222: {fileID: 1392574108}
   - 114: {fileID: 1392574107}
   - 114: {fileID: 1392574109}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: r2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2615,7 +2615,7 @@ GameObject:
   - 114: {fileID: 1429862621}
   - 114: {fileID: 1429862620}
   - 225: {fileID: 1429862623}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: R2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2638,7 +2638,7 @@ RectTransform:
   m_RootOrder: 1
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: 2.86102295e-06, y: 46.9999924}
+  m_AnchoredPosition: {x: -52, y: 119}
   m_SizeDelta: {x: 160, y: 40}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &1429862620
@@ -2660,10 +2660,10 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: .960784316, g: .960784316, b: .960784316, a: 1}
-    m_PressedColor: {r: .784313738, g: .784313738, b: .784313738, a: 1}
-    m_DisabledColor: {r: .784313738, g: .784313738, b: .784313738, a: .501960814}
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 0}
+    m_HighlightedColor: {r: .960784316, g: .960784316, b: .960784316, a: 0}
+    m_PressedColor: {r: .784313738, g: .784313738, b: .784313738, a: 0}
+    m_DisabledColor: {r: .784313738, g: .784313738, b: .784313738, a: 0}
     m_ColorMultiplier: 1
     m_FadeDuration: .100000001
   m_SpriteState:
@@ -2803,7 +2803,7 @@ GameObject:
   - 222: {fileID: 1541064175}
   - 114: {fileID: 1541064174}
   - 114: {fileID: 1541064176}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: r3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3033,7 +3033,7 @@ GameObject:
   - 114: {fileID: 1696242976}
   - 114: {fileID: 1696242975}
   - 225: {fileID: 1696242978}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: R3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3056,7 +3056,7 @@ RectTransform:
   m_RootOrder: 2
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: 1.42673889e-05, y: 6.99999905}
+  m_AnchoredPosition: {x: -52, y: 84}
   m_SizeDelta: {x: 160, y: 40}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &1696242975
@@ -3078,10 +3078,10 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: .0905060619, g: .0945978686, b: .683823526, a: 1}
-    m_PressedColor: {r: .351319164, g: .737493873, b: .838235259, a: 1}
-    m_DisabledColor: {r: .784313738, g: .784313738, b: .784313738, a: .501960814}
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 0}
+    m_HighlightedColor: {r: .0905060619, g: .0945978686, b: .683823526, a: 0}
+    m_PressedColor: {r: .351319164, g: .737493873, b: .838235259, a: 0}
+    m_DisabledColor: {r: .784313738, g: .784313738, b: .784313738, a: 0}
     m_ColorMultiplier: 2.17000008
     m_FadeDuration: .100000001
   m_SpriteState:
@@ -3216,8 +3216,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
-  - {fileID: 207183161}
   - {fileID: 27086186}
+  - {fileID: 207183161}
   - {fileID: 618931257}
   - {fileID: 660872587}
   - {fileID: 568566299}
@@ -3335,7 +3335,7 @@ GameObject:
   - 114: {fileID: 1976590201}
   - 114: {fileID: 1976590205}
   - 225: {fileID: 1976590207}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Previous
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3361,10 +3361,10 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: .960784316, g: .960784316, b: .960784316, a: 1}
-    m_PressedColor: {r: .784313738, g: .784313738, b: .784313738, a: 1}
-    m_DisabledColor: {r: .784313738, g: .784313738, b: .784313738, a: .501960814}
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 0}
+    m_HighlightedColor: {r: .960784316, g: .960784316, b: .960784316, a: 0}
+    m_PressedColor: {r: .784313738, g: .784313738, b: .784313738, a: 0}
+    m_DisabledColor: {r: .784313738, g: .784313738, b: .784313738, a: 0}
     m_ColorMultiplier: 1
     m_FadeDuration: .100000001
   m_SpriteState:
@@ -3437,8 +3437,8 @@ RectTransform:
   m_RootOrder: 6
   m_AnchorMin: {x: .5, y: .211240649}
   m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: -58.5, y: -84.0830002}
-  m_SizeDelta: {x: 64, y: -41}
+  m_AnchoredPosition: {x: -118, y: 30.3999996}
+  m_SizeDelta: {x: 73, y: -148}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &1976590205
 MonoBehaviour:
@@ -3474,7 +3474,7 @@ GameObject:
   - 114: {fileID: 1982536266}
   - 114: {fileID: 1982536265}
   - 225: {fileID: 1982536270}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Next
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3497,8 +3497,8 @@ RectTransform:
   m_RootOrder: 5
   m_AnchorMin: {x: .5, y: .211240649}
   m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: 58.5, y: -84.0830078}
-  m_SizeDelta: {x: 64, y: -41}
+  m_AnchoredPosition: {x: 30.7000008, y: 30.3999996}
+  m_SizeDelta: {x: 73, y: -148}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &1982536265
 MonoBehaviour:
@@ -3519,7 +3519,7 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 0}
     m_HighlightedColor: {r: .960784316, g: .960784316, b: .960784316, a: 1}
     m_PressedColor: {r: .784313738, g: .784313738, b: .784313738, a: 1}
     m_DisabledColor: {r: .784313738, g: .784313738, b: .784313738, a: .501960814}
@@ -3663,7 +3663,7 @@ GameObject:
   m_Component:
   - 224: {fileID: 2137884627}
   - 114: {fileID: 2137884628}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: setNone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
