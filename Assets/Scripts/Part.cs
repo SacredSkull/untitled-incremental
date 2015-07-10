@@ -145,13 +145,5 @@ public class Part : Startable, IComparable<Part> {
         * @return  The name.
         */
 
-    public override string name {
-        get {
-            return this.stringID;
-        }
-        set {
-            this.stringID = value.Replace(" ", "-");
-        }
-    }
-
+    public override string name { get; set; }
 }
