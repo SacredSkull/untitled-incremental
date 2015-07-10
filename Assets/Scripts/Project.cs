@@ -42,6 +42,7 @@ public abstract class Project : Startable {
     public double processIncrease { get; set; }
     public int moneyPerTick { get; set; }
     public int moneyMult { get; set; }
+    public int moneyPerClick { get; set; }
     public ICollection<Research> _Research; 
     public ICollection<Research> Research {
         get {
