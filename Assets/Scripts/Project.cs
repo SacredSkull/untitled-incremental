@@ -48,7 +48,8 @@ public abstract class Project : Startable {
         get {
             if (_Research == null) {
                 using (DatabaseConnection con = new DatabaseConnection()) {
-                    const string sql = @"SELECT r.* FROM Research as r INNER JOIN( SELECT hwr.ResearchID FROM HardwareProject_Research as hwr WHERE hwr.HardwareProjectID = @PID) as hwr ON hwr.ResearchID = ID;";
+                    // This wizardry results in the deriving classes using the tables as they should, assuming the table name is _exactly_ equal to the class name.
+                    string sql = string.Format(@"SELECT r.* FROM Research as r INNER JOIN( SELECT junction.ResearchID FROM {0}_Research as junction WHERE junction.{0}ID = @PID) as junction ON junction.ResearchID = ID;", this.GetType().Name);
                     _Research = con.connection.Query<Research>(sql, new { PID = ID }).ToList();
                 }
             }
