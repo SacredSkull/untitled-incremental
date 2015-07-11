@@ -30,9 +30,9 @@ using System.Linq;
 
 public class Part : Startable, IComparable<Part> {
     public int ID { get; set; }
-    public string stringID;
-    public int cost;
-    public int quantity;
+    public int cost { get; set; }
+    public int quantity { get; set; }
+    public override string name { get; set; }
 
     /**
         * @fn  public Part(string name, int amount)
@@ -144,6 +144,4 @@ public class Part : Startable, IComparable<Part> {
         *
         * @return  The name.
         */
-
-    public override string name { get; set; }
 }

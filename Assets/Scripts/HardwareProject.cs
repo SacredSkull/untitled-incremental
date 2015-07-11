@@ -9,6 +9,7 @@ using UnityEngine;
 
 public class HardwareProject : Project {
     private ICollection<Part> _Parts;
+
     public ICollection<Part> Parts {
         get {
             if (_Parts == null) {
