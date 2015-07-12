@@ -697,7 +697,7 @@ public class GameController : MonoBehaviour {
 			Dictionary<int,Part> temp = new Dictionary<int,Part>();
 			foreach (var item in allParts)
 			{	
-				if(item.isBuyable){
+				if(item.isBuyable()){
 					temp.Add(item.ID,item);
 				}
 			}

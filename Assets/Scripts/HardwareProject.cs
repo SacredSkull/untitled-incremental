@@ -16,6 +16,7 @@ public class HardwareProject : Project {
                 using (DatabaseConnection con = new DatabaseConnection()) {
                     const string sql = @"SELECT p.ID ID, p.Name name, p.Cost cost, hwr.Quantity quantity FROM Part as p INNER JOIN( SELECT hwr.PartID, hwr.Quantity FROM HardwareProject_Parts as hwr WHERE hwr.HardwareProjectID = @PID) as hwr ON hwr.PartID = ID;";
                     _Parts = con.connection.Query<Part>(sql, new { PID = ID }).ToList();
+
                 }
             }
             return _Parts;
