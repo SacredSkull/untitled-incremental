@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Linq;
+using Dapper;
+using Incremental.Database;
 
 //A part can be bought through the computer to make pc components etc
 //For now lets just say all parts are available from the get go, but some will obviously 
@@ -34,7 +36,26 @@ public class Part : Startable, IComparable<Part> {
     public int quantity { get; set; }
     public override string name { get; set; }
 
-    /**
+	private ICollection<Part> _Research;
+	
+	public ICollection<Part> Research {
+		get {
+			if (_Research == null) {
+				using (DatabaseConnection con = new DatabaseConnection()) {
+					const string sql = @"SELECT r.* FROM Research as r 
+                                INNER JOIN(
+	                                SELECT rJunction.ResearchID 
+	                                FROM Part_Research as rJunction 
+	                                WHERE rJunction.PartID = @RID
+                                ) as rJunction ON rJunction.ResearchID = r.ID;";
+					_Research = con.connection.Query<Part>(sql, new { RID = ID }).ToList();
+				}
+			}
+			return _Research;
+		}
+	}
+
+	/**
         * @fn  public Part(string name, int amount)
         *
         * @brief   Direct creation/debugging constructor.

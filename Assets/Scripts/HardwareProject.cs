@@ -47,4 +47,9 @@ public class HardwareProject : Project {
         }
 		return true;
     }
+
+	public bool isActive {
+		get;
+		private set;
+	}
 }
