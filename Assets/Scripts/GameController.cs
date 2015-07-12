@@ -31,6 +31,7 @@ public class GameController : MonoBehaviour {
 	private int BUTTON_COUNT = 5;
 	GameObject picker;
 	GameObject inProgress;
+	public GameObject info;
     List<HardwareProject> allHardwareProjects;
     List<SoftwareProject> allSoftwareProjects;
     List<Research> allResearch;
@@ -79,6 +80,9 @@ public class GameController : MonoBehaviour {
 	private Text score;
 	private Text moneyScore;
 	private Text powerLevel;
+	private Text ppc;
+	private Text ppt;
+	private Text mpt;
 	private Text potentialResearch;
 	private Text r1;
 	private Text r2;
@@ -1123,6 +1127,9 @@ public class GameController : MonoBehaviour {
 		score = GameObject.Find("PointsText").GetComponent<Text>();
 		moneyScore = GameObject.Find ("MoneyText").GetComponent<Text> ();
 		powerLevel = GameObject.Find ("PowerText").GetComponent<Text> ();
+		ppc = GameObject.Find ("PointsPerClick").GetComponent<Text> ();
+		ppt = GameObject.Find ("PointsPerTick").GetComponent<Text> ();
+		mpt = GameObject.Find ("MoneyPerTick").GetComponent<Text> ();
 		potentialResearch = GameObject.Find("Picker").GetComponent<Text>();
 		r1 = GameObject.Find ("r1").GetComponent<Text> ();
 		r2 = GameObject.Find ("r2").GetComponent<Text> ();
@@ -1132,6 +1139,8 @@ public class GameController : MonoBehaviour {
 		picker = GameObject.Find("Picker");
 		inProgress = GameObject.Find ("WorkInProgress");
 		inProgress.active = false;
+		info = GameObject.Find("MoreInfo");
+		info.active = false;
 		researchPoints = 0;
 		money = 0;
 	}
@@ -1188,6 +1197,9 @@ public class GameController : MonoBehaviour {
 			score.text = researchPoints.ToString ()+"RP";
 			moneyScore.text = "$"+ money.ToString();
 			powerLevel.text = processingPower.ToString()+"MHz";
+			ppc.text = (pointsPerClick).ToString()+" Points/Click";
+			ppt.text = (pointsPerSecond * pointsMult).ToString()+" Points/Second";
+			mpt.text = (moneyPerSecond * moneyMultiplier).ToString()+" Money/Second";
 
 		}
 		if (ticker == Priority.LOW) {
