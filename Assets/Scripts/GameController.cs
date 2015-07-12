@@ -756,9 +756,13 @@ public class GameController : MonoBehaviour {
 		chapterPage = 0;
 		setButtonVisible ("Index", false);
 		outProject[0].text = "Research";
+		outProject [0].GetComponent<WorkID> ().storedType = BrowserListItemClick.ListItemType.ResearchCategory;
 		outProject[1].text = "Software";
+		outProject [1].GetComponent<WorkID> ().storedType = BrowserListItemClick.ListItemType.SoftwareCategory;
 		outProject[2].text = "Hardware";
+		outProject [2].GetComponent<WorkID> ().storedType = BrowserListItemClick.ListItemType.HardwareCategory;
 		outProject[3].text = "Parts";
+		outProject [3].GetComponent<WorkID> ().storedType = BrowserListItemClick.ListItemType.PartsCategory;
 		if (!PossibleSoftware.Any()) {
 			setButtonVisible ("R2", false);
 		} else {

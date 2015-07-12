@@ -37,6 +37,7 @@ public class BrowserListItemClick : MonoBehaviour {
 	public void OnMouseDown(){
 		GameController game = GameController.instance;
 		int? ID = this.transform.parent.GetComponentInChildren<WorkID>().ID;
+		BrowserListItemClick.ListItemType storedType = this.transform.parent.GetComponentInChildren<WorkID> ().storedType;
 		switch (game.chapter) {
 		    case GameController.pickedType.Research:
 		        if (ID!=null&& game.AllUncompleteResearch.ContainsKey ((int)ID)) {
@@ -59,17 +60,17 @@ public class BrowserListItemClick : MonoBehaviour {
 		        }
 		        break;
 		    default:
-		        switch (buttonType) {
-		            case ListItemType.ResearchCategory:
+		        switch (storedType) {
+					case ListItemType.ResearchCategory:
                         game.setChapterToResearch();
 		                break;
-                    case ListItemType.HardwareCategory:
+					case ListItemType.HardwareCategory:
                         game.setChapterToHardware();
 		                break;
-                    case ListItemType.SoftwareCategory:
+					case ListItemType.SoftwareCategory:
                         game.setChapterToSoftware();
 		                break;
-                    case ListItemType.PartsCategory:
+					case ListItemType.PartsCategory:
                         game.setChapterToParts();
 		                break;
 		        }
