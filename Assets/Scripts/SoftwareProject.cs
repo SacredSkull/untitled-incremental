@@ -13,6 +13,6 @@ public class SoftwareProject : Project {
                 missingRequirements.Add(r);
             }
         }
-        return missingRequirements.Count == 0;
+        return missingRequirements.Count == 0 && this.uses != 0;
     }
 }
