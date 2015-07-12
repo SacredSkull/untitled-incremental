@@ -32,7 +32,7 @@ public class GameController : MonoBehaviour {
 	GameObject picker;
 	GameObject inProgress;
 	public GameObject info;
-    List<HardwareProject> allHardwareProjects;
+    Dictionary<int,HardwareProject> allHardwareProjects = new Dictionary<int, HardwareProject>();
     Dictionary<int,SoftwareProject> allSoftwareProjects = new Dictionary<int,SoftwareProject >();
     List<Research> allResearch;
 	public int chapterPage = 0;
@@ -621,7 +621,7 @@ public class GameController : MonoBehaviour {
     public Dictionary<int,HardwareProject> UnstartedHardware {
         get {
             Dictionary<int,HardwareProject> temp = new Dictionary<int,HardwareProject>();
-            foreach (var item in allHardwareProjects)
+            foreach (var item in allHardwareProjects.Values.ToList())
             {
                 if (item.uses > 0 || item.uses == -1)
                 {
@@ -696,9 +696,10 @@ public class GameController : MonoBehaviour {
 		get {
 			Dictionary<int,Part> temp = new Dictionary<int,Part>();
 			foreach (var item in allParts)
-			{
-				temp.Add(item.ID,item);
-
+			{	
+				if(item.isBuyable){
+					temp.Add(item.ID,item);
+				}
 			}
 			return temp;
 		}
@@ -887,7 +888,7 @@ public class GameController : MonoBehaviour {
 		setButtonVisible ("R3", true);
 		setButtonVisible ("R4", true);
 		setButtonVisible ("R5", true);
-		List<Part> temp = allParts;
+		List<Part> temp = allBuyableParts.Values.ToList();
 		int i = 0;
 		foreach(Text field in outProject){
 			int position = 0+(chapterPage*BUTTON_COUNT)+i;
@@ -1196,10 +1197,13 @@ public class GameController : MonoBehaviour {
 //        allProjects = projectXML.Project;
 //		allParts = partXML.Part;
 	    using (DatabaseConnection connection = new DatabaseConnection()) {
-	        allHardwareProjects = connection.GetAllHardwareProjects().ToList();
-			List<SoftwareProject> parseable = connection.GetAllSoftwareProjects().ToList();
-			foreach(SoftwareProject p in parseable){
+	        List<HardwareProject> parseableHardware = connection.GetAllHardwareProjects().ToList();
+			List<SoftwareProject> parseableSoftware = connection.GetAllSoftwareProjects().ToList();
+			foreach(SoftwareProject p in parseableSoftware){
 				allSoftwareProjects.Add(p.ID,p);
+			}
+			foreach(HardwareProject h in parseableHardware){
+				allHardwareProjects.Add(h.ID,h);
 			}
 	        allResearch = connection.GetAllResearch().ToList();
 	        allParts = connection.GetAllParts().ToList();
