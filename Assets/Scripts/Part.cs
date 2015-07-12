@@ -36,9 +36,9 @@ public class Part : Startable, IComparable<Part> {
     public int quantity { get; set; }
     public override string name { get; set; }
 
-	private ICollection<Part> _Research;
+	private ICollection<Research> _Research;
 	
-	public ICollection<Part> Research {
+	public ICollection<Research> Research {
 		get {
 			if (_Research == null) {
 				using (DatabaseConnection con = new DatabaseConnection()) {
@@ -48,7 +48,7 @@ public class Part : Startable, IComparable<Part> {
 	                                FROM Part_Research as rJunction 
 	                                WHERE rJunction.PartID = @RID
                                 ) as rJunction ON rJunction.ResearchID = r.ID;";
-					_Research = con.connection.Query<Part>(sql, new { RID = ID }).ToList();
+					_Research = con.connection.Query<Research>(sql, new { RID = ID }).ToList();
 				}
 			}
 			return _Research;
@@ -110,6 +110,16 @@ public class Part : Startable, IComparable<Part> {
         } else
             return -1;
     }
+
+	public bool isBuyable()
+	{
+		foreach (Research r in this.Research) {
+			if (!r.hasBeenDone()) {
+				return false;
+			}
+		}
+		return true;
+	}
 
     /**
         * @fn  public override void complete()
