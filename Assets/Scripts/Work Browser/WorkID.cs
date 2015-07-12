@@ -3,7 +3,7 @@ using System.Collections;
 
 public class WorkID : MonoBehaviour {
 
-	public int ID {
+	public int? ID {
 		get;
 		set;
 	}

@@ -15,22 +15,22 @@ public class ClickR4 : MonoBehaviour {
 
 	public void OnMouseDown(){
 		GameController game = GameController.instance;
-		int ID = GameObject.Find("r4").GetComponent<WorkID>().ID;
+		int? ID = GameObject.Find("r4").GetComponent<WorkID>().ID;
 		if (game.chapter == GameController.pickedType.Research) {
-			if (game.AllUncompleteResearch.ContainsKey (ID)) {
-				game.startResearch (game.AllUncompleteResearch [ID]);
+			if (ID!=null&& game.AllUncompleteResearch.ContainsKey ((int)ID)) {
+				game.startResearch (game.AllUncompleteResearch [(int)ID]);
 			}
 		} else if (game.chapter == GameController.pickedType.Software) {
-			if (game.UnstartedSoftware.ContainsKey (ID)) {
-				game.startSoftware (game.UnstartedSoftware [ID]);
+			if (ID!=null&& game.UnstartedSoftware.ContainsKey ((int)ID)) {
+				game.startSoftware (game.UnstartedSoftware [(int)ID]);
 			}
 		} else if (game.chapter == GameController.pickedType.Hardware) {
-			if (game.UnstartedHardware.ContainsKey (ID)) {
-				game.makeHardware (game.UnstartedHardware [ID]);
+			if (ID!=null&& game.UnstartedHardware.ContainsKey ((int)ID)) {
+				game.makeHardware (game.UnstartedHardware [(int)ID]);
 			}
 		} else if (game.chapter == GameController.pickedType.Parts) {
-			if (game.allBuyableParts.ContainsKey (ID)) {
-				game.buyPart (game.allBuyableParts [ID],1);
+			if (ID!=null&& game.allBuyableParts.ContainsKey ((int)ID)) {
+				game.buyPart (game.allBuyableParts [(int)ID],1);
 			}
 		} else {
 			game.setChapterToParts();
