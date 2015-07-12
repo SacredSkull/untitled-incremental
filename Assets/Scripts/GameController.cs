@@ -33,7 +33,7 @@ public class GameController : MonoBehaviour {
 	GameObject inProgress;
 	public GameObject info;
     List<HardwareProject> allHardwareProjects;
-    List<SoftwareProject> allSoftwareProjects;
+    Dictionary<int,SoftwareProject> allSoftwareProjects = new Dictionary<int,SoftwareProject >();
     List<Research> allResearch;
 	public int chapterPage = 0;
 	//Have you changed page in the last 15 frames?
@@ -118,10 +118,17 @@ public class GameController : MonoBehaviour {
 		if(isResearchSet()){
 			if ((currentResearch.cost > researchPoints+points) || debugResearchPoints) {
 				this.researchPoints += points;
-			} else if (!isSoftware) {
-				finishResearch ();
+			} 
+			 else {
+				finishResearch();
 				this.researchPoints = 0;
-			} else {
+			}
+		}
+		else if(isSoftwareSet){
+			if ((currentSoftware.pointCost > researchPoints+points) || debugResearchPoints) {
+				this.researchPoints += points;
+			}
+			else {
 				finishSoftware();
 				this.researchPoints = 0;
 			}
@@ -246,7 +253,6 @@ public class GameController : MonoBehaviour {
 			foreach(HardwareProject item in relevantHardware){
 				temp+=  item.moneyPerTick;
 			}
-			Debug.Log (temp.ToString());
 			return temp;
 		}
 	}
@@ -368,50 +374,15 @@ public class GameController : MonoBehaviour {
      */
 
 	public void finishResearch(){
-		researchSet = false;
 		inProgress.active = false;
-		picker.active = true;
-		setButtonVisible ("Index", true);
-	    int index = currentResearch.ID;
+		researchSet = false;
+		int index = currentResearch.ID;
 		AllUncompleteResearch.Remove (index);
 		currentResearch.complete();
 		AllCompleteResearch.Add(currentResearch.ID, currentResearch);
 		lastCompleted = currentResearch;
 		currentResearch = null;
-		AllPossibleResearchByKey = SortResearchByKey (AllPossibleResearch);
-		List<Research> temp = AllPossibleResearchByKey;
-		int i = 0;
-		chapterPage = 0;
-		foreach(Text field in outProject){
-			int position = 0+(chapterPage*BUTTON_COUNT)+i;
-			try{
-				field.text = temp[position].name + ": " +temp[position].cost;
-				field.GetComponent<WorkID>().ID = temp[position].ID;
-			}
-			catch(ArgumentOutOfRangeException){
-				field.text = "???";
-			}
-			i++;
-		}
-		if(chapterPage == 0){
-			GameObject button; 
-			button = GameObject.Find("Previous");
-			button.GetComponent<CanvasGroup>().alpha = 0;
-			button.GetComponent<Button>().interactable = false;
-			button.GetComponent<CanvasGroup>().interactable = false;
-			if(temp.Count <= BUTTON_COUNT+(chapterPage*BUTTON_COUNT)){
-				button = GameObject.Find("Next");
-				button.GetComponent<CanvasGroup>().alpha = 0;
-				button.GetComponent<Button>().interactable = false;
-				button.GetComponent<CanvasGroup>().interactable = false;
-			}
-			else{
-				button = GameObject.Find("Next");
-				button.GetComponent<CanvasGroup>().alpha = 1;
-				button.GetComponent<Button>().interactable = true;
-				button.GetComponent<CanvasGroup>().interactable = true;
-			}
-		}
+		showPicker ();
 
 	}
 
@@ -519,7 +490,6 @@ public class GameController : MonoBehaviour {
 		int count = unorderedKeys.Count;
 		for (int i = 0; i<count; i++) {
 			keyOrder.Add(unorderedKeys.Max ());
-			Debug.Log (unorderedKeys.Count.ToString());
 			unorderedKeys.Remove (unorderedKeys.Max ());
 		}
 		List<Research> ordered = new List<Research> ();
@@ -550,12 +520,14 @@ public class GameController : MonoBehaviour {
      * @return  The unstarted software.
      */
 
+
+
     public Dictionary<int,SoftwareProject> UnstartedSoftware
     {
         get {
             Dictionary<int,SoftwareProject> temp = new Dictionary<int, SoftwareProject>();
-            foreach (SoftwareProject item in allSoftwareProjects) {
-                if(item.uses > 0 || item.uses == -1){
+            foreach (SoftwareProject item in allSoftwareProjects.Values.ToList()) {
+				if(item.uses > 0 || item.uses == -1){
 					temp.Add(item.ID,item);
 				}
 			}
@@ -590,7 +562,7 @@ public class GameController : MonoBehaviour {
      * @return  true if this object is software, false if not.
      */
 
-	public bool isSoftware {
+	public bool isSoftwareSet {
 		get;
 		private set;
 	}
@@ -601,8 +573,12 @@ public class GameController : MonoBehaviour {
 	}
 
 	public void startSoftware(SoftwareProject project){
+		picker.active = false;
+		inProgress.active = true;
 		currentSoftware = project;
-		isSoftware = true;
+		isSoftwareSet = true;
+		GameObject.Find ("CurrentResearch").GetComponent<Text>().text = currentSoftware.name;
+		GameObject.Find ("Description").GetComponent<Text> ().text = currentSoftware.description;
 	}
 
 	public void finishSoftware(){
@@ -611,12 +587,15 @@ public class GameController : MonoBehaviour {
 		}
 		else{
 			AllCompletedSoftware.Add(currentSoftware);
-            allSoftwareProjects[currentResearch.ID].uses--;
+			currentSoftware.uses -=1;
+			allSoftwareProjects.Remove(currentSoftware.ID);
+			allSoftwareProjects.Add (currentSoftware.ID,currentSoftware);
 		}
 		currentSoftware = null;
-		isSoftware = false;
+		isSoftwareSet = false;
 		currentResearch = null;
 		researchSet = false;
+		showPicker ();
 	}
 
 	//-----------------------------------------------------HARDWARE
@@ -1121,6 +1100,25 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
+	public void showPicker(){
+		picker.active = true;
+		if(chapter == pickedType.Research ){
+			setChapterToResearch();
+		}
+		else if(chapter == pickedType.Software){
+			setChapterToSoftware();
+		}
+		else if(chapter == pickedType.Hardware){
+			setChapterToHardware();
+		}
+		else if(chapter == pickedType.Parts){
+			setChapterToParts();
+		}
+		else{
+			setChapterToNone();
+		}
+
+	}
 	//-----------------------------------------UNITY METHODS
 
 	void Awake() {
@@ -1164,7 +1162,10 @@ public class GameController : MonoBehaviour {
 //		allParts = partXML.Part;
 	    using (DatabaseConnection connection = new DatabaseConnection()) {
 	        allHardwareProjects = connection.GetAllHardwareProjects().ToList();
-	        allSoftwareProjects = connection.GetAllSoftwareProjects().ToList();
+			List<SoftwareProject> parseable = connection.GetAllSoftwareProjects().ToList();
+			foreach(SoftwareProject p in parseable){
+				allSoftwareProjects.Add(p.ID,p);
+			}
 	        allResearch = connection.GetAllResearch().ToList();
 	        allParts = connection.GetAllParts().ToList();
 
