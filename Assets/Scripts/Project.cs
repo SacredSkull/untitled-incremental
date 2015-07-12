@@ -39,10 +39,13 @@ public abstract class Project : Startable {
     public int pointsPerTick { get; set; }
     public int pointsPerClick { get; set; }
     public int pointMult { get; set; }
+    public int pointMultPerClick { get; set; }
     public double processIncrease { get; set; }
+    public int OneTimeFees { get; set; }
     public int moneyPerTick { get; set; }
     public int moneyMult { get; set; }
     public int moneyPerClick { get; set; }
+
     public ICollection<Research> _Research; 
     public ICollection<Research> Research {
         get {
