@@ -455,8 +455,17 @@ public class GameController : MonoBehaviour {
 			List<Research> additions = findNew (before.Values.ToList (), canDo);
 			finalCanDo = before;
 			//removes the key of the last completed research. Thanks Stack Overflow! :)
-			var item = finalCanDo.First(x => x.Value.ID == lastCompleted.ID);
-			finalCanDo.Remove(item.Key);
+			try{
+				var item = finalCanDo.First(x => x.Value.ID == lastCompleted.ID);
+				if (!item.Equals(null)){
+					finalCanDo.Remove(item.Key);
+				}
+			}
+			catch(NullReferenceException){
+
+			}
+
+
 			foreach (Research r in additions) {
 				high++;
 				finalCanDo.Add (high, r);
@@ -738,6 +747,10 @@ public class GameController : MonoBehaviour {
 	}
 
 	public void setChapterToNone(){
+		foreach(Text field in outProject){
+			field.text = null;
+			field.GetComponent<WorkID>().ID = null;
+		}
 		chapter = pickedType.None;
 		chapterPage = 0;
 		setButtonVisible ("Index", false);
@@ -760,6 +773,7 @@ public class GameController : MonoBehaviour {
 		setButtonVisible ("R5", false);
 		setButtonVisible ("Next", false);
 		setButtonVisible ("Previous", false);
+
 	}
 
 	public void setChapterToResearch(){
@@ -779,6 +793,7 @@ public class GameController : MonoBehaviour {
 			}
 			catch(ArgumentOutOfRangeException){
 				field.text = "???";
+				field.GetComponent<WorkID>().ID = null;
 			}
 			i++;
 		}
@@ -796,6 +811,10 @@ public class GameController : MonoBehaviour {
 	}
 
 	public void setChapterToSoftware(){
+		if(!PossibleSoftware.Any ()){
+			setChapterToNone();
+			return;
+		}
 		chapter = pickedType.Software;
 		setButtonVisible ("R2", true);
 		setButtonVisible ("R3", true);
@@ -811,6 +830,7 @@ public class GameController : MonoBehaviour {
 			}
 			catch(ArgumentOutOfRangeException){
 				field.text = "???";
+				field.GetComponent<WorkID>().ID = null;
 			}
 			i++;
 		}
@@ -825,6 +845,10 @@ public class GameController : MonoBehaviour {
 	}
 
 	public void setChapterToHardware(){
+		if(!PossibleHardware.Any ()){
+			setChapterToNone();
+			return;
+		}
 		chapter = pickedType.Hardware;
 		setButtonVisible ("R2", true);
 		setButtonVisible ("R3", true);
@@ -840,6 +864,7 @@ public class GameController : MonoBehaviour {
 			}
 			catch(ArgumentOutOfRangeException){
 				field.text = "???";
+				field.GetComponent<WorkID>().ID = null;
 			}
 			i++;
 		}
@@ -872,6 +897,7 @@ public class GameController : MonoBehaviour {
 			}
 			catch(ArgumentOutOfRangeException){
 				field.text = "???";
+				field.GetComponent<WorkID>().ID = null;
 			}
 			i++;
 		}
@@ -906,6 +932,7 @@ public class GameController : MonoBehaviour {
 				}
 				catch(ArgumentOutOfRangeException){
 					field.text = "???";
+					field.GetComponent<WorkID>().ID = null;
 				}
 				i++;
 			}
@@ -926,6 +953,7 @@ public class GameController : MonoBehaviour {
 				}
 				catch(ArgumentOutOfRangeException){
 					field.text = "???";
+					field.GetComponent<WorkID>().ID = null;
 				}
 				i++;
 			}
@@ -946,6 +974,7 @@ public class GameController : MonoBehaviour {
 				}
 				catch(ArgumentOutOfRangeException){
 					field.text = "???";
+					field.GetComponent<WorkID>().ID = null;
 				}
 				i++;
 			}
@@ -966,6 +995,7 @@ public class GameController : MonoBehaviour {
 				}
 				catch(ArgumentOutOfRangeException){
 					field.text = "???";
+					field.GetComponent<WorkID>().ID = null;
 				}
 				i++;
 			}
@@ -991,6 +1021,7 @@ public class GameController : MonoBehaviour {
 					field.GetComponent<WorkID> ().ID = temp [position].ID;
 				} catch (ArgumentOutOfRangeException) {
 					field.text = "???";
+					field.GetComponent<WorkID>().ID = null;
 				}
 				i++;
 			}
@@ -1020,6 +1051,7 @@ public class GameController : MonoBehaviour {
 					field.GetComponent<WorkID> ().ID = temp [position].ID;
 				} catch (ArgumentOutOfRangeException) {
 					field.text = "???";
+					field.GetComponent<WorkID>().ID = null;
 				}
 				i++;
 			}
@@ -1049,6 +1081,8 @@ public class GameController : MonoBehaviour {
 					field.GetComponent<WorkID> ().ID = temp [position].ID;
 				} catch (ArgumentOutOfRangeException) {
 					field.text = "???";
+					field.GetComponent<WorkID>().ID = null;
+
 				}
 				i++;
 			}
@@ -1078,6 +1112,7 @@ public class GameController : MonoBehaviour {
 					field.GetComponent<WorkID> ().ID = temp [position].ID;
 				} catch (ArgumentOutOfRangeException) {
 					field.text = "???";
+					field.GetComponent<WorkID>().ID = null;
 				}
 				i++;
 			}
