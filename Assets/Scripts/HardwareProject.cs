@@ -10,8 +10,7 @@ using UnityEngine;
 public class HardwareProject : Project {
 	public enum type
 	{
-		Computer,
-		None
+		Computer,None,NoType
 	}
 
     private ICollection<Part> _Parts;
@@ -29,16 +28,39 @@ public class HardwareProject : Project {
         }
     }
 
-	public type _HardwareType;
+	public string RemoveLineEndings( string value)
+	{
+		if(String.IsNullOrEmpty(value))
+		{
+			return value;
+		}
+		string lineSeparator = ((char) 0x2028).ToString();
+		string paragraphSeparator = ((char)0x2029).ToString();
+		
+		return value.Replace("\r\n", string.Empty).Replace("\n", string.Empty).Replace("\r", string.Empty).Replace(lineSeparator, string.Empty).Replace(paragraphSeparator, string.Empty);
+	}
+
+	public type _HardwareType = type.None;
 
 	public type HardwareType{
 		get{
-			if(_HardwareType == null){
-				String parseable;
+			if(_HardwareType == type.None){
+				IEnumerable<String> parseable;
 				using (DatabaseConnection conn = new DatabaseConnection()){
-					const string sql = @"SELECT t.Name name FROM SoftwareProjectType as t INNER JOIN( SELECT hwr.TypeID, hwr.HardwareProjectID FROM HardwareProject_Type as hwr WHERE hwr.HardwareProjectID = @PID)as hwr ON hwr.TypeID = t.ID;";
-					parseable = conn.connection.Query<String>(sql, new { PID = ID }).ToString();
-
+					const string sql = @"SELECT t.Name name FROM HardwareType as t INNER JOIN( SELECT hwr.TypeID, hwr.HardwareProjectID FROM HardwareProject_Type as hwr WHERE hwr.HardwareProjectID = @PID)as hwr ON hwr.TypeID = t.ID;";
+					parseable = conn.connection.Query<String>(sql, new { PID = ID });
+				}
+				if(parseable.Any ()){
+					foreach (type item in Enum.GetValues(typeof(type))){
+						String finalType = RemoveLineEndings(parseable.First().ToString());
+						Debug.Log (finalType);
+						Debug.Log ((item.ToString()==finalType));
+						if(item.ToString().Equals(finalType, StringComparison.OrdinalIgnoreCase)){
+							Debug.Log ("pass");
+							_HardwareType = item;
+							return _HardwareType;
+						}
+					}
 				}
 				foreach (type item in Enum.GetValues(typeof(type))){
 					if(item.ToString().Equals(parseable)){
@@ -46,7 +68,7 @@ public class HardwareProject : Project {
 						return _HardwareType;
 					}
 				}
-				_HardwareType = type.None;
+				_HardwareType = type.NoType;
 			}
 			return _HardwareType;
 		}
