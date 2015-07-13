@@ -287,6 +287,8 @@ public class GameController : MonoBehaviour {
 	public void addPointsPerSecond(){
 		int toAdd = pointsPerSecond * pointsMult;
 		if (researchSet) {
+			addResearchPoints (toAdd);
+		} else if (isSoftwareSet) {
 			addResearchPoints(toAdd);
 		}
 	}
@@ -382,6 +384,7 @@ public class GameController : MonoBehaviour {
 		AllCompleteResearch.Add(currentResearch.ID, currentResearch);
 		lastCompleted = currentResearch;
 		currentResearch = null;
+		AllPossibleResearchByKey = SortResearchByKey (AllPossibleResearch);
 		showPicker ();
 
 	}
@@ -462,6 +465,9 @@ public class GameController : MonoBehaviour {
 				}
 			}
 			catch(NullReferenceException){
+
+			}
+			catch(InvalidOperationException){
 
 			}
 
@@ -602,8 +608,6 @@ public class GameController : MonoBehaviour {
 		}
 		currentSoftware = null;
 		isSoftwareSet = false;
-		currentResearch = null;
-		researchSet = false;
 		showPicker ();
 	}
 
@@ -787,7 +791,6 @@ public class GameController : MonoBehaviour {
 		setButtonVisible ("R3", true);
 		setButtonVisible ("R4", true);
 		setButtonVisible ("R5", true);
-		AllPossibleResearchByKey = SortResearchByKey (AllPossibleResearch);
 		List<Research> temp = AllPossibleResearchByKey;
 		int i = 0;
 		foreach(Text field in outProject){
