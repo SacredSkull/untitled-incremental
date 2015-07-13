@@ -791,7 +791,13 @@ public class GameController : MonoBehaviour {
 		setButtonVisible ("R3", true);
 		setButtonVisible ("R4", true);
 		setButtonVisible ("R5", true);
-		List<Research> temp = AllPossibleResearchByKey;
+		List<Research> temp = new List<Research> ();
+		if (AllPossibleResearchByKey != null) {
+			temp = AllPossibleResearchByKey;
+		} else {
+			AllPossibleResearchByKey = SortResearchByKey (AllPossibleResearch);
+			temp = AllPossibleResearchByKey;
+		}
 		int i = 0;
 		foreach(Text field in outProject){
 			int position = 0+(chapterPage*BUTTON_COUNT)+i;
