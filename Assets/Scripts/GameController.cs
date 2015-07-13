@@ -29,8 +29,11 @@ using UnityEngine.EventSystems;
 public class GameController : MonoBehaviour {
 
 	private int BUTTON_COUNT = 5;
-	GameObject picker;
+	//called whenever research is finished, set to a high number, prevents click spamming opening the browser
+	public int justFinished = 0;
+	public GameObject picker;
 	GameObject inProgress;
+	public GameObject browser;
 	public GameObject info;
     Dictionary<int,HardwareProject> allHardwareProjects = new Dictionary<int, HardwareProject>();
     Dictionary<int,SoftwareProject> allSoftwareProjects = new Dictionary<int,SoftwareProject >();
@@ -376,6 +379,7 @@ public class GameController : MonoBehaviour {
      */
 
 	public void finishResearch(){
+		justFinished = 8;
 		inProgress.active = false;
 		researchSet = false;
 		int index = currentResearch.ID;
@@ -597,6 +601,7 @@ public class GameController : MonoBehaviour {
 	}
 
 	public void finishSoftware(){
+		justFinished = 8;
 		if(currentSoftware.canDoMultiple){
 			AllCompletedSoftware.Add(currentSoftware);
 		}
@@ -1186,6 +1191,8 @@ public class GameController : MonoBehaviour {
 		picker = GameObject.Find("Picker");
 		inProgress = GameObject.Find ("WorkInProgress");
 		inProgress.active = false;
+		browser = GameObject.Find ("FileBrowser");
+		browser.active = false;
 		info = GameObject.Find("MoreInfo");
 		info.active = false;
 		researchPoints = 0;
@@ -1244,6 +1251,7 @@ public class GameController : MonoBehaviour {
 		}
 		if (ticker == Priority.HIGH) {
 			// Ticks every 5 frames
+
 		}
 		if (ticker == Priority.MEDIUM) {
 			// Ticks every 10 frames
@@ -1257,6 +1265,9 @@ public class GameController : MonoBehaviour {
 		}
 		if (ticker == Priority.LOW) {
 			// Ticks every 15 frames
+			if(justFinished>0){
+				justFinished--;
+			}
 			flicked = false;
 			ticker = 0;
 		} else

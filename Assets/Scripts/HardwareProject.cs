@@ -10,7 +10,9 @@ using UnityEngine;
 public class HardwareProject : Project {
 	public enum type
 	{
-		Computer,None,NoType
+		Computer,
+		None,
+		NoType
 	}
 
     private ICollection<Part> _Parts;
@@ -53,10 +55,7 @@ public class HardwareProject : Project {
 				if(parseable.Any ()){
 					foreach (type item in Enum.GetValues(typeof(type))){
 						String finalType = RemoveLineEndings(parseable.First().ToString());
-						Debug.Log (finalType);
-						Debug.Log ((item.ToString()==finalType));
 						if(item.ToString().Equals(finalType, StringComparison.OrdinalIgnoreCase)){
-							Debug.Log ("pass");
 							_HardwareType = item;
 							return _HardwareType;
 						}

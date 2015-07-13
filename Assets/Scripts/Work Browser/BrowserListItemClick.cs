@@ -27,7 +27,7 @@ public class BrowserListItemClick : MonoBehaviour {
 	}
 
     public void OnMouseOver(BaseEventData e) {
-        Utility.UnityLog("giggle" + this.name);
+        
     }
 
     public void OnMouseExit() {

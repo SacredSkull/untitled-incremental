@@ -10,7 +10,6 @@ public class SoftwareProject : Project {
     public int pointCost { get; set; }
 
     public bool possible(out List<Startable> missingRequirements) {
-		Debug.Log (SoftwareType.ToString());
 		missingRequirements = new List<Startable>();
         foreach (Research r in this.Research) {
             if (!r.hasBeenDone()) {
