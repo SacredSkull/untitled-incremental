@@ -90,7 +90,7 @@ public class HardwareProject : Project {
         foreach (Part part in this.Parts)
         {
             bool contains = game.partInventory.ContainsKey(part.ID);
-            if (contains) {
+            if (contains||ID != 3) {
                 if(game.partInventory[part.ID] < part.quantity) {
 					return false;
                 }

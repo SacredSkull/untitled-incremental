@@ -237,6 +237,12 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
+	public double primaryProcessingPower{
+		get{
+			return primaryComputer.processIncrease + BASE_PROCESSING_POWER;
+		}
+	}
+
     /**
      * @property    public double moneyPerTick
      *
@@ -293,6 +299,18 @@ public class GameController : MonoBehaviour {
 			addResearchPoints (toAdd);
 		} else if (isSoftwareSet) {
 			addResearchPoints(toAdd);
+		}
+	}
+
+	//the total power, being used by currently installed programs
+	public double usedPower{
+		get{
+			double power = 0.00;
+			power+= primaryOS.ProcessReq;
+			foreach(SoftwareProject program in InstalledSoftware){
+				power += program.ProcessReq;  
+			}
+			return power;
 		}
 	}
 
@@ -553,7 +571,20 @@ public class GameController : MonoBehaviour {
             return temp;
         }
     }
+	public List<SoftwareProject> AllCompletedGenericProjects = new List<SoftwareProject> ();
+
     public List<SoftwareProject> AllCompletedSoftware = new List<SoftwareProject>();
+
+	public List<SoftwareProject> InstalledSoftware = new List<SoftwareProject> ();
+
+	public List<SoftwareProject> AllCompletedOS = new List<SoftwareProject> ();
+
+	public SoftwareProject primaryOS {
+		get;
+		private set;
+	}
+
+	public List<SoftwareProject> AllCompletedCourses = new List<SoftwareProject> ();
 
     /**
     * @property    public List<SoftwareProject> PossibleSoftware
@@ -591,6 +622,11 @@ public class GameController : MonoBehaviour {
 		private set;
 	}
 
+	public bool installing {
+		get;
+		private set;
+	}
+
 	public void startSoftware(SoftwareProject project){
 		picker.active = false;
 		inProgress.active = true;
@@ -603,10 +639,32 @@ public class GameController : MonoBehaviour {
 	public void finishSoftware(){
 		justFinished = 8;
 		if(currentSoftware.canDoMultiple){
-			AllCompletedSoftware.Add(currentSoftware);
+			if(currentSoftware.SoftwareType == SoftwareProject.type.Course){
+				AllCompletedCourses.Add (currentSoftware);
+			}
+			else if(currentSoftware.SoftwareType == SoftwareProject.type.OS){
+				AllCompletedOS.Add(currentSoftware);
+			}
+			else if(currentSoftware.SoftwareType == SoftwareProject.type.Software){
+				AllCompletedSoftware.Add(currentSoftware);
+			}
+			else{
+				AllCompletedGenericProjects.Add(currentSoftware);
+			}
 		}
 		else{
-			AllCompletedSoftware.Add(currentSoftware);
+			if(currentSoftware.SoftwareType == SoftwareProject.type.Course){
+				AllCompletedCourses.Add (currentSoftware);
+			}
+			else if(currentSoftware.SoftwareType == SoftwareProject.type.OS){
+				AllCompletedOS.Add(currentSoftware);
+			}
+			else if(currentSoftware.SoftwareType == SoftwareProject.type.Software){
+				AllCompletedSoftware.Add(currentSoftware);
+			}
+			else{
+				AllCompletedGenericProjects.Add(currentSoftware);
+			}
 			currentSoftware.uses -=1;
 			allSoftwareProjects.Remove(currentSoftware.ID);
 			allSoftwareProjects.Add (currentSoftware.ID,currentSoftware);
@@ -614,6 +672,25 @@ public class GameController : MonoBehaviour {
 		currentSoftware = null;
 		isSoftwareSet = false;
 		showPicker ();
+	}
+
+	//install software to run on your computer, there is a short waiting time between 
+	//each install, this will be visualised in the GUI.
+	public void installSoftware(SoftwareProject tobeInstalled, int number){
+		if (tobeInstalled.canDoMultiple) {
+			for (int i = 0; i<number; i++) {
+				if(usedPower+tobeInstalled.ProcessReq < processingPower){
+					System.Threading.Thread.Sleep ((int)(tobeInstalled.ProcessReq * (10000 / primaryProcessingPower)));
+					InstalledSoftware.Add (tobeInstalled);
+				}
+				else{
+					break;
+				}
+
+			}
+		} else {
+			
+		}
 	}
 
 	//-----------------------------------------------------HARDWARE
@@ -640,7 +717,14 @@ public class GameController : MonoBehaviour {
             return temp;
         }
     }
-    public List<HardwareProject> AllCompletedHardware = new List<HardwareProject>();
+    public List<HardwareProject> AllCompletedComputers = new List<HardwareProject>();
+
+	public HardwareProject primaryComputer {
+		get;
+		private set;
+	}
+
+	public List<HardwareProject> AllCompletedGenericHardware = new List<HardwareProject> ();
 
 	public List<HardwareProject> PossibleHardware{
 		get{
@@ -660,18 +744,30 @@ public class GameController : MonoBehaviour {
 
 	public void makeHardware(HardwareProject project){
         if (project.canDoMultiple) {
-            AllCompletedHardware.Add(project);
+			if(project.HardwareType == HardwareProject.type.Computer){
+				AllCompletedComputers.Add(project);
+			}
+			else{
+				AllCompletedGenericHardware.Add(project);
+			}
             useRequiredParts(project);
 		}
 		else{
             if (allHardwareProjects[project.ID].uses > 0) {
-                AllCompletedHardware.Add(project);
+				if(project.HardwareType == HardwareProject.type.Computer){
+					AllCompletedComputers.Add(project);
+				}
+				else{
+					AllCompletedGenericHardware.Add(project);
+				}
                 allHardwareProjects[project.ID].uses--;
                 useRequiredParts(project);
             }
         }
 
 	}
+
+
 
 
 	//-----------------------------------------------------TICK METHODS AND DATA
@@ -1223,7 +1319,14 @@ public class GameController : MonoBehaviour {
 				allSoftwareProjects.Add(p.ID,p);
 			}
 			foreach(HardwareProject h in parseableHardware){
-				allHardwareProjects.Add(h.ID,h);
+				if(h.ID !=3){
+					allHardwareProjects.Add(h.ID,h);
+				}
+				else{
+					AllCompletedComputers.Add (h);
+					primaryComputer = h;
+				}
+				
 			}
 	        allResearch = connection.GetAllResearch().ToList();
 	        allParts = connection.GetAllParts().ToList();
