@@ -29,7 +29,7 @@ public class HardwareProject : Project {
             return _Parts;
         }
     }
-
+    
 	public string RemoveLineEndings( string value)
 	{
 		if(String.IsNullOrEmpty(value))
@@ -42,8 +42,7 @@ public class HardwareProject : Project {
 		return value.Replace("\r\n", string.Empty).Replace("\n", string.Empty).Replace("\r", string.Empty).Replace(lineSeparator, string.Empty).Replace(paragraphSeparator, string.Empty);
 	}
 
-	public type _HardwareType = type.None;
-
+	private type _HardwareType = type.None;
 	public type HardwareType{
 		get{
 			if(_HardwareType == type.None){
@@ -55,7 +54,10 @@ public class HardwareProject : Project {
 				if(parseable.Any ()){
 					foreach (type item in Enum.GetValues(typeof(type))){
 						String finalType = RemoveLineEndings(parseable.First().ToString());
+						Utility.UnityLog(finalType);
+                        Utility.UnityLog((item.ToString() == finalType).ToString());
 						if(item.ToString().Equals(finalType, StringComparison.OrdinalIgnoreCase)){
+                            Utility.UnityLog("pass");
 							_HardwareType = item;
 							return _HardwareType;
 						}
@@ -78,7 +80,7 @@ public class HardwareProject : Project {
 	//the info will come in handy I don't thin it is necessary for this method.
     public bool possible()
     {
-		Debug.Log (this.HardwareType.ToString ()+"  " +name);
+        Utility.UnityLog(this.HardwareType.ToString() + "  " + name);
         foreach (Research r in this.Research) {
             if (!r.hasBeenDone()) {
 				return false;
