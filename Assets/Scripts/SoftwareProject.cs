@@ -35,6 +35,7 @@ public class SoftwareProject : Project {
 	{
 		OS,
 		Course,
+		Software,
 		None,
 		NoType
 	}
