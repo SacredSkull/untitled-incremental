@@ -8,16 +8,6 @@ using Incremental.Database;
 
 public class SoftwareController : MonoBehaviour {
 
-	GameController game;
-	PickerController picker;
-	ResearchController rControl;
-
-	void Start(){
-		game = GameController.instance;
-		picker = PickerController.instance;
-		rControl = ResearchController.instance;
-	}
-
 	private static SoftwareController _instance;
 	
 	public static SoftwareController instance {
@@ -42,7 +32,7 @@ public class SoftwareController : MonoBehaviour {
 	{
 		get {
 			Dictionary<int,SoftwareProject> temp = new Dictionary<int, SoftwareProject>();
-			foreach (SoftwareProject item in game.allSoftwareProjects.Values.ToList()) {
+			foreach (SoftwareProject item in GameController.instance.allSoftwareProjects.Values.ToList()) {
 				if(item.uses > 0 || item.uses == -1){
 					temp.Add(item.ID,item);
 				}
@@ -58,6 +48,8 @@ public class SoftwareController : MonoBehaviour {
 	public List<SoftwareProject> AllCompletedOS = new List<SoftwareProject> ();
 	
 	public List<SoftwareProject> AllCompletedCourses = new List<SoftwareProject> ();
+
+	public List<SoftwareProject> AllCompletedSoftwareProjects = new List<SoftwareProject>();
 	
 	/**
     * @property    public List<SoftwareProject> PossibleSoftware
@@ -96,8 +88,8 @@ public class SoftwareController : MonoBehaviour {
 	}
 	
 	public void startSoftware(SoftwareProject project){
-		GUITools.setGameObjectActive (game.picker, false);
-		GUITools.setGameObjectActive (game.inProgress, true);
+		GUITools.setGameObjectActive (GameController.instance.picker, false);
+		GUITools.setGameObjectActive (GameController.instance.inProgress, true);
 		currentSoftware = project;
 		isSoftwareSet = true;
 		GameObject.Find ("CurrentResearch").GetComponent<Text>().text = currentSoftware.name;
@@ -105,7 +97,7 @@ public class SoftwareController : MonoBehaviour {
 	}
 	
 	public void finishSoftware(){
-		game.justFinished = 8;
+		GameController.instance.justFinished = 8;
 		if(currentSoftware.canDoMultiple){
 			if(currentSoftware.SoftwareType == SoftwareProject.type.Course){
 				AllCompletedCourses.Add (currentSoftware);
@@ -134,11 +126,11 @@ public class SoftwareController : MonoBehaviour {
 				AllCompletedGenericProjects.Add(currentSoftware);
 			}
 			currentSoftware.uses -=1;
-			game.allSoftwareProjects.Remove(currentSoftware.ID);
-			game.allSoftwareProjects.Add (currentSoftware.ID,currentSoftware);
-		}
+			GameController.instance.allSoftwareProjects.Remove(currentSoftware.ID);
+			GameController.instance.allSoftwareProjects.Add (currentSoftware.ID,currentSoftware);
+		}AllCompletedSoftwareProjects.Add (currentSoftware);
 		currentSoftware = null;
 		isSoftwareSet = false;
-		picker.showPicker ();
+		PickerController.instance.showPicker ();
 	}
 }

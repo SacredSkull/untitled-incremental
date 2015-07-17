@@ -37,6 +37,8 @@ public class HardwareController : MonoBehaviour {
 		get;
 		private set;
 	}
+
+	public List<HardwareProject> AllCompletedHardwareProjects = new List<HardwareProject> ();
 	
 	public List<HardwareProject> AllCompletedGenericHardware = new List<HardwareProject> ();
 	
@@ -63,6 +65,7 @@ public class HardwareController : MonoBehaviour {
 			}
 			else{
 				AllCompletedGenericHardware.Add(project);
+				AllCompletedHardwareProjects.Add(project);
 			}
 			useRequiredParts(project);
 		}
@@ -74,6 +77,7 @@ public class HardwareController : MonoBehaviour {
 				else{
 					AllCompletedGenericHardware.Add(project);
 				}
+				AllCompletedHardwareProjects.Add(project);
 				GameController.instance.allHardwareProjects[project.ID].uses--;
 				useRequiredParts(project);
 			}
