@@ -8,7 +8,7 @@ public class WorkID : MonoBehaviour {
 		set;
 	}
 
-	public BrowserListItemClick.ListItemType storedType {
+	public BrowserListItem.ListItemType storedType {
 		get;
 		set;
 	}
