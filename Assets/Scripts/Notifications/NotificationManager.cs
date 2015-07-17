@@ -19,8 +19,8 @@ public class NotificationManager : MonoBehaviour {
         notifications = new List<Startable>();
 
 	    ResearchController.instance.AllCompleteResearch += notify;
-        HardwareController.instance.AllCompletedGenericHardware += notify;
-        SoftwareController.instance.AllCompletedGenericProjects += notify;
+		HardwareController.instance.AllCompletedHardwareProjects += notify;
+        SoftwareController.instance.AllCompletedSoftwareProjects += notify;
 	}
 
     void ResearchNotification(Research r, EventArgs e) {
