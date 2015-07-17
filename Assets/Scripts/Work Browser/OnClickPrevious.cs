@@ -16,7 +16,7 @@ public class OnClickPrevious : MonoBehaviour {
 	}
 
 	public void OnMouseDown(){
-		GameController game = GameController.instance;
-		game.previous ();
+		PickerController projectPicker = PickerController.instance;
+		projectPicker.previous ();
 	}
 }

@@ -111,7 +111,7 @@ public class Research : Startable, IComparable<Research> {
     */
 
     public bool hasBeenDone() {
-        return GameController.instance.AllCompleteResearch.ContainsKey(this.ID);
+        return ResearchController.instance.AllCompleteResearch.ContainsKey(this.ID);
     }
 
     /**

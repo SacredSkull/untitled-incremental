@@ -14,7 +14,7 @@ public class ToIndex : MonoBehaviour {
 	}
 
 	public void onMouseDown(){
-		GameController game = GameController.instance;
-		game.setChapterToNone();
+		PickerController picker = PickerController.instance;
+		picker.setChapterToNone();
 	}
 }
