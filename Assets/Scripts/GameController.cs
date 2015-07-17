@@ -28,29 +28,16 @@ using UnityEngine.EventSystems;
 
 public class GameController : MonoBehaviour {
 
-	private int BUTTON_COUNT = 5;
 	//called whenever research is finished, set to a high number, prevents click spamming opening the browser
 	public int justFinished = 0;
 	public GameObject picker;
-	GameObject inProgress;
+	public GameObject inProgress;
 	public GameObject browser;
 	public GameObject info;
-    Dictionary<int,HardwareProject> allHardwareProjects = new Dictionary<int, HardwareProject>();
-    Dictionary<int,SoftwareProject> allSoftwareProjects = new Dictionary<int,SoftwareProject >();
+	public Dictionary<int,HardwareProject> allHardwareProjects = new Dictionary<int, HardwareProject>();
+    public Dictionary<int,SoftwareProject> allSoftwareProjects = new Dictionary<int,SoftwareProject >();
     List<Research> allResearch;
-	public int chapterPage = 0;
-	//Have you changed page in the last 15 frames?
-	public bool flicked = false;
-	public enum pickedType
-	{
-		None,
-		Research,
-		Software,
-		Hardware,
-		Parts
 
-	}
-	public pickedType chapter;
 
     // See http://unitypatterns.com/singletons/ for more details. Alternatively, google C# singleton.
     private static GameController _instance;
@@ -64,8 +51,10 @@ public class GameController : MonoBehaviour {
 
     public static GameController instance {
         get {
-            if (_instance == null)
-                _instance = GameObject.FindObjectOfType<GameController>();
+			if (_instance == null){
+				_instance = GameObject.FindObjectOfType<GameController>();
+			}
+           
             return _instance;
         }
     }
@@ -76,6 +65,10 @@ public class GameController : MonoBehaviour {
 	//-----------Incremental Values
     private const int BASE_POINTS_PER_CLICK = 1;
 	private const double BASE_PROCESSING_POWER = 1.00;
+	public int researchPoints {
+		get;
+		private set;
+	}
     /** @brief   Current money of the player. */
 	public double money = 0.00;
 
@@ -118,22 +111,24 @@ public class GameController : MonoBehaviour {
      */
 
 	public void addResearchPoints(int points){
-		if(isResearchSet()){
-			if ((currentResearch.cost > researchPoints+points) || debugResearchPoints) {
-				this.researchPoints += points;
+		SoftwareController sControl = SoftwareController.instance;
+		ResearchController rControl = ResearchController.instance;
+		if(rControl.isResearchSet()){
+			if ((rControl.currentResearch.cost > researchPoints+points) || debugResearchPoints) {
+				researchPoints += points;
 			} 
 			 else {
-				finishResearch();
-				this.researchPoints = 0;
+				rControl.finishResearch();
+				researchPoints = 0;
 			}
 		}
-		else if(isSoftwareSet){
-			if ((currentSoftware.pointCost > researchPoints+points) || debugResearchPoints) {
-				this.researchPoints += points;
+		else if(sControl.isSoftwareSet){
+			if ((sControl.currentSoftware.pointCost > researchPoints+points) || debugResearchPoints) {
+				researchPoints += points;
 			}
 			else {
-				finishSoftware();
-				this.researchPoints = 0;
+				sControl.finishSoftware();
+				researchPoints = 0;
 			}
 		}
 
@@ -156,8 +151,10 @@ public class GameController : MonoBehaviour {
     int pointsPerSecond{
 		get{
 			int temp = 0;
-			List<SoftwareProject> relevantSoftware = AllCompletedSoftware.Where(x => x.pointsPerTick> 0).ToList();
-			List<HardwareProject> relevantHardware = AllCompletedHardware.Where(x => x.pointsPerTick> 0).ToList();
+			SoftwareController sControl = SoftwareController.instance;
+			HardwareController hControl = HardwareController.instance;
+			List<SoftwareProject> relevantSoftware = sControl.AllCompletedSoftware.Where(x => x.pointsPerTick> 0).ToList();
+			List<HardwareProject> relevantHardware = hControl.AllCompletedGenericHardware.Where(x => x.pointsPerTick> 0).ToList();
 			foreach(SoftwareProject project in relevantSoftware){
 				temp += project.pointsPerTick;
 			}
@@ -179,8 +176,10 @@ public class GameController : MonoBehaviour {
 	 public int pointsPerClick{
 		get{
 			int temp = BASE_POINTS_PER_CLICK;
-			List<SoftwareProject> relevantSoftware = AllCompletedSoftware.Where(x => x.pointsPerClick> 0).ToList();
-			List<HardwareProject> relevantHardware = AllCompletedHardware.Where(x => x.pointsPerClick> 0).ToList();
+			SoftwareController sControl = SoftwareController.instance;
+			HardwareController hControl = HardwareController.instance;
+			List<SoftwareProject> relevantSoftware = sControl.AllCompletedSoftware.Where(x => x.pointsPerClick> 0).ToList();
+			List<HardwareProject> relevantHardware = hControl.AllCompletedGenericHardware.Where(x => x.pointsPerClick> 0).ToList();
 			foreach(SoftwareProject item in relevantSoftware){
 				temp+=  item.pointsPerClick;
 			}
@@ -202,8 +201,10 @@ public class GameController : MonoBehaviour {
     public int pointsMult{
 		get{
 			int temp = 1;
-			List<SoftwareProject> relevantSoftware = AllCompletedSoftware.Where(x => x.pointMult> 0).ToList();
-            List<HardwareProject> relevantHardware = AllCompletedHardware.Where(x => x.pointMult > 0).ToList();
+			SoftwareController sControl = SoftwareController.instance;
+			HardwareController hControl = HardwareController.instance;
+			List<SoftwareProject> relevantSoftware = sControl.AllCompletedSoftware.Where(x => x.pointMult> 0).ToList();
+            List<HardwareProject> relevantHardware = hControl.AllCompletedGenericHardware.Where(x => x.pointMult > 0).ToList();
 			foreach(SoftwareProject item in relevantSoftware){
 				temp += item.pointMult;
 			}
@@ -225,8 +226,10 @@ public class GameController : MonoBehaviour {
     public double processingPower{
 		get{
 			double temp = BASE_PROCESSING_POWER;
-			List<SoftwareProject> relevantSoftware = AllCompletedSoftware.Where(x => x.processIncrease> 0.00).ToList();
-			List<HardwareProject> relevantHardware = AllCompletedHardware.Where(x => x.processIncrease> 0.00).ToList();
+			SoftwareController sControl = SoftwareController.instance;
+			HardwareController hControl = HardwareController.instance;
+			List<SoftwareProject> relevantSoftware = sControl.AllCompletedSoftware.Where(x => x.processIncrease> 0.00).ToList();
+			List<HardwareProject> relevantHardware = hControl.AllCompletedGenericHardware.Where(x => x.processIncrease> 0.00).ToList();
 			foreach(SoftwareProject item in relevantSoftware){
 				temp += item.processIncrease;
 			}
@@ -237,11 +240,6 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
-	public double primaryProcessingPower{
-		get{
-			return primaryComputer.processIncrease + BASE_PROCESSING_POWER;
-		}
-	}
 
     /**
      * @property    public double moneyPerTick
@@ -254,8 +252,10 @@ public class GameController : MonoBehaviour {
 	public double moneyPerSecond{
 		get{
 			int temp = 0;
-			List<SoftwareProject> relevantSoftware = AllCompletedSoftware.Where(x => x.moneyPerTick> 0).ToList();
-            List<HardwareProject> relevantHardware = AllCompletedHardware.Where(x => x.moneyPerTick > 0).ToList();
+			SoftwareController sControl = SoftwareController.instance;
+			HardwareController hControl = HardwareController.instance;
+			List<SoftwareProject> relevantSoftware = sControl.AllCompletedSoftware.Where(x => x.moneyPerTick> 0).ToList();
+            List<HardwareProject> relevantHardware = hControl.AllCompletedGenericHardware.Where(x => x.moneyPerTick > 0).ToList();
 			foreach(SoftwareProject item in relevantSoftware){
 				temp+=  item.moneyPerTick;
 			}
@@ -277,8 +277,10 @@ public class GameController : MonoBehaviour {
 	public int moneyMultiplier{
 		get{
 			int temp = 1;
-			List<SoftwareProject> relevantSoftware = AllCompletedSoftware.Where(x => x.moneyMult> 0).ToList();
-            List<HardwareProject> relevantHardware = AllCompletedHardware.Where(x => x.moneyMult > 0).ToList();
+			SoftwareController sControl = SoftwareController.instance;
+			HardwareController hControl = HardwareController.instance;
+			List<SoftwareProject> relevantSoftware = sControl.AllCompletedSoftware.Where(x => x.moneyMult> 0).ToList();
+            List<HardwareProject> relevantHardware = hControl.AllCompletedGenericHardware.Where(x => x.moneyMult > 0).ToList();
 			foreach(SoftwareProject item in relevantSoftware){
 				temp+=  item.moneyMult;
 			}
@@ -295,479 +297,18 @@ public class GameController : MonoBehaviour {
 
 	public void addPointsPerSecond(){
 		int toAdd = pointsPerSecond * pointsMult;
-		if (researchSet) {
+		if (ResearchController.instance.researchSet) {
 			addResearchPoints (toAdd);
-		} else if (isSoftwareSet) {
+		} else if (SoftwareController.instance.isSoftwareSet) {
 			addResearchPoints(toAdd);
 		}
 	}
 
-	//the total power, being used by currently installed programs
-	public double usedPower{
-		get{
-			double power = 0.00;
-			power+= primaryOS.ProcessReq;
-			foreach(SoftwareProject program in InstalledSoftware){
-				power += program.ProcessReq;  
-			}
-			return power;
-		}
-	}
-
-
-	//-----------------------------------------------------RESEARCH METHODS AND DATA
-	/** @brief   If research is set or not */
-	private bool researchSet = false;
-	/** @brief   All uncomplete research. */
-    public Dictionary<int, Research> AllUncompleteResearch = new Dictionary<int, Research>();
-	/** @brief   All complete research- key = ResearchID, value = Research*/
-    public Dictionary<int, Research> AllCompleteResearch = new Dictionary<int, Research>();
-	//May need to create another list ordered by ID to make finding completed
-	//research more efficient. For now though, it is not necessary.
-	//private List<Research> AllResearch = new List<Research>();
-	
-    // EVENTS
-    public delegate void StartedResearchHandler(Research sender, EventArgs e);
-    public delegate void StoppedResearchHandler(Research sender, EventArgs e);
-    public delegate void CompletedResearchHandler(Research sender, EventArgs e);
-
-    public event StartedResearchHandler StartedResearch;
-    public event StoppedResearchHandler StoppedResearch;
-    public event CompletedResearchHandler aCompletedResearch;
-
-	public int unlockedCount {
-		get;
-		set;
-	}
-
-	public bool isResearchSet(){
-		return researchSet;
-	}
-
-	public Research currentResearch {
-		get;
-		private set;
-	}
-
-	public Research lastCompleted {
-		get;
-		set;
-	}
-
-	public int currentID {
-		get;
-		private set;
-	}
-
-    public int researchPoints {
-		get;
-		private set;
-	}
-
-    /**
-     * @fn  public void startResearch(Research research)
-     *
-     * @brief   Starts research.
-     *
-     * @author  Conal
-     * @date    05/04/2015
-     *
-     * @param   research    The research to start.
-     */
-
-	public void startResearch(Research research){
-		researchSet = true;
-		currentResearch = research;
-		picker.active = false;
-		inProgress.active = true;
-		//451,151,0,455,300
-		GameObject.Find ("CurrentResearch").GetComponent<Text>().text = currentResearch.name;
-		GameObject.Find ("Description").GetComponent<Text> ().text = currentResearch.description;
-	}
-
-	//removes from UncompleteResearch, adds to completedResearch
-
-    /**
-     * @fn  public void finishResearch()
-     *
-     * @brief   Finishes research, removing it from uncompleted research and adding it into the completed list.
-     *
-     * @author  Conal
-     * @date    01/04/2015
-     */
-
-	public void finishResearch(){
-		justFinished = 8;
-		inProgress.active = false;
-		researchSet = false;
-		int index = currentResearch.ID;
-		AllUncompleteResearch.Remove (index);
-		currentResearch.complete();
-		AllCompleteResearch.Add(currentResearch.ID, currentResearch);
-		lastCompleted = currentResearch;
-		currentResearch = null;
-		AllPossibleResearchByKey = SortResearchByKey (AllPossibleResearch);
-		showPicker ();
-
-	}
-
-	//currently useless
-	/*public void addNewResearch(Research a){
-		if (a.isDone ()) {
-			AllCompleteResearch.Add (a);
-			AllCompleteResearch.Sort ();
-		} else {
-			AllUncompleteResearch.Add (a);
-			AllUncompleteResearch.Sort ();
-		}
-	}*/
-
-	//Finds the Research that are in after but not in before
-	private List<Research> findNew(List<Research> before,List<Research> after){
-		List<Research> newResearch = new List<Research> ();
-		foreach(Research a in after){
-			bool found = false;
-			foreach(Research b in before){
-				if(a.ID == b.ID){
-					found = true;
-					break;
-				}
-			}
-			if(found == false){
-				newResearch.Add(a);
-			}
-		}
-		return newResearch;
-	}
-
-    /**
-     * @property    public List<Research> AllPossibleResearch
-     *
-     * @brief   Gets all possible research that canBeDone().
-     * 
-     * @warning Iterator; should not be called every tick!
-     * 
-     * @return  all possible research.
-     */
-
-	//The higher the int value the more recently the Research has been possible. In order for this to work
-	//an old version of the dictionary must be given.
-	public Dictionary<int,Research> PossibleResearch(Dictionary<int,Research> before){
-		int i;
-		Dictionary<int,Research> finalCanDo = new Dictionary<int,Research > ();
-		List<Research> canDo = new List<Research> ();
-		foreach (Research r in AllUncompleteResearch.Values.ToList()) {
-			if (r.canBeDone ()) {
-				canDo.Add (r);
-			}
-		}
-		if (before == null) {
-			i = 0;
-			foreach (Research r in canDo) {
-				finalCanDo.Add (i, r);
-				i++;
-			}
-			storePossibleResearch = finalCanDo;
-			return finalCanDo;
-		} else {
-			int high = -1;
-			//finds highest number
-			foreach (int k in before.Keys.ToList()) {
-				if (k > high) {
-					high = k;
-				}
-			}
-			List<Research> additions = findNew (before.Values.ToList (), canDo);
-			finalCanDo = before;
-			//removes the key of the last completed research. Thanks Stack Overflow! :)
-			try{
-				var item = finalCanDo.First(x => x.Value.ID == lastCompleted.ID);
-				if (!item.Equals(null)){
-					finalCanDo.Remove(item.Key);
-				}
-			}
-			catch(NullReferenceException){
-
-			}
-			catch(InvalidOperationException){
-
-			}
-
-
-			foreach (Research r in additions) {
-				high++;
-				finalCanDo.Add (high, r);
-			}
-			storePossibleResearch = finalCanDo;
-			return finalCanDo;
-		}
-	}
-
-	public Dictionary<int,Research> storePossibleResearch{
-		get;
-		private set;
-	}
-	//Method to be called whenever the list is needed
-	public Dictionary<int,Research> AllPossibleResearch{
-		get{
-			return PossibleResearch(storePossibleResearch);
-		}
-	}
-	//where the sorted list is to be stored, to prevent all these bothersome
-	//methods from being repeatedly called.
-	public List<Research> AllPossibleResearchByKey {
-		get;
-		set;
-	}
-
-	//from highest to lowest
-	public List<Research> SortResearchByKey(Dictionary<int,Research> unsorted){
-		List<int> keyOrder = new List<int> ();
-		List<int> unorderedKeys = unsorted.Keys.ToList ();
-		int count = unorderedKeys.Count;
-		for (int i = 0; i<count; i++) {
-			keyOrder.Add(unorderedKeys.Max ());
-			unorderedKeys.Remove (unorderedKeys.Max ());
-		}
-		List<Research> ordered = new List<Research> ();
-		foreach (int j in keyOrder) {
-			ordered.Add(unsorted[j]);
-		}
-		return ordered;
-	}
-
-	//-----------------------------------------------------SOFTWARE
-
-    // EVENTS
-    public delegate void StartedSoftwareHandler(SoftwareProject sender, EventArgs e);
-    public delegate void StoppedSoftwareHandler(SoftwareProject sender, EventArgs e);
-    public delegate void CompletedSoftwareHandler(SoftwareProject sender, EventArgs e);
-
-    public event StartedSoftwareHandler StartedSoftware;
-    public event StoppedSoftwareHandler StoppedSoftware;
-    public event CompletedSoftwareHandler CompletedSoftware;
-
-    /**
-     * @property    public List<SoftwawreProject> UnstartedSoftware
-     *
-     * @brief   All SoftwareProjects that have not been completed or are repeatable
-     * 
-     * @warning Iterator; should not be called every tick!
-     *
-     * @return  The unstarted software.
-     */
 
 
 
-    public Dictionary<int,SoftwareProject> UnstartedSoftware
-    {
-        get {
-            Dictionary<int,SoftwareProject> temp = new Dictionary<int, SoftwareProject>();
-            foreach (SoftwareProject item in allSoftwareProjects.Values.ToList()) {
-				if(item.uses > 0 || item.uses == -1){
-					temp.Add(item.ID,item);
-				}
-			}
-            return temp;
-        }
-    }
-	public List<SoftwareProject> AllCompletedGenericProjects = new List<SoftwareProject> ();
 
-    public List<SoftwareProject> AllCompletedSoftware = new List<SoftwareProject>();
-
-	public List<SoftwareProject> InstalledSoftware = new List<SoftwareProject> ();
-
-	public List<SoftwareProject> AllCompletedOS = new List<SoftwareProject> ();
-
-	public SoftwareProject primaryOS {
-		get;
-		private set;
-	}
-
-	public List<SoftwareProject> AllCompletedCourses = new List<SoftwareProject> ();
-
-    /**
-    * @property    public List<SoftwareProject> PossibleSoftware
-    *
-    * @brief   All Software that has its dependencies filled
-    *          
-    * @warning Iterator; should not be called every tick!
-    *
-    * @return  The potential software.
-    */
-
-    public List<SoftwareProject> PossibleSoftware{
-		get{
-            List<Startable> requirements = new List<Startable>();
-			List<SoftwareProject> temp = UnstartedSoftware.Values.ToList ().Where(x => x.possible(out requirements)).ToList();
-			return temp;
-		}
-	}
-
-    /**
-     * @property    public bool isSoftware
-     *
-     * @brief   Used by ComputerOnClick. Gets or privately sets a value indicating whether this object is software.
-     *
-     * @return  true if this object is software, false if not.
-     */
-
-	public bool isSoftwareSet {
-		get;
-		private set;
-	}
-
-	public SoftwareProject currentSoftware {
-		get;
-		private set;
-	}
-
-	public bool installing {
-		get;
-		private set;
-	}
-
-	public void startSoftware(SoftwareProject project){
-		picker.active = false;
-		inProgress.active = true;
-		currentSoftware = project;
-		isSoftwareSet = true;
-		GameObject.Find ("CurrentResearch").GetComponent<Text>().text = currentSoftware.name;
-		GameObject.Find ("Description").GetComponent<Text> ().text = currentSoftware.description;
-	}
-
-	public void finishSoftware(){
-		justFinished = 8;
-		if(currentSoftware.canDoMultiple){
-			if(currentSoftware.SoftwareType == SoftwareProject.type.Course){
-				AllCompletedCourses.Add (currentSoftware);
-			}
-			else if(currentSoftware.SoftwareType == SoftwareProject.type.OS){
-				AllCompletedOS.Add(currentSoftware);
-			}
-			else if(currentSoftware.SoftwareType == SoftwareProject.type.Software){
-				AllCompletedSoftware.Add(currentSoftware);
-			}
-			else{
-				AllCompletedGenericProjects.Add(currentSoftware);
-			}
-		}
-		else{
-			if(currentSoftware.SoftwareType == SoftwareProject.type.Course){
-				AllCompletedCourses.Add (currentSoftware);
-			}
-			else if(currentSoftware.SoftwareType == SoftwareProject.type.OS){
-				AllCompletedOS.Add(currentSoftware);
-			}
-			else if(currentSoftware.SoftwareType == SoftwareProject.type.Software){
-				AllCompletedSoftware.Add(currentSoftware);
-			}
-			else{
-				AllCompletedGenericProjects.Add(currentSoftware);
-			}
-			currentSoftware.uses -=1;
-			allSoftwareProjects.Remove(currentSoftware.ID);
-			allSoftwareProjects.Add (currentSoftware.ID,currentSoftware);
-		}
-		currentSoftware = null;
-		isSoftwareSet = false;
-		showPicker ();
-	}
-
-	//install software to run on your computer, there is a short waiting time between 
-	//each install, this will be visualised in the GUI.
-	public void installSoftware(SoftwareProject tobeInstalled, int number){
-		if (tobeInstalled.canDoMultiple) {
-			for (int i = 0; i<number; i++) {
-				if(usedPower+tobeInstalled.ProcessReq < processingPower){
-					System.Threading.Thread.Sleep ((int)(tobeInstalled.ProcessReq * (10000 / primaryProcessingPower)));
-					InstalledSoftware.Add (tobeInstalled);
-				}
-				else{
-					break;
-				}
-
-			}
-		} else {
-			
-		}
-	}
-
-	//-----------------------------------------------------HARDWARE
-
-    // HardwareProject
-    public delegate void StartedHardwareHandler(HardwareProject sender, EventArgs e);
-    public delegate void StoppedHardwareHandler(HardwareProject sender, EventArgs e);
-    public delegate void CompletedHardwareHandler(HardwareProject sender, EventArgs e);
-
-    public event StartedHardwareHandler StartedHardware;
-    public event StoppedHardwareHandler StoppedHardware;
-    public event CompletedHardwareHandler CompletedHardware;
-
-    public Dictionary<int,HardwareProject> UnstartedHardware {
-        get {
-            Dictionary<int,HardwareProject> temp = new Dictionary<int,HardwareProject>();
-            foreach (var item in allHardwareProjects.Values.ToList())
-            {
-                if (item.uses > 0 || item.uses == -1)
-                {
-                    temp.Add(item.ID,item);
-                }
-            }
-            return temp;
-        }
-    }
-    public List<HardwareProject> AllCompletedComputers = new List<HardwareProject>();
-
-	public HardwareProject primaryComputer {
-		get;
-		private set;
-	}
-
-	public List<HardwareProject> AllCompletedGenericHardware = new List<HardwareProject> ();
-
-	public List<HardwareProject> PossibleHardware{
-		get{
-            // Note: out parameters are not optional by design, so we actually need to create this.
-            // The alternative is overloading possible(), with a method that does not compute missing requirements.
-            List<Startable> requirements = new List<Startable>();
-			List<HardwareProject> temp = UnstartedHardware.Values.ToList ().Where(x => x.possible()).ToList();
-			return temp;
-		}
-	}
-
-    private void useRequiredParts(HardwareProject project){
-       	foreach (Part item in project.Parts) {
-			use(item, item.quantity);
-		}
-	}
-
-	public void makeHardware(HardwareProject project){
-        if (project.canDoMultiple) {
-			if(project.HardwareType == HardwareProject.type.Computer){
-				AllCompletedComputers.Add(project);
-			}
-			else{
-				AllCompletedGenericHardware.Add(project);
-			}
-            useRequiredParts(project);
-		}
-		else{
-            if (allHardwareProjects[project.ID].uses > 0) {
-				if(project.HardwareType == HardwareProject.type.Computer){
-					AllCompletedComputers.Add(project);
-				}
-				else{
-					AllCompletedGenericHardware.Add(project);
-				}
-                allHardwareProjects[project.ID].uses--;
-                useRequiredParts(project);
-            }
-        }
-
-	}
-
-
+      
 
 
 	//-----------------------------------------------------TICK METHODS AND DATA
@@ -797,478 +338,11 @@ public class GameController : MonoBehaviour {
 	//List containing all parts
 	public List<Part> allParts = new List<Part>();
 
-	public Dictionary<int,Part> allBuyableParts{
-		get {
-			Dictionary<int,Part> temp = new Dictionary<int,Part>();
-			foreach (var item in allParts)
-			{	
-				if(item.isBuyable()){
-					temp.Add(item.ID,item);
-				}
-			}
-			return temp;
-		}
-	}
-	
-	// Dictionary containing the part ID and quantity
-	public readonly Dictionary<int, int> partInventory = new Dictionary<int, int>();
 
-	bool hasParts(Part p, int number) {
-	    return partInventory[p.ID] >= number;
-	}
-
-	public void buyPart(Part p, int number){
-		if (money >= (p.cost * number)) {
-			money-= (p.cost * number);
-			if(partInventory.ContainsKey(p.ID)){
-				partInventory[p.ID] += number;
-			}
-			else{
-				partInventory.Add(p.ID,number);
-			}
-            
-		}
-		else{
-			// \todo Exceptions
-		}
-	}
-
-	public void use(Part p, int number){
-	    partInventory[p.ID] -= number;
-	}
 	//-----------------------------------------MISC
 
 	//if bool is true, button made visible, if false button made invisble
-	public void setButtonVisible(String name,bool visible){
-		GameObject button = GameObject.Find(name);
-		if (!visible) {
-			button.GetComponent<CanvasGroup> ().alpha = 0;
-			button.GetComponent<Button> ().interactable = false;
-			button.GetComponent<CanvasGroup> ().interactable = false;
-		} else {
-			button.GetComponent<CanvasGroup>().alpha = 1;
-			button.GetComponent<Button>().interactable = true;
-			button.GetComponent<CanvasGroup>().interactable = true;
-		}
-	}
 
-	public void setChapterToNone(){
-		foreach(Text field in outProject){
-			field.text = null;
-			field.GetComponent<WorkID>().ID = null;
-		}
-		chapter = pickedType.None;
-		chapterPage = 0;
-		setButtonVisible ("Index", false);
-		outProject[0].text = "Research";
-		outProject [0].GetComponent<WorkID> ().storedType = BrowserListItemClick.ListItemType.ResearchCategory;
-		outProject[1].text = "Software";
-		outProject [1].GetComponent<WorkID> ().storedType = BrowserListItemClick.ListItemType.SoftwareCategory;
-		outProject[2].text = "Hardware";
-		outProject [2].GetComponent<WorkID> ().storedType = BrowserListItemClick.ListItemType.HardwareCategory;
-		outProject[3].text = "Parts";
-		outProject [3].GetComponent<WorkID> ().storedType = BrowserListItemClick.ListItemType.PartsCategory;
-		if (!PossibleSoftware.Any()) {
-			setButtonVisible ("R2", false);
-		} else {
-			setButtonVisible ("R2", true);
-		}
-		if (!PossibleHardware.Any ()) {
-			setButtonVisible ("R3", false);
-			setButtonVisible ("R4", false);
-		} else {
-			setButtonVisible ("R3", true);
-			setButtonVisible ("R4", true);
-		}
-		setButtonVisible ("R5", false);
-		setButtonVisible ("Next", false);
-		setButtonVisible ("Previous", false);
-
-	}
-
-	public void setChapterToResearch(){
-		chapter = pickedType.Research;
-		setButtonVisible ("R2", true);
-		setButtonVisible ("R3", true);
-		setButtonVisible ("R4", true);
-		setButtonVisible ("R5", true);
-		List<Research> temp = new List<Research> ();
-		if (AllPossibleResearchByKey != null) {
-			temp = AllPossibleResearchByKey;
-		} else {
-			AllPossibleResearchByKey = SortResearchByKey (AllPossibleResearch);
-			temp = AllPossibleResearchByKey;
-		}
-		int i = 0;
-		foreach(Text field in outProject){
-			int position = 0+(chapterPage*BUTTON_COUNT)+i;
-			try{
-				field.text = temp[position].name + ":  " +temp[position].cost;
-				field.GetComponent<WorkID>().ID = temp[position].ID;
-			}
-			catch(ArgumentOutOfRangeException){
-				field.text = "???";
-				field.GetComponent<WorkID>().ID = null;
-			}
-			i++;
-		}
-		setButtonVisible ("Index", true);
-		if(chapterPage == 0){
-			GameObject button;
-			setButtonVisible ("Previous", false);
-			if(temp.Count <= BUTTON_COUNT+(chapterPage*BUTTON_COUNT)){
-				setButtonVisible ("Next", false);
-			}
-			else{
-				setButtonVisible ("Next", true);
-			}
-		}
-	}
-
-	public void setChapterToSoftware(){
-		if(!PossibleSoftware.Any ()){
-			setChapterToNone();
-			return;
-		}
-		chapter = pickedType.Software;
-		setButtonVisible ("R2", true);
-		setButtonVisible ("R3", true);
-		setButtonVisible ("R4", true);
-		setButtonVisible ("R5", true);
-		List<SoftwareProject> temp = PossibleSoftware;
-		int i = 0;
-		foreach(Text field in outProject){
-			int position = 0+(chapterPage*BUTTON_COUNT)+i;
-			try{
-				field.text = temp[position].name + ":  " +temp[position].pointCost;
-				field.GetComponent<WorkID>().ID = temp[position].ID;
-			}
-			catch(ArgumentOutOfRangeException){
-				field.text = "???";
-				field.GetComponent<WorkID>().ID = null;
-			}
-			i++;
-		}
-		setButtonVisible ("Index", true);
-		if(chapterPage == 0){
-			GameObject button;
-			setButtonVisible ("Previous", false);
-			if(temp.Count <= BUTTON_COUNT+(chapterPage*BUTTON_COUNT)){
-				setButtonVisible ("Next", false);
-			}
-		}
-	}
-
-	public void setChapterToHardware(){
-		if(!PossibleHardware.Any ()){
-			setChapterToNone();
-			return;
-		}
-		chapter = pickedType.Hardware;
-		setButtonVisible ("R2", true);
-		setButtonVisible ("R3", true);
-		setButtonVisible ("R4", true);
-		setButtonVisible ("R5", true);
-		List<HardwareProject> temp = PossibleHardware;
-		int i = 0;
-		foreach(Text field in outProject){
-			int position = 0+(chapterPage*BUTTON_COUNT)+i;
-			try{
-				field.text = temp[position].name;
-				field.GetComponent<WorkID>().ID = temp[position].ID;
-			}
-			catch(ArgumentOutOfRangeException){
-				field.text = "???";
-				field.GetComponent<WorkID>().ID = null;
-			}
-			i++;
-		}
-		setButtonVisible ("Index", true);
-		if(chapterPage == 0){
-			GameObject button;
-			setButtonVisible ("Previous", false);
-			if(temp.Count <= BUTTON_COUNT+(chapterPage*BUTTON_COUNT)){
-				setButtonVisible ("Next", false);
-			}
-			else{
-				setButtonVisible ("Next", true);
-			}
-		}
-	}
-
-	public void setChapterToParts(){
-		chapter = pickedType.Parts;
-		setButtonVisible ("R2", true);
-		setButtonVisible ("R3", true);
-		setButtonVisible ("R4", true);
-		setButtonVisible ("R5", true);
-		List<Part> temp = allBuyableParts.Values.ToList();
-		int i = 0;
-		foreach(Text field in outProject){
-			int position = 0+(chapterPage*BUTTON_COUNT)+i;
-			try{
-				field.text = temp[position].name;
-				field.GetComponent<WorkID>().ID = temp[position].ID;
-			}
-			catch(ArgumentOutOfRangeException){
-				field.text = "???";
-				field.GetComponent<WorkID>().ID = null;
-			}
-			i++;
-		}
-		setButtonVisible ("Index", true);
-		if(chapterPage == 0){
-			GameObject button;
-			setButtonVisible ("Previous", false);
-			if(temp.Count <= BUTTON_COUNT+(chapterPage*BUTTON_COUNT)){
-				setButtonVisible ("Next", false);
-			}
-			else{
-				setButtonVisible ("Next", true);
-			}
-		}
-	}
-
-
-	public int pageNumber(){
-		return chapterPage;
-	}
-
-	public void next(){
-		chapterPage+=1;
-		if(chapter == pickedType.Research){
-			List<Research> temp = AllPossibleResearchByKey;
-			int i = 0;
-			foreach(Text field in outProject){
-				int position = 0+(chapterPage*BUTTON_COUNT)+i;
-				try{
-					field.text = temp[position].name + ": " +temp[position].cost;
-					field.GetComponent<WorkID>().ID = temp[position].ID;
-				}
-				catch(ArgumentOutOfRangeException){
-					field.text = "???";
-					field.GetComponent<WorkID>().ID = null;
-				}
-				i++;
-			}
-			setButtonVisible ("Previous", true);
-			if(temp.Count <= BUTTON_COUNT+(chapterPage*BUTTON_COUNT)){
-				setButtonVisible("Next",false);
-			}
-			flicked = true;
-		}
-		else if(chapter == pickedType.Software){
-			List<SoftwareProject> temp = PossibleSoftware;
-			int i = 0;
-			foreach(Text field in outProject){
-				int position = 0+(chapterPage*BUTTON_COUNT)+i;
-				try{
-					field.text = temp[position].name + ": " +temp[position].pointCost;
-					field.GetComponent<WorkID>().ID = temp[position].ID;
-				}
-				catch(ArgumentOutOfRangeException){
-					field.text = "???";
-					field.GetComponent<WorkID>().ID = null;
-				}
-				i++;
-			}
-			setButtonVisible ("Previous", true);
-			if(temp.Count <= BUTTON_COUNT+(chapterPage*BUTTON_COUNT)){
-				setButtonVisible("Next",false);
-			}
-			flicked = true;
-		}
-		else if(chapter == pickedType.Hardware){
-			List<HardwareProject> temp = PossibleHardware;
-			int i = 0;
-			foreach(Text field in outProject){
-				int position = 0+(chapterPage*BUTTON_COUNT)+i;
-				try{
-					field.text = temp[position].name;
-					field.GetComponent<WorkID>().ID = temp[position].ID;
-				}
-				catch(ArgumentOutOfRangeException){
-					field.text = "???";
-					field.GetComponent<WorkID>().ID = null;
-				}
-				i++;
-			}
-			setButtonVisible ("Previous", true);
-			if(temp.Count <= BUTTON_COUNT+(chapterPage*BUTTON_COUNT)){
-				setButtonVisible("Next",false);
-			}
-			flicked = true;
-		}
-		else if(chapter == pickedType.Parts){
-			List<Part> temp = allParts;
-			int i = 0;
-			foreach(Text field in outProject){
-				int position = 0+(chapterPage*BUTTON_COUNT)+i;
-				try{
-					field.text = temp[position].name + ": £" +temp[position].cost;
-					field.GetComponent<WorkID>().ID = temp[position].ID;
-				}
-				catch(ArgumentOutOfRangeException){
-					field.text = "???";
-					field.GetComponent<WorkID>().ID = null;
-				}
-				i++;
-			}
-			setButtonVisible ("Previous", true);
-			if(temp.Count <= BUTTON_COUNT+(chapterPage*BUTTON_COUNT)){
-				setButtonVisible("Next",false);
-			}
-			flicked = true;
-		}
-
-		
-	}
-	
-	public void previous(){
-		chapterPage -= 1;
-		if (chapter == pickedType.Research) {
-			List<Research> temp = AllPossibleResearchByKey;
-			int i = 0;
-			foreach (Text field in outProject) {
-				int position = 0 + (chapterPage * BUTTON_COUNT) + i;
-				try {
-					field.text = temp [position].name + ": " + temp [position].cost;
-					field.GetComponent<WorkID> ().ID = temp [position].ID;
-				} catch (ArgumentOutOfRangeException) {
-					field.text = "???";
-					field.GetComponent<WorkID>().ID = null;
-				}
-				i++;
-			}
-			if (chapterPage == 0) {
-				setButtonVisible ("Previous", false);
-				if (temp.Count <= BUTTON_COUNT + (chapterPage * BUTTON_COUNT)) {
-					setButtonVisible ("Next", false);
-				} else {
-					setButtonVisible ("Next", true);
-				}
-			} else if (chapterPage != 0) {
-				setButtonVisible ("Previous", true);
-				if (temp.Count <= BUTTON_COUNT + (chapterPage * BUTTON_COUNT)) {
-					setButtonVisible ("Next", false);
-				} else {
-					setButtonVisible ("Next", true);
-				}
-			}
-			flicked = true;
-		} else if (chapter == pickedType.Software) {
-			List<SoftwareProject> temp = PossibleSoftware;
-			int i = 0;
-			foreach (Text field in outProject) {
-				int position = 0 + (chapterPage * BUTTON_COUNT) + i;
-				try {
-					field.text = temp [position].name + ": " + temp [position].pointCost;
-					field.GetComponent<WorkID> ().ID = temp [position].ID;
-				} catch (ArgumentOutOfRangeException) {
-					field.text = "???";
-					field.GetComponent<WorkID>().ID = null;
-				}
-				i++;
-			}
-			if (chapterPage == 0) {
-				setButtonVisible ("Previous", false);
-				if (temp.Count <= BUTTON_COUNT + (chapterPage * BUTTON_COUNT)) {
-					setButtonVisible ("Next", false);
-				} else {
-					setButtonVisible ("Next", true);
-				}
-			} else if (chapterPage != 0) {
-				setButtonVisible ("Previous", true);
-				if (temp.Count <= BUTTON_COUNT + (chapterPage * BUTTON_COUNT)) {
-					setButtonVisible ("Next", false);
-				} else {
-					setButtonVisible ("Next", true);
-				}
-			}
-			flicked = true;
-		} else if (chapter == pickedType.Hardware) {
-			List<HardwareProject> temp = PossibleHardware;
-			int i = 0;
-			foreach (Text field in outProject) {
-				int position = 0 + (chapterPage * BUTTON_COUNT) + i;
-				try {
-					field.text = temp [position].name;
-					field.GetComponent<WorkID> ().ID = temp [position].ID;
-				} catch (ArgumentOutOfRangeException) {
-					field.text = "???";
-					field.GetComponent<WorkID>().ID = null;
-
-				}
-				i++;
-			}
-			if (chapterPage == 0) {
-				setButtonVisible ("Previous", false);
-				if (temp.Count <= BUTTON_COUNT + (chapterPage * BUTTON_COUNT)) {
-					setButtonVisible ("Next", false);
-				} else {
-					setButtonVisible ("Next", true);
-				}
-			} else if (chapterPage != 0) {
-				setButtonVisible ("Previous", true);
-				if (temp.Count <= BUTTON_COUNT + (chapterPage * BUTTON_COUNT)) {
-					setButtonVisible ("Next", false);
-				} else {
-					setButtonVisible ("Next", true);
-				}
-			}
-			flicked = true;
-		} else if (chapter == pickedType.Parts) {
-			List<Part> temp = allParts;
-			int i = 0;
-			foreach (Text field in outProject) {
-				int position = 0 + (chapterPage * BUTTON_COUNT) + i;
-				try {
-					field.text = temp [position].name + ": " + temp [position].cost;
-					field.GetComponent<WorkID> ().ID = temp [position].ID;
-				} catch (ArgumentOutOfRangeException) {
-					field.text = "???";
-					field.GetComponent<WorkID>().ID = null;
-				}
-				i++;
-			}
-			if (chapterPage == 0) {
-				setButtonVisible ("Previous", false);
-				if (temp.Count <= BUTTON_COUNT + (chapterPage * BUTTON_COUNT)) {
-					setButtonVisible ("Next", false);
-				} else {
-					setButtonVisible ("Next", true);
-				}
-			} else if (chapterPage != 0) {
-				setButtonVisible ("Previous", true);
-				if (temp.Count <= BUTTON_COUNT + (chapterPage * BUTTON_COUNT)) {
-					setButtonVisible ("Next", false);
-				} else {
-					setButtonVisible ("Next", true);
-				}
-			}
-			flicked = true;
-		}
-	}
-
-	public void showPicker(){
-		picker.active = true;
-		if(chapter == pickedType.Research ){
-			setChapterToResearch();
-		}
-		else if(chapter == pickedType.Software){
-			setChapterToSoftware();
-		}
-		else if(chapter == pickedType.Hardware){
-			setChapterToHardware();
-		}
-		else if(chapter == pickedType.Parts){
-			setChapterToParts();
-		}
-		else{
-			setChapterToNone();
-		}
-
-	}
 	//-----------------------------------------UNITY METHODS
 
 	void Awake() {
@@ -1323,8 +397,10 @@ public class GameController : MonoBehaviour {
 					allHardwareProjects.Add(h.ID,h);
 				}
 				else{
-					AllCompletedComputers.Add (h);
-					primaryComputer = h;
+					ComputerController compControl = ComputerController.instance; 
+					compControl.AllCompletedComputers.Add (h);
+					compControl.setMannedComputer(h);
+
 				}
 				
 			}
@@ -1333,9 +409,9 @@ public class GameController : MonoBehaviour {
 
 	    }
 		foreach (Research r in allResearch) {
-			AllUncompleteResearch.Add(r.ID,r);
+			ResearchController.instance.AllUncompleteResearch.Add(r.ID,r);
 		} 
-		setChapterToNone ();
+		PickerController.instance.setChapterToNone ();
 
 
 	    //AllCompleteResearch.Add(new Research("Robotics", "Cool robots", 200, 1, new Research[]{}, true));
@@ -1371,7 +447,7 @@ public class GameController : MonoBehaviour {
 			if(justFinished>0){
 				justFinished--;
 			}
-			flicked = false;
+			PickerController.instance.flicked = false;
 			ticker = 0;
 		} else
 			ticker++;
