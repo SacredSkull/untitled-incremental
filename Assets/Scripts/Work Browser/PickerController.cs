@@ -48,13 +48,13 @@ public class PickerController : MonoBehaviour {
 		chapterPage = 0;
 		GUITools.setButtonVisible ("Index", false);
 		GameController.instance.outProject[0].text = "Research";
-		GameController.instance.outProject [0].GetComponent<WorkID> ().storedType = BrowserListItemClick.ListItemType.ResearchCategory;
+		GameController.instance.outProject [0].GetComponent<WorkID> ().storedType = BrowserListItem.ListItemType.ResearchCategory;
 		GameController.instance.outProject[1].text = "Software";
-		GameController.instance.outProject [1].GetComponent<WorkID> ().storedType = BrowserListItemClick.ListItemType.SoftwareCategory;
+		GameController.instance.outProject [1].GetComponent<WorkID> ().storedType = BrowserListItem.ListItemType.SoftwareCategory;
 		GameController.instance.outProject[2].text = "Hardware";
-		GameController.instance.outProject [2].GetComponent<WorkID> ().storedType = BrowserListItemClick.ListItemType.HardwareCategory;
+		GameController.instance.outProject [2].GetComponent<WorkID> ().storedType = BrowserListItem.ListItemType.HardwareCategory;
 		GameController.instance.outProject[3].text = "Parts";
-		GameController.instance.outProject [3].GetComponent<WorkID> ().storedType = BrowserListItemClick.ListItemType.PartsCategory;
+		GameController.instance.outProject [3].GetComponent<WorkID> ().storedType = BrowserListItem.ListItemType.PartsCategory;
 		if (!SoftwareController.instance.PossibleSoftware.Any()) {
 			GUITools.setButtonVisible ("R2", false);
 		} else {

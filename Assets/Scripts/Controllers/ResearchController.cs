@@ -18,7 +18,6 @@ public class ResearchController : MonoBehaviour {
 		}
 	}
 
-
 	/** @brief   If research is set or not */
 	public bool researchSet = false;
 	/** @brief   All uncomplete research. */
@@ -52,8 +51,15 @@ public class ResearchController : MonoBehaviour {
 		get;
 		private set;
 	}
-	
 
+    // EVENTS
+    public delegate void StartedResearchHandler(Research sender, EventArgs e);
+    public delegate void StoppedResearchHandler(Research sender, EventArgs e);
+    public delegate void CompletedResearchHandler(Research sender, EventArgs e);
+
+    public event StartedResearchHandler onStartedResearch;
+    public event StoppedResearchHandler onStoppedResearch;
+    public event CompletedResearchHandler onCompletedResearch;
 	
 	/**
      * @fn  public void startResearch(Research research)
@@ -69,6 +75,10 @@ public class ResearchController : MonoBehaviour {
 	public void startResearch(Research research){
 		researchSet = true;
 		currentResearch = research;
+
+        // Check that there are listeners, if so call event
+        if(onStartedResearch != null)
+            onStartedResearch(currentResearch, EventArgs.Empty);
 		GUITools.setGameObjectActive (GameController.instance.picker, false);
 		GUITools.setGameObjectActive (GameController.instance.inProgress, true);
 		GameObject.Find ("CurrentResearch").GetComponent<Text>().text = currentResearch.name;
@@ -92,6 +102,11 @@ public class ResearchController : MonoBehaviour {
 		researchSet = false;
 		int index = currentResearch.ID;
 		AllUncompleteResearch.Remove (index);
+
+        // If there are listeners, call the event
+        if(onCompletedResearch != null)
+	        onCompletedResearch(currentResearch, EventArgs.Empty);
+
 		currentResearch.complete();
 		AllCompleteResearch.Add(currentResearch.ID, currentResearch);
 		lastCompleted = currentResearch;

@@ -86,11 +86,25 @@ public class SoftwareController : MonoBehaviour {
 		get;
 		private set;
 	}
+
+    // EVENTS
+    public delegate void StartedSoftwareHandler(SoftwareProject sender, EventArgs e);
+    public delegate void StoppedSoftwareHandler(SoftwareProject sender, EventArgs e);
+    public delegate void CompletedSoftwareHandler(SoftwareProject sender, EventArgs e);
+
+    public event StartedSoftwareHandler onStartedSoftware;
+    public event StoppedSoftwareHandler onStoppedSoftware;
+    public event CompletedSoftwareHandler onCompletedSoftware;
 	
 	public void startSoftware(SoftwareProject project){
 		GUITools.setGameObjectActive (GameController.instance.picker, false);
 		GUITools.setGameObjectActive (GameController.instance.inProgress, true);
 		currentSoftware = project;
+
+        // Check if there are listeners, if so, call event
+        if(onStartedSoftware != null)
+            onStartedSoftware(currentSoftware, EventArgs.Empty);
+
 		isSoftwareSet = true;
 		GameObject.Find ("CurrentResearch").GetComponent<Text>().text = currentSoftware.name;
 		GameObject.Find ("Description").GetComponent<Text> ().text = currentSoftware.description;
@@ -99,36 +113,44 @@ public class SoftwareController : MonoBehaviour {
 	public void finishSoftware(){
 		GameController.instance.justFinished = 8;
 		if(currentSoftware.canDoMultiple){
-			if(currentSoftware.SoftwareType == SoftwareProject.type.Course){
-				AllCompletedCourses.Add (currentSoftware);
-			}
-			else if(currentSoftware.SoftwareType == SoftwareProject.type.OS){
-				AllCompletedOS.Add(currentSoftware);
-			}
-			else if(currentSoftware.SoftwareType == SoftwareProject.type.Software){
-				AllCompletedSoftware.Add(currentSoftware);
-			}
-			else{
-				AllCompletedGenericProjects.Add(currentSoftware);
+			switch (currentSoftware.SoftwareType) {
+			    case SoftwareProject.type.Course:
+			        AllCompletedCourses.Add (currentSoftware);
+			        break;
+			    case SoftwareProject.type.OS:
+			        AllCompletedOS.Add(currentSoftware);
+			        break;
+			    case SoftwareProject.type.Software:
+			        AllCompletedSoftware.Add(currentSoftware);
+			        break;
+			    default:
+			        AllCompletedGenericProjects.Add(currentSoftware);
+			        break;
 			}
 		}
 		else{
-			if(currentSoftware.SoftwareType == SoftwareProject.type.Course){
-				AllCompletedCourses.Add (currentSoftware);
-			}
-			else if(currentSoftware.SoftwareType == SoftwareProject.type.OS){
-				AllCompletedOS.Add(currentSoftware);
-			}
-			else if(currentSoftware.SoftwareType == SoftwareProject.type.Software){
-				AllCompletedSoftware.Add(currentSoftware);
-			}
-			else{
-				AllCompletedGenericProjects.Add(currentSoftware);
+			switch (currentSoftware.SoftwareType) {
+			    case SoftwareProject.type.Course:
+			        AllCompletedCourses.Add (currentSoftware);
+			        break;
+			    case SoftwareProject.type.OS:
+			        AllCompletedOS.Add(currentSoftware);
+			        break;
+			    case SoftwareProject.type.Software:
+			        AllCompletedSoftware.Add(currentSoftware);
+			        break;
+			    default:
+			        AllCompletedGenericProjects.Add(currentSoftware);
+			        break;
 			}
 			currentSoftware.uses -=1;
 			GameController.instance.allSoftwareProjects.Remove(currentSoftware.ID);
 			GameController.instance.allSoftwareProjects.Add (currentSoftware.ID,currentSoftware);
-		}AllCompletedSoftwareProjects.Add (currentSoftware);
+		}
+        AllCompletedSoftwareProjects.Add (currentSoftware);
+        // Check if there are listeners, if so, call event
+        if (onCompletedSoftware != null)
+            onCompletedSoftware(currentSoftware, EventArgs.Empty);
 		currentSoftware = null;
 		isSoftwareSet = false;
 		PickerController.instance.showPicker ();
