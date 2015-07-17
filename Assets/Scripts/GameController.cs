@@ -343,6 +343,423 @@ public class GameController : MonoBehaviour {
 
 	//if bool is true, button made visible, if false button made invisble
 
+	public void setChapterToNone(){
+		foreach(Text field in outProject){
+			field.text = null;
+			field.GetComponent<WorkID>().ID = null;
+		}
+		chapter = pickedType.None;
+		chapterPage = 0;
+		setButtonVisible ("Index", false);
+		outProject[0].text = "Research";
+		outProject [0].GetComponent<WorkID> ().storedType = BrowserListItemClick.ListItemType.ResearchCategory;
+		outProject[1].text = "Software";
+		outProject [1].GetComponent<WorkID> ().storedType = BrowserListItemClick.ListItemType.SoftwareCategory;
+		outProject[2].text = "Hardware";
+		outProject [2].GetComponent<WorkID> ().storedType = BrowserListItemClick.ListItemType.HardwareCategory;
+		outProject[3].text = "Parts";
+		outProject [3].GetComponent<WorkID> ().storedType = BrowserListItemClick.ListItemType.PartsCategory;
+		if (!PossibleSoftware.Any()) {
+			setButtonVisible ("R2", false);
+		} else {
+			setButtonVisible ("R2", true);
+		}
+		if (!PossibleHardware.Any ()) {
+			setButtonVisible ("R3", false);
+			setButtonVisible ("R4", false);
+		} else {
+			setButtonVisible ("R3", true);
+			setButtonVisible ("R4", true);
+		}
+		setButtonVisible ("R5", false);
+		setButtonVisible ("Next", false);
+		setButtonVisible ("Previous", false);
+
+	}
+
+	public void setChapterToResearch(){
+		chapter = pickedType.Research;
+		setButtonVisible ("R2", true);
+		setButtonVisible ("R3", true);
+		setButtonVisible ("R4", true);
+		setButtonVisible ("R5", true);
+		List<Research> temp = new List<Research> ();
+		if (AllPossibleResearchByKey != null) {
+			temp = AllPossibleResearchByKey;
+		} else {
+			AllPossibleResearchByKey = SortResearchByKey (AllPossibleResearch);
+			temp = AllPossibleResearchByKey;
+		}
+		int i = 0;
+		foreach(Text field in outProject){
+			int position = 0+(chapterPage*BUTTON_COUNT)+i;
+			try{
+				field.text = temp[position].name + ":  " +temp[position].cost;
+				field.GetComponent<WorkID>().ID = temp[position].ID;
+			}
+			catch(ArgumentOutOfRangeException){
+				field.text = "???";
+				field.GetComponent<WorkID>().ID = null;
+			}
+			i++;
+		}
+		setButtonVisible ("Index", true);
+		if(chapterPage == 0){
+			GameObject button;
+			setButtonVisible ("Previous", false);
+			if(temp.Count <= BUTTON_COUNT+(chapterPage*BUTTON_COUNT)){
+				setButtonVisible ("Next", false);
+			}
+			else{
+				setButtonVisible ("Next", true);
+			}
+		}
+	}
+
+	public void setChapterToSoftware(){
+		if(!PossibleSoftware.Any ()){
+			setChapterToNone();
+			return;
+		}
+		chapter = pickedType.Software;
+		setButtonVisible ("R2", true);
+		setButtonVisible ("R3", true);
+		setButtonVisible ("R4", true);
+		setButtonVisible ("R5", true);
+		List<SoftwareProject> temp = PossibleSoftware;
+		int i = 0;
+		foreach(Text field in outProject){
+			int position = 0+(chapterPage*BUTTON_COUNT)+i;
+			try{
+				field.text = temp[position].name + ":  " +temp[position].pointCost;
+				field.GetComponent<WorkID>().ID = temp[position].ID;
+			}
+			catch(ArgumentOutOfRangeException){
+				field.text = "???";
+				field.GetComponent<WorkID>().ID = null;
+			}
+			i++;
+		}
+		setButtonVisible ("Index", true);
+		if(chapterPage == 0){
+			GameObject button;
+			setButtonVisible ("Previous", false);
+			if(temp.Count <= BUTTON_COUNT+(chapterPage*BUTTON_COUNT)){
+				setButtonVisible ("Next", false);
+			}
+		}
+	}
+
+	public void setChapterToHardware(){
+		if(!PossibleHardware.Any ()){
+			setChapterToNone();
+			return;
+		}
+		chapter = pickedType.Hardware;
+		setButtonVisible ("R2", true);
+		setButtonVisible ("R3", true);
+		setButtonVisible ("R4", true);
+		setButtonVisible ("R5", true);
+		List<HardwareProject> temp = PossibleHardware;
+		int i = 0;
+		foreach(Text field in outProject){
+			int position = 0+(chapterPage*BUTTON_COUNT)+i;
+			try{
+				field.text = temp[position].name;
+				field.GetComponent<WorkID>().ID = temp[position].ID;
+			}
+			catch(ArgumentOutOfRangeException){
+				field.text = "???";
+				field.GetComponent<WorkID>().ID = null;
+			}
+			i++;
+		}
+		setButtonVisible ("Index", true);
+		if(chapterPage == 0){
+			GameObject button;
+			setButtonVisible ("Previous", false);
+			if(temp.Count <= BUTTON_COUNT+(chapterPage*BUTTON_COUNT)){
+				setButtonVisible ("Next", false);
+			}
+			else{
+				setButtonVisible ("Next", true);
+			}
+		}
+	}
+
+	public void setChapterToParts(){
+		chapter = pickedType.Parts;
+		setButtonVisible ("R2", true);
+		setButtonVisible ("R3", true);
+		setButtonVisible ("R4", true);
+		setButtonVisible ("R5", true);
+		List<Part> temp = allBuyableParts.Values.ToList();
+		int i = 0;
+		foreach(Text field in outProject){
+			int position = 0+(chapterPage*BUTTON_COUNT)+i;
+			try{
+				field.text = temp[position].name;
+				field.GetComponent<WorkID>().ID = temp[position].ID;
+			}
+			catch(ArgumentOutOfRangeException){
+				field.text = "???";
+				field.GetComponent<WorkID>().ID = null;
+			}
+			i++;
+		}
+		setButtonVisible ("Index", true);
+		if(chapterPage == 0){
+			GameObject button;
+			setButtonVisible ("Previous", false);
+			if(temp.Count <= BUTTON_COUNT+(chapterPage*BUTTON_COUNT)){
+				setButtonVisible ("Next", false);
+			}
+			else{
+				setButtonVisible ("Next", true);
+			}
+		}
+	}
+
+
+	public int pageNumber(){
+		return chapterPage;
+	}
+
+	public void next(){
+		chapterPage+=1;
+		if(chapter == pickedType.Research){
+			List<Research> temp = AllPossibleResearchByKey;
+			int i = 0;
+			foreach(Text field in outProject){
+				int position = 0+(chapterPage*BUTTON_COUNT)+i;
+				try{
+					field.text = temp[position].name + ": " +temp[position].cost;
+					field.GetComponent<WorkID>().ID = temp[position].ID;
+				}
+				catch(ArgumentOutOfRangeException){
+					field.text = "???";
+					field.GetComponent<WorkID>().ID = null;
+				}
+				i++;
+			}
+			setButtonVisible ("Previous", true);
+			if(temp.Count <= BUTTON_COUNT+(chapterPage*BUTTON_COUNT)){
+				setButtonVisible("Next",false);
+			}
+			flicked = true;
+		}
+		else if(chapter == pickedType.Software){
+			List<SoftwareProject> temp = PossibleSoftware;
+			int i = 0;
+			foreach(Text field in outProject){
+				int position = 0+(chapterPage*BUTTON_COUNT)+i;
+				try{
+					field.text = temp[position].name + ": " +temp[position].pointCost;
+					field.GetComponent<WorkID>().ID = temp[position].ID;
+				}
+				catch(ArgumentOutOfRangeException){
+					field.text = "???";
+					field.GetComponent<WorkID>().ID = null;
+				}
+				i++;
+			}
+			setButtonVisible ("Previous", true);
+			if(temp.Count <= BUTTON_COUNT+(chapterPage*BUTTON_COUNT)){
+				setButtonVisible("Next",false);
+			}
+			flicked = true;
+		}
+		else if(chapter == pickedType.Hardware){
+			List<HardwareProject> temp = PossibleHardware;
+			int i = 0;
+			foreach(Text field in outProject){
+				int position = 0+(chapterPage*BUTTON_COUNT)+i;
+				try{
+					field.text = temp[position].name;
+					field.GetComponent<WorkID>().ID = temp[position].ID;
+				}
+				catch(ArgumentOutOfRangeException){
+					field.text = "???";
+					field.GetComponent<WorkID>().ID = null;
+				}
+				i++;
+			}
+			setButtonVisible ("Previous", true);
+			if(temp.Count <= BUTTON_COUNT+(chapterPage*BUTTON_COUNT)){
+				setButtonVisible("Next",false);
+			}
+			flicked = true;
+		}
+		else if(chapter == pickedType.Parts){
+			List<Part> temp = allParts;
+			int i = 0;
+			foreach(Text field in outProject){
+				int position = 0+(chapterPage*BUTTON_COUNT)+i;
+				try{
+					field.text = temp[position].name + ": £" +temp[position].cost;
+					field.GetComponent<WorkID>().ID = temp[position].ID;
+				}
+				catch(ArgumentOutOfRangeException){
+					field.text = "???";
+					field.GetComponent<WorkID>().ID = null;
+				}
+				i++;
+			}
+			setButtonVisible ("Previous", true);
+			if(temp.Count <= BUTTON_COUNT+(chapterPage*BUTTON_COUNT)){
+				setButtonVisible("Next",false);
+			}
+			flicked = true;
+		}
+
+		
+	}
+	
+	public void previous(){
+		chapterPage -= 1;
+		if (chapter == pickedType.Research) {
+			List<Research> temp = AllPossibleResearchByKey;
+			int i = 0;
+			foreach (Text field in outProject) {
+				int position = 0 + (chapterPage * BUTTON_COUNT) + i;
+				try {
+					field.text = temp [position].name + ": " + temp [position].cost;
+					field.GetComponent<WorkID> ().ID = temp [position].ID;
+				} catch (ArgumentOutOfRangeException) {
+					field.text = "???";
+					field.GetComponent<WorkID>().ID = null;
+				}
+				i++;
+			}
+			if (chapterPage == 0) {
+				setButtonVisible ("Previous", false);
+				if (temp.Count <= BUTTON_COUNT + (chapterPage * BUTTON_COUNT)) {
+					setButtonVisible ("Next", false);
+				} else {
+					setButtonVisible ("Next", true);
+				}
+			} else if (chapterPage != 0) {
+				setButtonVisible ("Previous", true);
+				if (temp.Count <= BUTTON_COUNT + (chapterPage * BUTTON_COUNT)) {
+					setButtonVisible ("Next", false);
+				} else {
+					setButtonVisible ("Next", true);
+				}
+			}
+			flicked = true;
+		} else if (chapter == pickedType.Software) {
+			List<SoftwareProject> temp = PossibleSoftware;
+			int i = 0;
+			foreach (Text field in outProject) {
+				int position = 0 + (chapterPage * BUTTON_COUNT) + i;
+				try {
+					field.text = temp [position].name + ": " + temp [position].pointCost;
+					field.GetComponent<WorkID> ().ID = temp [position].ID;
+				} catch (ArgumentOutOfRangeException) {
+					field.text = "???";
+					field.GetComponent<WorkID>().ID = null;
+				}
+				i++;
+			}
+			if (chapterPage == 0) {
+				setButtonVisible ("Previous", false);
+				if (temp.Count <= BUTTON_COUNT + (chapterPage * BUTTON_COUNT)) {
+					setButtonVisible ("Next", false);
+				} else {
+					setButtonVisible ("Next", true);
+				}
+			} else if (chapterPage != 0) {
+				setButtonVisible ("Previous", true);
+				if (temp.Count <= BUTTON_COUNT + (chapterPage * BUTTON_COUNT)) {
+					setButtonVisible ("Next", false);
+				} else {
+					setButtonVisible ("Next", true);
+				}
+			}
+			flicked = true;
+		} else if (chapter == pickedType.Hardware) {
+			List<HardwareProject> temp = PossibleHardware;
+			int i = 0;
+			foreach (Text field in outProject) {
+				int position = 0 + (chapterPage * BUTTON_COUNT) + i;
+				try {
+					field.text = temp [position].name;
+					field.GetComponent<WorkID> ().ID = temp [position].ID;
+				} catch (ArgumentOutOfRangeException) {
+					field.text = "???";
+					field.GetComponent<WorkID>().ID = null;
+
+				}
+				i++;
+			}
+			if (chapterPage == 0) {
+				setButtonVisible ("Previous", false);
+				if (temp.Count <= BUTTON_COUNT + (chapterPage * BUTTON_COUNT)) {
+					setButtonVisible ("Next", false);
+				} else {
+					setButtonVisible ("Next", true);
+				}
+			} else if (chapterPage != 0) {
+				setButtonVisible ("Previous", true);
+				if (temp.Count <= BUTTON_COUNT + (chapterPage * BUTTON_COUNT)) {
+					setButtonVisible ("Next", false);
+				} else {
+					setButtonVisible ("Next", true);
+				}
+			}
+			flicked = true;
+		} else if (chapter == pickedType.Parts) {
+			List<Part> temp = allParts;
+			int i = 0;
+			foreach (Text field in outProject) {
+				int position = 0 + (chapterPage * BUTTON_COUNT) + i;
+				try {
+					field.text = temp [position].name + ": " + temp [position].cost;
+					field.GetComponent<WorkID> ().ID = temp [position].ID;
+				} catch (ArgumentOutOfRangeException) {
+					field.text = "???";
+					field.GetComponent<WorkID>().ID = null;
+				}
+				i++;
+			}
+			if (chapterPage == 0) {
+				setButtonVisible ("Previous", false);
+				if (temp.Count <= BUTTON_COUNT + (chapterPage * BUTTON_COUNT)) {
+					setButtonVisible ("Next", false);
+				} else {
+					setButtonVisible ("Next", true);
+				}
+			} else if (chapterPage != 0) {
+				setButtonVisible ("Previous", true);
+				if (temp.Count <= BUTTON_COUNT + (chapterPage * BUTTON_COUNT)) {
+					setButtonVisible ("Next", false);
+				} else {
+					setButtonVisible ("Next", true);
+				}
+			}
+			flicked = true;
+		}
+	}
+
+	public void showPicker(){
+		picker.active = true;
+		if(chapter == pickedType.Research ){
+			setChapterToResearch();
+		}
+		else if(chapter == pickedType.Software){
+			setChapterToSoftware();
+		}
+		else if(chapter == pickedType.Hardware){
+			setChapterToHardware();
+		}
+		else if(chapter == pickedType.Parts){
+			setChapterToParts();
+		}
+		else{
+			setChapterToNone();
+		}
+
+	}
 	//-----------------------------------------UNITY METHODS
 
 	void Awake() {
@@ -371,6 +788,9 @@ public class GameController : MonoBehaviour {
 
     // Use this for initialization
 	void Start () {
+        // TODO: Remove this line to spot the issues! 
+	    AllCompletedHardware = AllCompletedGenericHardware;
+
 		incrementalTickTime = 1;
 		incrementalTickIterations = 40;
 		InvokeRepeating ("addMoneyPerSecond", 0f, 1.0f);
@@ -380,12 +800,7 @@ public class GameController : MonoBehaviour {
 		outProject.Add (r3);
 		outProject.Add (r4);
 		outProject.Add (r5);
-		//ResearchRoot researchXML = ResearchRoot.LoadFromFile(@"./Assets/Data/Research.xml");
-//		PartRoot partXML = PartRoot.LoadFromFile(@"./Assets/Data/Part.XML");
-//		ProjectRoot projectXML = ProjectRoot.LoadFromFile(@"./Assets/Data/Project.XML");
-//		AllUncompleteResearch = researchXML.Research;
-//        allProjects = projectXML.Project;
-//		allParts = partXML.Part;
+
 	    using (DatabaseConnection connection = new DatabaseConnection()) {
 	        List<HardwareProject> parseableHardware = connection.GetAllHardwareProjects().ToList();
 			List<SoftwareProject> parseableSoftware = connection.GetAllSoftwareProjects().ToList();
@@ -425,9 +840,6 @@ public class GameController : MonoBehaviour {
     // Update is called once per frame
 	void Update () {
 		//List<Research> temp = AllPossibleResearch;
-		if (ticker == Priority.REALTIME) {
-			// Ticks every frame
-		}
 		if (ticker == Priority.HIGH) {
 			// Ticks every 5 frames
 

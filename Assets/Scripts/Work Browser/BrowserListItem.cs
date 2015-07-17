@@ -3,7 +3,7 @@ using System.Collections;
 
 using UnityEngine.EventSystems;
 
-public class BrowserListItemClick : MonoBehaviour {
+public class BrowserListItem : MonoBehaviour {
 
     public enum ListItemType {
         ResearchCategory,
