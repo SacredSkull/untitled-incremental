@@ -51,6 +51,17 @@ public class HardwareController : MonoBehaviour {
 			return temp;
 		}
 	}
+
+    // EVENTS
+
+    public delegate void StartedHardwareHandler(HardwareProject sender, EventArgs e);
+    public delegate void StoppedHardwareHandler(HardwareProject sender, EventArgs e);
+    public delegate void CompletedHardwareHandler(HardwareProject sender, EventArgs e);
+
+    public event StartedHardwareHandler onStartedHardware;
+    public event StoppedHardwareHandler onStoppedHardware;
+    public event CompletedHardwareHandler onCompletedHardware;
+
 	
 	private void useRequiredParts(HardwareProject project){
 		foreach (Part item in project.Parts) {
@@ -67,6 +78,9 @@ public class HardwareController : MonoBehaviour {
 				AllCompletedGenericHardware.Add(project);
 				AllCompletedHardwareProjects.Add(project);
 			}
+            // Check if there are listeners, if so, call event
+            if (onCompletedHardware != null)
+                onCompletedHardware(project, EventArgs.Empty);
 			useRequiredParts(project);
 		}
 		else{
@@ -78,6 +92,11 @@ public class HardwareController : MonoBehaviour {
 					AllCompletedGenericHardware.Add(project);
 				}
 				AllCompletedHardwareProjects.Add(project);
+                
+                // Check if there are listeners, if so, call event
+                if (onCompletedHardware != null)
+                    onCompletedHardware(project, EventArgs.Empty);
+
 				GameController.instance.allHardwareProjects[project.ID].uses--;
 				useRequiredParts(project);
 			}

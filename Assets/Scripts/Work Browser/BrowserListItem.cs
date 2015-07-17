@@ -42,7 +42,7 @@ public class BrowserListItem : MonoBehaviour {
 		HardwareController hControl = HardwareController.instance;
 		PartController pControl = PartController.instance;
 		int? ID = this.transform.parent.GetComponentInChildren<WorkID>().ID;
-		BrowserListItemClick.ListItemType storedType = this.transform.parent.GetComponentInChildren<WorkID> ().storedType;
+		BrowserListItem.ListItemType storedType = this.transform.parent.GetComponentInChildren<WorkID> ().storedType;
 		switch (projectPicker.chapter) {
 		    case PickerController.pickedType.Research:
 		        if (ID!=null&& rControl.AllUncompleteResearch.ContainsKey ((int)ID)) {
