@@ -15,7 +15,7 @@ public class OnClickNext : MonoBehaviour {
 	}
 
 	public void OnMouseDown(){
-		GameController game = GameController.instance;
-		game.next ();
+		PickerController picker = PickerController.instance;
+		picker.next ();
 	}
 }
