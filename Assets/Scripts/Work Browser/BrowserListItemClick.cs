@@ -35,43 +35,48 @@ public class BrowserListItemClick : MonoBehaviour {
     }
 
 	public void OnMouseDown(){
+		PickerController projectPicker = PickerController.instance;
 		GameController game = GameController.instance;
+		ResearchController rControl = ResearchController.instance;
+		SoftwareController sControl = SoftwareController.instance;
+		HardwareController hControl = HardwareController.instance;
+		PartController pControl = PartController.instance;
 		int? ID = this.transform.parent.GetComponentInChildren<WorkID>().ID;
 		BrowserListItemClick.ListItemType storedType = this.transform.parent.GetComponentInChildren<WorkID> ().storedType;
-		switch (game.chapter) {
-		    case GameController.pickedType.Research:
-		        if (ID!=null&& game.AllUncompleteResearch.ContainsKey ((int)ID)) {
-		            game.startResearch (game.AllUncompleteResearch [(int)ID]);
+		switch (projectPicker.chapter) {
+		    case PickerController.pickedType.Research:
+		        if (ID!=null&& rControl.AllUncompleteResearch.ContainsKey ((int)ID)) {
+		            rControl.startResearch (rControl.AllUncompleteResearch [(int)ID]);
 		        }
 		        break;
-		    case GameController.pickedType.Software:
-		        if (ID!=null&& game.UnstartedSoftware.ContainsKey ((int)ID)) {
-		            game.startSoftware (game.UnstartedSoftware [(int)ID]);
+			case PickerController.pickedType.Software:
+		        if (ID!=null&& sControl.UnstartedSoftware.ContainsKey ((int)ID)) {
+		            sControl.startSoftware (sControl.UnstartedSoftware [(int)ID]);
 		        }
 		        break;
-		    case GameController.pickedType.Hardware:
-		        if (ID!=null&& game.UnstartedHardware.ContainsKey ((int)ID)) {
-		            game.makeHardware (game.UnstartedHardware [(int)ID]);
+			case PickerController.pickedType.Hardware:
+		        if (ID!=null&& hControl.UnstartedHardware.ContainsKey ((int)ID)) {
+		            hControl.makeHardware (hControl.UnstartedHardware [(int)ID]);
 		        }
 		        break;
-		    case GameController.pickedType.Parts:
-		        if (ID!=null&& game.allBuyableParts.ContainsKey ((int)ID)) {
-		            game.buyPart (game.allBuyableParts [(int)ID],1);
+		    case PickerController.pickedType.Parts:
+		        if (ID!=null&& pControl.allBuyableParts.ContainsKey ((int)ID)) {
+		            pControl.buyPart (pControl.allBuyableParts [(int)ID],1);
 		        }
 		        break;
 		    default:
 		        switch (storedType) {
 					case ListItemType.ResearchCategory:
-                        game.setChapterToResearch();
+						projectPicker.setChapterToResearch();
 		                break;
 					case ListItemType.HardwareCategory:
-                        game.setChapterToHardware();
+						projectPicker.setChapterToHardware();
 		                break;
 					case ListItemType.SoftwareCategory:
-                        game.setChapterToSoftware();
+						projectPicker.setChapterToSoftware();
 		                break;
 					case ListItemType.PartsCategory:
-                        game.setChapterToParts();
+						projectPicker.setChapterToParts();
 		                break;
 		        }
 		        break;
