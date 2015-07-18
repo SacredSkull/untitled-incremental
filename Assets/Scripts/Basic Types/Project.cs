@@ -11,7 +11,7 @@ using Incremental.Database;
     * @class   Project
     *
     * @brief   Projects require Research and/or Part (s) to complete them. 
-    *          Some can be only completed a definite number of times; others indefinitely.
+    *          Some can be only completed a definite ID of times; others indefinitely.
     *
     * @author  Conal
     * @author  Peter
@@ -31,7 +31,6 @@ public abstract class Project : Startable {
     //public int upkeepCost(will not be used);
 
     //public List<Part> requiredParts = new List<Part>();
-    public int ID { get; set; }
     public string name { get; set; }
     public string description { get; set; }
     public int upkeep { get; set; }
@@ -108,21 +107,6 @@ public abstract class Project : Startable {
     public override void start() {
         //TODO: This is required by interface Startable
         throw new NotImplementedException();
-    }
-
-    /**
-        * @property    public override int number
-        *                     
-        * @todo        Is the set parameter correct? Should it not be `this.number = value`?
-        */
-
-    public override int number {
-        get {
-            return 0;
-        }
-        set {
-            this.number = 0;
-        }
     }
 
     /**
