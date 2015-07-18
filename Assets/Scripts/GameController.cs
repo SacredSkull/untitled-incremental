@@ -254,7 +254,8 @@ public class GameController : MonoBehaviour {
 			int temp = 0;
 			SoftwareController sControl = SoftwareController.instance;
 			HardwareController hControl = HardwareController.instance;
-			List<SoftwareProject> relevantSoftware = sControl.AllCompletedSoftware.Where(x => x.moneyPerTick> 0).ToList();
+			ComputerController cControl = ComputerController.instance;
+			List<SoftwareProject> relevantSoftware = sControl.AllCompletedCourses.Where(x => x.moneyPerTick> 0).ToList();
             List<HardwareProject> relevantHardware = hControl.AllCompletedGenericHardware.Where(x => x.moneyPerTick > 0).ToList();
 			foreach(SoftwareProject item in relevantSoftware){
 				temp+=  item.moneyPerTick;
@@ -262,6 +263,7 @@ public class GameController : MonoBehaviour {
 			foreach(HardwareProject item in relevantHardware){
 				temp+=  item.moneyPerTick;
 			}
+			temp += cControl.getMoneyPerTick;
 			return temp;
 		}
 	}
@@ -383,9 +385,6 @@ public class GameController : MonoBehaviour {
 	    using (DatabaseConnection connection = new DatabaseConnection()) {
 	        List<HardwareProject> parseableHardware = connection.GetAllHardwareProjects().ToList();
 			List<SoftwareProject> parseableSoftware = connection.GetAllSoftwareProjects().ToList();
-			foreach(SoftwareProject p in parseableSoftware){
-				allSoftwareProjects.Add(p.ID,p);
-			}
 			foreach(HardwareProject h in parseableHardware){
 				if(h.ID !=3){
 					allHardwareProjects.Add(h.ID,h);
@@ -395,6 +394,19 @@ public class GameController : MonoBehaviour {
 					compControl.AllCompletedComputers.Add (h);
 					compControl.setMannedComputer(h);
 
+				}
+				
+			}
+			foreach(SoftwareProject p in parseableSoftware){
+				if(p.ID !=42){
+					allSoftwareProjects.Add(p.ID,p);
+				}
+				else{
+					ComputerController compControl = ComputerController.instance; 
+					SoftwareController softControl = SoftwareController.instance;
+					softControl.AllCompletedOS.Add (p);
+					compControl.mannedComputer.primaryOS = p;
+					
 				}
 				
 			}

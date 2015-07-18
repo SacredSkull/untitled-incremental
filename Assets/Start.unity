@@ -240,7 +240,7 @@ RectTransform:
   m_RootOrder: 7
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: 406, y: -90}
+  m_AnchoredPosition: {x: 352, y: -48.8499985}
   m_SizeDelta: {x: 335, y: 311}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &62930791
@@ -438,7 +438,7 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: -31.8999996, y: 95.5999985}
+  m_AnchoredPosition: {x: -21.7000008, y: 75.1999969}
   m_SizeDelta: {x: 69.6999969, y: 22.1000004}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &133847448
@@ -830,6 +830,51 @@ MonoBehaviour:
       m_TypeName: UnityEngine.EventSystems.EventTrigger+TriggerEvent, UnityEngine.UI,
         Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   delegates: []
+--- !u!1 &356092778
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 224: {fileID: 356092780}
+  - 114: {fileID: 356092779}
+  m_Layer: 5
+  m_Name: ResearchController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &356092779
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 356092778}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43671a96ae29085488f26fe419ff98dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  researchSet: 0
+--- !u!224 &356092780
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 356092778}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 33.5122223}
+  m_LocalScale: {x: .502172768, y: .455582649, z: .84959352}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 10
+  m_AnchorMin: {x: .5, y: .5}
+  m_AnchorMax: {x: .5, y: .5}
+  m_AnchoredPosition: {x: -223.679352, y: 185.775558}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: .5, y: .5}
 --- !u!1 &368078043
 GameObject:
   m_ObjectHideFlags: 0
@@ -1818,7 +1863,7 @@ RectTransform:
   m_RootOrder: 1
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -5, y: 56.0999985}
+  m_AnchoredPosition: {x: -10.6000004, y: 35.7000008}
   m_SizeDelta: {x: -992.099976, y: -472.200012}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &660872588
@@ -2209,7 +2254,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 241.259842
+  orthographic size: 267.467133
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -2229,8 +2274,8 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 883142635}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 166.300003, y: 173, z: -333}
-  m_LocalScale: {x: 6005.83252, y: 6005.82959, z: 0}
+  m_LocalPosition: {x: 211, y: 188, z: -333}
+  m_LocalScale: {x: 6005.83252, y: 4429.22754, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -3674,7 +3719,7 @@ RectTransform:
   m_RootOrder: 8
   m_AnchorMin: {x: .5, y: 1}
   m_AnchorMax: {x: .5, y: 1}
-  m_AnchoredPosition: {x: -494, y: -283}
+  m_AnchoredPosition: {x: -419, y: -356}
   m_SizeDelta: {x: 0, y: 492}
   m_Pivot: {x: 0, y: .5}
 --- !u!114 &1474722728
@@ -4492,7 +4537,7 @@ RectTransform:
   m_RootOrder: 6
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -284.100006, y: -249}
+  m_AnchoredPosition: {x: -292.949951, y: -76}
   m_SizeDelta: {x: -596, y: -158}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &1742206221
@@ -4748,8 +4793,8 @@ RectTransform:
   m_RootOrder: 2
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 166.300003, y: 173}
-  m_SizeDelta: {x: 1166, y: 492}
+  m_AnchoredPosition: {x: 208, y: 187}
+  m_SizeDelta: {x: 1082, y: 543}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &1796006195
 MonoBehaviour:
@@ -4817,7 +4862,7 @@ GameObject:
   - 114: {fileID: 1828150183}
   - 114: {fileID: 1828150182}
   m_Layer: 5
-  m_Name: Button
+  m_Name: Hide
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

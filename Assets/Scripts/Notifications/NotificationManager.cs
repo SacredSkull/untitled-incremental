@@ -8,15 +8,15 @@ public class NotificationManager : MonoBehaviour {
     public Notification notificationPrefab;
     public NotificationItem notificationItemPrefab;
     public Transform ContentPanel;
-    public List<Startable> notifications;
+    public LinkedList<Startable> notifications;
     public Transform PopupParentElement;
     public GameObject notificationPage;
 
-    private bool notificationWindowEnabled = false;
+    private bool notificationWindowEnabled = true;
 
 	// Use this for initialization
 	void Start () {
-        notifications = new List<Startable>();
+        notifications = new LinkedList<Startable>();
 
 	    ResearchController.instance.onCompletedResearch += notify;
 		HardwareController.instance.onCompletedHardware += notify;
@@ -57,7 +57,7 @@ public class NotificationManager : MonoBehaviour {
             notification.transform.SetParent(PopupParentElement);
         }
         if (notificationItemPrefab != null) {
-            notifications.Add(s);
+			notifications.AddFirst(s);
             NotificationItem item = Instantiate(notificationItemPrefab);
             item.ID = s.number;
             item.title.text = s.name;
