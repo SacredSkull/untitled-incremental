@@ -73,6 +73,7 @@ public class ResearchController : MonoBehaviour {
      */
 	
 	public void startResearch(Research research){
+		GameController.instance.justFinished = 0;
 		researchSet = true;
 		currentResearch = research;
 

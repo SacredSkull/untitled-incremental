@@ -19,7 +19,8 @@ public class ComputerOnClick : MonoBehaviour {
 	public void OnMouseDown(){
 		GameController game = GameController.instance;
 		ResearchController rControl = ResearchController.instance;
-		if (rControl.isResearchSet()) {
+		SoftwareController sControl = SoftwareController.instance;
+		if (rControl.isResearchSet()||sControl.isSoftwareSet) {
 			game.addResearchPoints (game.pointsPerClick); 
 		} else {
 			if(game.justFinished == 0){

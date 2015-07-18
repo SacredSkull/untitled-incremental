@@ -29,12 +29,12 @@ public class Computer : MonoBehaviour {
 
 	public SoftwareProject primaryOS {
 		get;
-		private set;
+		set;
 	}
 
 	public SoftwareProject secondaryOS{
 		get;
-		private set;
+		set;
 	}
 
 	public List<SoftwareProject> InstalledPrograms = new List<SoftwareProject> ();
