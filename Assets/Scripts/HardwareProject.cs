@@ -15,8 +15,20 @@ public class HardwareProject : Project {
 		NoType
 	}
 
-    private ICollection<Part> _Parts;
+    private static IDictionary<int, int> _partInventory; 
+    public static IDictionary<int, int> partInventory {
+        get {
+            if (_partInventory == null) {
+                throw new NullReferenceException("partInventory must be set!");
+            }
+            return _partInventory;
+        }
+        set {
+            _partInventory = value;
+        }
+    }
 
+    private ICollection<Part> _Parts;
     public ICollection<Part> Parts {
         get {
             if (_Parts == null) {
@@ -89,9 +101,9 @@ public class HardwareProject : Project {
         GameController game = GameController.instance;
         foreach (Part part in this.Parts)
         {
-            bool contains = PartController.instance.partInventory.ContainsKey(part.ID);
-            if (contains||ID != 3) {
-				if(PartController.instance.partInventory[part.ID] < part.quantity) {
+            bool contains = partInventory.ContainsKey(part.ID);
+            if (contains || ID != 3) {
+                if (partInventory[part.ID] < part.quantity) {
 					return false;
                 }
             }
