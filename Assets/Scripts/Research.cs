@@ -24,20 +24,34 @@ public class Research : Startable, IComparable<Research> {
 	public double processReq;
 	public bool done;
 
+
+
+    private static IDictionary<int, Research> _researchInventory;
+    public static IDictionary<int, Research> researchInventory {
+        get {
+            if(_researchInventory == null)
+                throw new NullReferenceException("The static property researchInventory MUST be set!");
+            return _researchInventory;
+        }
+        set {
+            _researchInventory = value;
+        }
+    }
+
+
     /**
-        * @property    public List<Startable> Dependencies
-        *
-        * @brief   Gets the dependencies of this research.
-        *          
-        * @note    Research only depends on other research.
-        *          
-        * @detail  Iterates over every dependency for this object and finds the research by it's string name.
-        *
-        * @return  The list of <Startable> dependencies.
-        */
+    * @property    public List<Startable> Dependencies
+    *
+    * @brief   Gets the dependencies of this research.
+    *          
+    * @note    Research only depends on other research.
+    *          
+    * @detail  Iterates over every dependency for this object and finds the research by it's string name.
+    *
+    * @return  The list of <Startable> dependencies.
+    */
 
     private List<Research> _Dependencies;
-
     public List<Research> Dependencies {
         get {
             if (_Dependencies == null) {
@@ -111,7 +125,7 @@ public class Research : Startable, IComparable<Research> {
     */
 
     public bool hasBeenDone() {
-        return ResearchController.instance.AllCompleteResearch.ContainsKey(this.ID);
+        return researchInventory.ContainsKey(this.ID);
     }
 
     /**
