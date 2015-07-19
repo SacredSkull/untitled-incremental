@@ -8,16 +8,6 @@ using Incremental.Database;
 
 public class ResearchController : MonoBehaviour {
 
-	private static ResearchController _instance;
-
-	public static ResearchController instance {
-		get {
-			if (_instance == null)
-				_instance = GameObject.FindObjectOfType<ResearchController>();
-			return _instance;
-		}
-	}
-
 	/** @brief   If research is set or not */
 	public bool researchSet = false;
 	/** @brief   All uncomplete research. */

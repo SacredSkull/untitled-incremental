@@ -8,16 +8,6 @@ using Incremental.Database;
 
 public class SoftwareController : MonoBehaviour {
 
-	private static SoftwareController _instance;
-	
-	public static SoftwareController instance {
-		get {
-			if (_instance == null)
-				_instance = GameObject.FindObjectOfType<SoftwareController>();
-			return _instance;
-		}
-	}
-
 	/**
      * @property    public List<SoftwawreProject> UnstartedSoftware
      *

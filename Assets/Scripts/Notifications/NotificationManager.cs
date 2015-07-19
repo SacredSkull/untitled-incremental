@@ -17,9 +17,9 @@ public class NotificationManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         notifications = new LinkedList<Asset>();
-	    ResearchController.instance.onCompletedResearch += notify;
-		HardwareController.instance.onCompletedHardware += notify;
-        SoftwareController.instance.onCompletedSoftware += notify;
+	    GameController.instance.rControl.onCompletedResearch += notify;
+		GameController.instance.hControl.onCompletedHardware += notify;
+        GameController.instance.sControl.onCompletedSoftware += notify;
 	}
 
     void ResearchNotification(Research r, EventArgs e) {

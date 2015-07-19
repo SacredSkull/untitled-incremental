@@ -55,12 +55,12 @@ public class PickerController : MonoBehaviour {
 		GameController.instance.outProject [2].GetComponent<WorkID> ().storedType = BrowserListItem.ListItemType.HardwareCategory;
 		GameController.instance.outProject[3].text = "Parts";
 		GameController.instance.outProject [3].GetComponent<WorkID> ().storedType = BrowserListItem.ListItemType.PartsCategory;
-		if (!SoftwareController.instance.PossibleSoftware.Any()) {
+		if (!GameController.instance.sControl.PossibleSoftware.Any()) {
 			GUITools.setButtonVisible ("R2", false);
 		} else {
 			GUITools.setButtonVisible ("R2", true);
 		}
-		if (!HardwareController.instance.PossibleHardware.Any ()) {
+		if (!GameController.instance.hControl.PossibleHardware.Any ()) {
 			GUITools.setButtonVisible ("R3", false);
 			GUITools.setButtonVisible ("R4", false);
 		} else {
@@ -80,11 +80,11 @@ public class PickerController : MonoBehaviour {
 		GUITools.setButtonVisible ("R4", true);
 		GUITools.setButtonVisible ("R5", true);
 		List<Research> temp = new List<Research> ();
-		if (ResearchController.instance.AllPossibleResearchByKey != null) {
-			temp = ResearchController.instance.AllPossibleResearchByKey;
+		if (GameController.instance.rControl.AllPossibleResearchByKey != null) {
+			temp = GameController.instance.rControl.AllPossibleResearchByKey;
 		} else {
-			ResearchController.instance.AllPossibleResearchByKey = ResearchController.instance.SortResearchByKey (ResearchController.instance.AllPossibleResearch);
-			temp = ResearchController.instance.AllPossibleResearchByKey;
+			GameController.instance.rControl.AllPossibleResearchByKey = GameController.instance.rControl.SortResearchByKey (GameController.instance.rControl.AllPossibleResearch);
+			temp = GameController.instance.rControl.AllPossibleResearchByKey;
 		}
 		int i = 0;
 		foreach(Text field in GameController.instance.outProject){
@@ -113,7 +113,7 @@ public class PickerController : MonoBehaviour {
 	}
 	
 	public void setChapterToSoftware(){
-		if(!SoftwareController.instance.PossibleSoftware.Any ()){
+		if(!GameController.instance.sControl.PossibleSoftware.Any ()){
 			setChapterToNone();
 			return;
 		}
@@ -122,7 +122,7 @@ public class PickerController : MonoBehaviour {
 		GUITools.setButtonVisible ("R3", true);
 		GUITools.setButtonVisible ("R4", true);
 		GUITools.setButtonVisible ("R5", true);
-		List<SoftwareProject> temp = SoftwareController.instance.PossibleSoftware;
+		List<SoftwareProject> temp = GameController.instance.sControl.PossibleSoftware;
 		int i = 0;
 		foreach(Text field in GameController.instance.outProject){
 			int position = 0+(chapterPage*BUTTON_COUNT)+i;
@@ -147,7 +147,7 @@ public class PickerController : MonoBehaviour {
 	}
 	
 	public void setChapterToHardware(){
-		if(!HardwareController.instance.PossibleHardware.Any ()){
+		if(!GameController.instance.hControl.PossibleHardware.Any ()){
 			setChapterToNone();
 			return;
 		}
@@ -156,7 +156,7 @@ public class PickerController : MonoBehaviour {
 		GUITools.setButtonVisible ("R3", true);
 		GUITools.setButtonVisible ("R4", true);
 		GUITools.setButtonVisible ("R5", true);
-		List<HardwareProject> temp = HardwareController.instance.PossibleHardware;
+		List<HardwareProject> temp = GameController.instance.hControl.PossibleHardware;
 		int i = 0;
 		foreach(Text field in GameController.instance.outProject){
 			int position = 0+(chapterPage*BUTTON_COUNT)+i;
@@ -189,7 +189,7 @@ public class PickerController : MonoBehaviour {
 		GUITools.setButtonVisible ("R3", true);
 		GUITools.setButtonVisible ("R4", true);
 		GUITools.setButtonVisible ("R5", true);
-		List<Part> temp = PartController.instance.allBuyableParts.Values.ToList();
+		List<Part> temp = GameController.instance.pControl.allBuyableParts.Values.ToList();
 		int i = 0;
 		foreach(Text field in GameController.instance.outProject){
 			int position = 0+(chapterPage*BUTTON_COUNT)+i;
@@ -224,7 +224,7 @@ public class PickerController : MonoBehaviour {
 	public void next(){
 		chapterPage+=1;
 		if(chapter == pickedType.Research){
-			List<Research> temp = ResearchController.instance.AllPossibleResearchByKey;
+			List<Research> temp = GameController.instance.rControl.AllPossibleResearchByKey;
 			int i = 0;
 			foreach(Text field in GameController.instance.outProject){
 				int position = 0+(chapterPage*BUTTON_COUNT)+i;
@@ -245,7 +245,7 @@ public class PickerController : MonoBehaviour {
 			flicked = true;
 		}
 		else if(chapter == pickedType.Software){
-			List<SoftwareProject> temp = SoftwareController.instance.PossibleSoftware;
+			List<SoftwareProject> temp = GameController.instance.sControl.PossibleSoftware;
 			int i = 0;
 			foreach(Text field in GameController.instance.outProject){
 				int position = 0+(chapterPage*BUTTON_COUNT)+i;
@@ -266,7 +266,7 @@ public class PickerController : MonoBehaviour {
 			flicked = true;
 		}
 		else if(chapter == pickedType.Hardware){
-			List<HardwareProject> temp = HardwareController.instance.PossibleHardware;
+			List<HardwareProject> temp = GameController.instance.hControl.PossibleHardware;
 			int i = 0;
 			foreach(Text field in GameController.instance.outProject){
 				int position = 0+(chapterPage*BUTTON_COUNT)+i;
@@ -314,7 +314,7 @@ public class PickerController : MonoBehaviour {
 	public void previous(){
 		chapterPage -= 1;
 		if (chapter == pickedType.Research) {
-			List<Research> temp = ResearchController.instance.AllPossibleResearchByKey;
+			List<Research> temp = GameController.instance.rControl.AllPossibleResearchByKey;
 			int i = 0;
 			foreach (Text field in GameController.instance.outProject) {
 				int position = 0 + (chapterPage * BUTTON_COUNT) + i;
@@ -344,7 +344,7 @@ public class PickerController : MonoBehaviour {
 			}
 			flicked = true;
 		} else if (chapter == pickedType.Software) {
-			List<SoftwareProject> temp = SoftwareController.instance.PossibleSoftware;
+			List<SoftwareProject> temp = GameController.instance.sControl.PossibleSoftware;
 			int i = 0;
 			foreach (Text field in GameController.instance.outProject) {
 				int position = 0 + (chapterPage * BUTTON_COUNT) + i;
@@ -374,7 +374,7 @@ public class PickerController : MonoBehaviour {
 			}
 			flicked = true;
 		} else if (chapter == pickedType.Hardware) {
-			List<HardwareProject> temp = HardwareController.instance.PossibleHardware;
+			List<HardwareProject> temp = GameController.instance.hControl.PossibleHardware;
 			int i = 0;
 			foreach (Text field in GameController.instance.outProject) {
 				int position = 0 + (chapterPage * BUTTON_COUNT) + i;

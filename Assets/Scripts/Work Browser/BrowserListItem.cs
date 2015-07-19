@@ -37,31 +37,27 @@ public class BrowserListItem : MonoBehaviour {
 	public void OnMouseDown(){
 		PickerController projectPicker = PickerController.instance;
 		GameController game = GameController.instance;
-		ResearchController rControl = ResearchController.instance;
-		SoftwareController sControl = SoftwareController.instance;
-		HardwareController hControl = HardwareController.instance;
-		PartController pControl = PartController.instance;
 		int? ID = this.transform.parent.GetComponentInChildren<WorkID>().ID;
 		BrowserListItem.ListItemType storedType = this.transform.parent.GetComponentInChildren<WorkID> ().storedType;
 		switch (projectPicker.chapter) {
 		    case PickerController.pickedType.Research:
-		        if (ID!=null&& rControl.AllUncompleteResearch.ContainsKey ((int)ID)) {
-		            rControl.startResearch (rControl.AllUncompleteResearch [(int)ID]);
+		        if (ID!=null&& GameController.instance.rControl.AllUncompleteResearch.ContainsKey ((int)ID)) {
+					GameController.instance.rControl.startResearch (GameController.instance.rControl.AllUncompleteResearch [(int)ID]);
 		        }
 		        break;
 			case PickerController.pickedType.Software:
-		        if (ID!=null&& sControl.UnstartedSoftware.ContainsKey ((int)ID)) {
-		            sControl.startSoftware (sControl.UnstartedSoftware [(int)ID]);
+				if (ID!=null&& GameController.instance.sControl.UnstartedSoftware.ContainsKey ((int)ID)) {
+					GameController.instance.sControl.startSoftware (GameController.instance.sControl.UnstartedSoftware [(int)ID]);
 		        }
 		        break;
 			case PickerController.pickedType.Hardware:
-		        if (ID!=null&& hControl.UnstartedHardware.ContainsKey ((int)ID)) {
-		            hControl.makeHardware (hControl.UnstartedHardware [(int)ID]);
+				if (ID!=null&& GameController.instance.hControl.UnstartedHardware.ContainsKey ((int)ID)) {
+					GameController.instance.hControl.makeHardware (GameController.instance.hControl.UnstartedHardware [(int)ID]);
 		        }
 		        break;
 		    case PickerController.pickedType.Parts:
-		        if (ID!=null&& pControl.allBuyableParts.ContainsKey ((int)ID)) {
-		            pControl.buyPart (pControl.allBuyableParts [(int)ID],1);
+				if (ID!=null&& GameController.instance.pControl.allBuyableParts.ContainsKey ((int)ID)) {
+					GameController.instance.pControl.buyPart (GameController.instance.pControl.allBuyableParts [(int)ID],1);
 		        }
 		        break;
 		    default:
