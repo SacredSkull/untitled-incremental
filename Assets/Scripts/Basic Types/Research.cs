@@ -24,17 +24,6 @@ public class Research : Startable, IComparable<Research> {
 	public double processReq;
 	public bool done;
 
-	public enum field
-	{
-		SoftwareDeveloper,
-		Researcher,
-		WebDeveloper,
-		OSDeveloper,
-		Fieldless,
-		None
-		
-	}
-
 	public string RemoveLineEndings( string value)
 	{
 		if(String.IsNullOrEmpty(value))
@@ -217,18 +206,18 @@ public class Research : Startable, IComparable<Research> {
             return 0;
     }
 
-	public field _ResearchField = type.None;
+	public Field.field _ResearchField = Field.field.None;
 	
-	public field ResearchField{
+	public Field.field ResearchField{
 		get{
-			if(_ResearchField == field.None){
+			if(_ResearchField == Field.field.None){
 				IEnumerable<String> parseable;
 				using (DatabaseConnection conn = new DatabaseConnection()){
 					const string sql = @"SELECT t.Name name FROM Field as t INNER JOIN( SELECT swr.FieldID, swr.ResearchID FROM Research_Field as swr WHERE swr.ResearchID = @PID)as swr ON swr.FieldID = t.ID;";
 					parseable = conn.connection.Query<String>(sql, new { PID = ID });
 				}
 				if(parseable.Any ()){
-					foreach (field item in Enum.GetValues(typeof(field))){
+					foreach (Field.field item in Enum.GetValues(typeof(Field.field))){
 						String finalType = RemoveLineEndings(parseable.First().ToString());
 						if(item.ToString().Equals(finalType, StringComparison.OrdinalIgnoreCase)){
 							_ResearchField = item;
@@ -236,7 +225,7 @@ public class Research : Startable, IComparable<Research> {
 						}
 					}
 				}
-				_ResearchField = field.Fieldless;
+				_ResearchField = Field.field.Fieldless;
 			}
 			return _ResearchField;
 		}

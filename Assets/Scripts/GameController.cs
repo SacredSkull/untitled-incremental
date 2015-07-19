@@ -64,6 +64,8 @@ public class GameController : MonoBehaviour {
         }
     }
 
+
+
 	//-----------DEBUG
 	public bool debugResearchPoints;
 
@@ -364,10 +366,7 @@ public class GameController : MonoBehaviour {
 
     // Use this for initialization
 	void Start () {
-        // TODO: Remove this line to spot the issues! 
-	    
-
-		incrementalTickTime = 1;
+        incrementalTickTime = 1;
 		incrementalTickIterations = 40;
 		InvokeRepeating ("addMoneyPerSecond", 0f, 1.0f);
 		InvokeRepeating ("addPointsPerSecond", 0f, 1.0f);

@@ -16,6 +16,11 @@ public class Computer : MonoBehaviour {
 		set;
 	}
 
+	public Employee user {
+		get;
+		set;
+	}
+
 	public HardwareProject computerBuild {
 		get;
 		set;

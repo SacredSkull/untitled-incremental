@@ -40,17 +40,6 @@ public class SoftwareProject : Project {
 		NoType
 	}
 
-	public enum field
-	{
-		SoftwareDeveloper,
-		Researcher,
-		WebDeveloper,
-		OSDeveloper,
-		Fieldless,
-		None
-
-	}
-
 	public type _SoftwareType = type.None;
 	
 	public type SoftwareType{
@@ -76,18 +65,19 @@ public class SoftwareProject : Project {
 		}
 	}
 
-	public type _SoftwareField = type.None;
+	public Field.field _SoftwareField = Field.field.None;
 	
-	public type SoftwareField{
+	public Field.field SoftwareField{
 		get{
-			if(_SoftwareField == field.None){
+			GameController game = GameController.instance;
+			if(_SoftwareField == Field.field.None){
 				IEnumerable<String> parseable;
 				using (DatabaseConnection conn = new DatabaseConnection()){
 					const string sql = @"SELECT t.Name name FROM Field as t INNER JOIN( SELECT swr.FieldID, swr.SoftwareID FROM SoftwareProject_Field as swr WHERE swr.SoftwareID = @PID)as swr ON swr.FieldID = t.ID;";
 					parseable = conn.connection.Query<String>(sql, new { PID = ID });
 				}
 				if(parseable.Any ()){
-					foreach (field item in Enum.GetValues(typeof(field))){
+					foreach (Field.field item in Enum.GetValues(typeof(Field.field))){
 						String finalType = RemoveLineEndings(parseable.First().ToString());
 						if(item.ToString().Equals(finalType, StringComparison.OrdinalIgnoreCase)){
 							_SoftwareField = item;
@@ -95,7 +85,7 @@ public class SoftwareProject : Project {
 						}
 					}
 				}
-				_SoftwareField = field.Fieldless;
+				_SoftwareField = Field.field.Fieldless;
 			}
 			return _SoftwareField;
 		}
