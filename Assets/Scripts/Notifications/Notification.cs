@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class Notification : MonoBehaviour {
     public TextMesh title; 
-    public Startable resource;
+    public Asset resource;
 
     public void Initialise() {
         title.text = resource.name;
