@@ -22,6 +22,8 @@ public class Employee : Asset {
 		Engineer = 3
 	}
 
+	public Dictionary<field,int> fieldPotential = new Dictionary<field, int> ();
+
     // Generate a full name (with prefix) only if it remains unassigned
     private string _name;
     public override string name {
@@ -60,9 +62,12 @@ public class Employee : Asset {
 	// field, they have reached maximum potential, when doing first research or course in a
 	// field the number of points they earn is random, some employees will gain 1 point for 
 	// learning OS others 3 points, the fewer points the more potential they have in that field
-	public Dictionary<int, field> employeeFields = new Dictionary<int,field> ();
+	public Dictionary<field,int> employeeFields = new Dictionary<field,double> ();
 	public List<SoftwareProject> courses = new List<SoftwareProject> ();
+	//only need to put in the research at the limit of their undertanding
 	public List<Research> completedResearch = new List<Research>();
+	public ResearchController employeeResearch = new ResearchController ();
+	public SoftwareController employeeSoftware = new SoftwareController();
 	//0.00 - 1.00
 	public double loyalty{ get; set;}
 
@@ -101,6 +106,60 @@ public class Employee : Asset {
 			return  100 -(catalyst * (100-happiness));
 		}
 	}
+
+	void addDependecies(List<Research> depends){
+		if (!depends.Contains) {
+			return;
+		} else {
+			foreach(Research r in depends){
+				if(employeeResearch.AllCompleteResearch.ContainsKey(r.ID)){
+					return;
+				}
+				else{
+					employeeResearch.AllUncompleteResearch.Remove(r.ID);
+					employeeResearch.AllCompleteResearch.Add (r.ID,r);
+					addDependecies(r.Dependencies);
+				}
+
+			}
+		}
+	}
+
+	//called when object is first created
+	public void completeProfile(){
+		foreach (Research r in completedResearch) {
+			employeeResearch.AllUncompleteResearch.Remove(r.ID);
+			employeeResearch.AllCompleteResearch.Add (r.ID,r);
+			addDependecies(r.Dependencies);
+		}
+		foreach (SoftwareProject s in courses){
+			employeeSoftware.AllCompletedCourses.Add(s);
+			employeeSoftware.UnstartedSoftware.Remove(s);
+		}
+		foreach (field item in Enum.GetValues(typeof(field)) ){
+			Random rnd = new Random();
+			int rand = rnd.Next (99,1001);
+			fieldPotential.Add(item,rand);
+			employeeFields.Add (item,0.00);
+		}
+		foreach (SoftwareProject sDone in employeeSoftware.AllCompletedCourses) {
+			int catalyst = fieldPotential[sDone.SoftwareField];
+			double points = (double)(sDone.pointCost/catalyst);
+			employeeFields[sDone.SoftwareField] += points;
+			if(!employeeFields[sDone.SoftwareField]<100){
+				employeeFields[sDone.SoftwareField] = 100;
+			}
+		}
+		foreach (Research rDone in employeeResearch.AllCompleteResearch) {
+			int catalyst = fieldPotential[rDone.ResearchField];
+			double points = (double)(rDone.cost/catalyst);
+			employeeFields[rDone.ResearchField] += points;
+			if(!employeeFields[rDone.ResearchField]<100){
+				employeeFields[rDone.ResearchField] = 100;
+			}
+		}
+	}
+
 
 
 }

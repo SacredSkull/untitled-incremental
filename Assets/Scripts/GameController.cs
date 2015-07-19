@@ -41,7 +41,7 @@ public class GameController : MonoBehaviour {
 	public HardwareController hControl;
 	public PartController pControl;
 	public ComputerController compControl;
-	List<Research> allResearch;
+	public List<Research> allResearch;
 
 
     // See http://unitypatterns.com/singletons/ for more details. Alternatively, google C# singleton.
@@ -406,9 +406,6 @@ public class GameController : MonoBehaviour {
 	        allParts = connection.GetAllParts().ToList();
 
 	    }
-		foreach (Research r in allResearch) {
-			rControl.AllUncompleteResearch.Add(r.ID,r);
-		} 
 		PickerController.instance.setChapterToNone ();
 
 

@@ -24,6 +24,29 @@ public class Research : Startable, IComparable<Research> {
 	public double processReq;
 	public bool done;
 
+	public enum field
+	{
+		SoftwareDeveloper,
+		Researcher,
+		WebDeveloper,
+		OSDeveloper,
+		Fieldless,
+		None
+		
+	}
+
+	public string RemoveLineEndings( string value)
+	{
+		if(String.IsNullOrEmpty(value))
+		{
+			return value;
+		}
+		string lineSeparator = ((char) 0x2028).ToString();
+		string paragraphSeparator = ((char)0x2029).ToString();
+		
+		return value.Replace("\r\n", string.Empty).Replace("\n", string.Empty).Replace("\r", string.Empty).Replace(lineSeparator, string.Empty).Replace(paragraphSeparator, string.Empty);
+	}
+
     /**
         * @property    public List<Startable> Dependencies
         *
@@ -193,4 +216,29 @@ public class Research : Startable, IComparable<Research> {
         } else
             return 0;
     }
+
+	public field _ResearchField = type.None;
+	
+	public field ResearchField{
+		get{
+			if(_ResearchField == field.None){
+				IEnumerable<String> parseable;
+				using (DatabaseConnection conn = new DatabaseConnection()){
+					const string sql = @"SELECT t.Name name FROM Field as t INNER JOIN( SELECT swr.FieldID, swr.ResearchID FROM Research_Field as swr WHERE swr.ResearchID = @PID)as swr ON swr.FieldID = t.ID;";
+					parseable = conn.connection.Query<String>(sql, new { PID = ID });
+				}
+				if(parseable.Any ()){
+					foreach (field item in Enum.GetValues(typeof(field))){
+						String finalType = RemoveLineEndings(parseable.First().ToString());
+						if(item.ToString().Equals(finalType, StringComparison.OrdinalIgnoreCase)){
+							_ResearchField = item;
+							return _ResearchField;
+						}
+					}
+				}
+				_ResearchField = field.Fieldless;
+			}
+			return _ResearchField;
+		}
+	}
 }

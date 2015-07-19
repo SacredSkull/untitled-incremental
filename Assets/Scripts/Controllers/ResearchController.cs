@@ -232,6 +232,12 @@ public class ResearchController : MonoBehaviour {
 		return ordered;
 	}
 
+	void Awake(){
+		foreach (Research r in GameController.instance.allResearch) {
+			AllUncompleteResearch.Add (r.ID,r);
+		}
+	}
+
 
 
 }
