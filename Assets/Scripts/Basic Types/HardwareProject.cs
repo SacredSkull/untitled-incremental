@@ -54,19 +54,10 @@ public class HardwareProject : Project {
 				if(parseable.Any ()){
 					foreach (type item in Enum.GetValues(typeof(type))){
 						String finalType = RemoveLineEndings(parseable.First().ToString());
-						Utility.UnityLog(finalType);
-                        Utility.UnityLog((item.ToString() == finalType).ToString());
 						if(item.ToString().Equals(finalType, StringComparison.OrdinalIgnoreCase)){
-                            Utility.UnityLog("pass");
-							_HardwareType = item;
+                            _HardwareType = item;
 							return _HardwareType;
 						}
-					}
-				}
-				foreach (type item in Enum.GetValues(typeof(type))){
-					if(item.ToString().Equals(parseable)){
-						_HardwareType = item;
-						return _HardwareType;
 					}
 				}
 				_HardwareType = type.NoType;
