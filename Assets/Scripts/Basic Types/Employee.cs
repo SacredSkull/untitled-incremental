@@ -15,14 +15,7 @@ public class Employee : Asset {
     // When this is being serialized (or stored somewhere), you merely need to cast it to int to 
     // retrieve the value: 
     // e.g. int asd = (int)field.Programmer;
-	public enum field : int
-	{
-		Researcher = 1,
-		Programmer = 2,
-		Engineer = 3
-	}
-
-	public Dictionary<field,int> fieldPotential = new Dictionary<field, int> ();
+	public Dictionary<Field.field,int> fieldPotential = new Dictionary<Field.field, int> ();
 
     // Generate a full name (with prefix) only if it remains unassigned
     private string _name;
@@ -39,13 +32,13 @@ public class Employee : Asset {
     }
 
     // Pick an enumerator at random
-    private field? _jobField;
-    public field? jobField {
+    private Field.field? _jobField;
+    public Field.field? jobField {
         get {
             if (_jobField == null) {
-                Array values = Enum.GetValues(typeof(field));
+                Array values = Enum.GetValues(typeof(Field.field));
                 Random random = new Random();
-                field randomField = (field)values.GetValue(random.Next(values.Length));
+                Field.field randomField = (Field.field)values.GetValue(random.Next(values.Length));
                 _jobField = randomField;
             }
             return _jobField;
@@ -55,14 +48,14 @@ public class Employee : Asset {
         }
     }
 
-	private Dictionary<field, int> fieldPay = new Dictionary<field, int> ();
+	private Dictionary<Field.field, int> fieldPay = new Dictionary<Field.field, int> ();
 	//using this, create an employee profile for the player, so they can share methods
 	public bool player{ get; set;}
 	// int from 1-100, so if an employee has 100 they can't learn anything more in this 
 	// field, they have reached maximum potential, when doing first research or course in a
 	// field the number of points they earn is random, some employees will gain 1 point for 
 	// learning OS others 3 points, the fewer points the more potential they have in that field
-	public Dictionary<field,int> employeeFields = new Dictionary<field,double> ();
+	public Dictionary<Field.field,double> employeeFields = new Dictionary<Field.field,double> ();
 	public List<SoftwareProject> courses = new List<SoftwareProject> ();
 	//only need to put in the research at the limit of their undertanding
 	public List<Research> completedResearch = new List<Research>();
@@ -108,7 +101,7 @@ public class Employee : Asset {
 	}
 
 	void addDependecies(List<Research> depends){
-		if (!depends.Contains) {
+		if (depends.Count==0) {
 			return;
 		} else {
 			foreach(Research r in depends){
@@ -134,9 +127,9 @@ public class Employee : Asset {
 		}
 		foreach (SoftwareProject s in courses){
 			employeeSoftware.AllCompletedCourses.Add(s);
-			employeeSoftware.UnstartedSoftware.Remove(s);
+			employeeSoftware.UnstartedSoftware.Remove(s.ID);
 		}
-		foreach (field item in Enum.GetValues(typeof(field)) ){
+		foreach (Field.field item in Enum.GetValues(typeof(Field.field)) ){
 			Random rnd = new Random();
 			int rand = rnd.Next (99,1001);
 			fieldPotential.Add(item,rand);
@@ -146,15 +139,15 @@ public class Employee : Asset {
 			int catalyst = fieldPotential[sDone.SoftwareField];
 			double points = (double)(sDone.pointCost/catalyst);
 			employeeFields[sDone.SoftwareField] += points;
-			if(!employeeFields[sDone.SoftwareField]<100){
+			if(employeeFields[sDone.SoftwareField]>100){
 				employeeFields[sDone.SoftwareField] = 100;
 			}
 		}
-		foreach (Research rDone in employeeResearch.AllCompleteResearch) {
+		foreach (Research rDone in employeeResearch.AllCompleteResearch.Values) {
 			int catalyst = fieldPotential[rDone.ResearchField];
 			double points = (double)(rDone.cost/catalyst);
 			employeeFields[rDone.ResearchField] += points;
-			if(!employeeFields[rDone.ResearchField]<100){
+			if(employeeFields[rDone.ResearchField]>100){
 				employeeFields[rDone.ResearchField] = 100;
 			}
 		}
