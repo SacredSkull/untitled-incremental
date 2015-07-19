@@ -8,7 +8,7 @@ public class NotificationManager : MonoBehaviour {
     public Notification notificationPrefab;
     public NotificationItem notificationItemPrefab;
     public Transform ContentPanel;
-    public LinkedList<Startable> notifications;
+    public LinkedList<Asset> notifications;
     public Transform PopupParentElement;
     public GameObject notificationPage;
 
@@ -16,8 +16,7 @@ public class NotificationManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        notifications = new LinkedList<Startable>();
-
+        notifications = new LinkedList<Asset>();
 	    ResearchController.instance.onCompletedResearch += notify;
 		HardwareController.instance.onCompletedHardware += notify;
         SoftwareController.instance.onCompletedSoftware += notify;
@@ -48,24 +47,24 @@ public class NotificationManager : MonoBehaviour {
         }
     }
 
-    void notify(Startable s, EventArgs e) {
+    void notify(Asset a, EventArgs e) {
         if (notificationPrefab != null) {
             // You can instantiate  scripts (and the prefabs they're attached to) by ensuring that the prefab is the class of the script you wish to create, then cast that to that class in the relevant container for other modifications.
             Notification notification = (Notification)Instantiate(notificationPrefab, PopupParentElement.position, Quaternion.Euler(270,0,0));
-            notification.resource = s;
+            notification.resource = a;
             notification.Initialise();
             notification.transform.SetParent(PopupParentElement);
         }
         if (notificationItemPrefab != null) {
-			notifications.AddFirst(s);
+			notifications.AddFirst(a);
             NotificationItem item = Instantiate(notificationItemPrefab);
-            item.ID = s.number;
-            item.title.text = s.name;
-            if (s is Research) {
+            item.ID = a.ID;
+            item.title.text = a.name;
+            if (a is Research) {
                 item.type.text = "Research";
-            } else if (s is SoftwareProject) {
+            } else if (a is SoftwareProject) {
                 item.type.text = "Software";
-            } else if (s is HardwareProject) {
+            } else if (a is HardwareProject) {
                 item.type.text = "Hardware";
             } else {
                 item.type.text = "Unknown";
