@@ -89,9 +89,9 @@ public class HardwareProject : Project {
         GameController game = GameController.instance;
         foreach (Part part in this.Parts)
         {
-            bool contains = PartController.instance.partInventory.ContainsKey(part.ID);
+            bool contains = GameController.instance.pControl.partInventory.ContainsKey(part.ID);
             if (contains||ID != 3) {
-				if(PartController.instance.partInventory[part.ID] < part.quantity) {
+				if(GameController.instance.pControl.partInventory[part.ID] < part.quantity) {
 					return false;
                 }
             }

@@ -36,7 +36,12 @@ public class GameController : MonoBehaviour {
 	public GameObject info;
 	public Dictionary<int,HardwareProject> allHardwareProjects = new Dictionary<int, HardwareProject>();
     public Dictionary<int,SoftwareProject> allSoftwareProjects = new Dictionary<int,SoftwareProject >();
-    List<Research> allResearch;
+	public ResearchController rControl;
+	public SoftwareController sControl;
+	public HardwareController hControl;
+	public PartController pControl;
+	public ComputerController compControl;
+	List<Research> allResearch;
 
 
     // See http://unitypatterns.com/singletons/ for more details. Alternatively, google C# singleton.
@@ -111,8 +116,6 @@ public class GameController : MonoBehaviour {
      */
 
 	public void addResearchPoints(int points){
-		SoftwareController sControl = SoftwareController.instance;
-		ResearchController rControl = ResearchController.instance;
 		if(rControl.isResearchSet()){
 			if ((rControl.currentResearch.cost > researchPoints+points) || debugResearchPoints) {
 				researchPoints += points;
@@ -151,8 +154,6 @@ public class GameController : MonoBehaviour {
     int pointsPerSecond{
 		get{
 			int temp = 0;
-			SoftwareController sControl = SoftwareController.instance;
-			HardwareController hControl = HardwareController.instance;
 			List<SoftwareProject> relevantSoftware = sControl.AllCompletedSoftware.Where(x => x.pointsPerTick> 0).ToList();
 			List<HardwareProject> relevantHardware = hControl.AllCompletedGenericHardware.Where(x => x.pointsPerTick> 0).ToList();
 			foreach(SoftwareProject project in relevantSoftware){
@@ -176,8 +177,6 @@ public class GameController : MonoBehaviour {
 	 public int pointsPerClick{
 		get{
 			int temp = BASE_POINTS_PER_CLICK;
-			SoftwareController sControl = SoftwareController.instance;
-			HardwareController hControl = HardwareController.instance;
 			List<SoftwareProject> relevantSoftware = sControl.AllCompletedSoftware.Where(x => x.pointsPerClick> 0).ToList();
 			List<HardwareProject> relevantHardware = hControl.AllCompletedGenericHardware.Where(x => x.pointsPerClick> 0).ToList();
 			foreach(SoftwareProject item in relevantSoftware){
@@ -201,8 +200,6 @@ public class GameController : MonoBehaviour {
     public int pointsMult{
 		get{
 			int temp = 1;
-			SoftwareController sControl = SoftwareController.instance;
-			HardwareController hControl = HardwareController.instance;
 			List<SoftwareProject> relevantSoftware = sControl.AllCompletedSoftware.Where(x => x.pointMult> 0).ToList();
             List<HardwareProject> relevantHardware = hControl.AllCompletedGenericHardware.Where(x => x.pointMult > 0).ToList();
 			foreach(SoftwareProject item in relevantSoftware){
@@ -226,8 +223,6 @@ public class GameController : MonoBehaviour {
     public double processingPower{
 		get{
 			double temp = BASE_PROCESSING_POWER;
-			SoftwareController sControl = SoftwareController.instance;
-			HardwareController hControl = HardwareController.instance;
 			List<SoftwareProject> relevantSoftware = sControl.AllCompletedSoftware.Where(x => x.processIncrease> 0.00).ToList();
 			List<HardwareProject> relevantHardware = hControl.AllCompletedGenericHardware.Where(x => x.processIncrease> 0.00).ToList();
 			foreach(SoftwareProject item in relevantSoftware){
@@ -252,9 +247,6 @@ public class GameController : MonoBehaviour {
 	public double moneyPerSecond{
 		get{
 			int temp = 0;
-			SoftwareController sControl = SoftwareController.instance;
-			HardwareController hControl = HardwareController.instance;
-			ComputerController cControl = ComputerController.instance;
 			List<SoftwareProject> relevantSoftware = sControl.AllCompletedCourses.Where(x => x.moneyPerTick> 0).ToList();
             List<HardwareProject> relevantHardware = hControl.AllCompletedGenericHardware.Where(x => x.moneyPerTick > 0).ToList();
 			foreach(SoftwareProject item in relevantSoftware){
@@ -263,7 +255,7 @@ public class GameController : MonoBehaviour {
 			foreach(HardwareProject item in relevantHardware){
 				temp+=  item.moneyPerTick;
 			}
-			temp += cControl.getMoneyPerTick;
+			temp += compControl.getMoneyPerTick;
 			return temp;
 		}
 	}
@@ -279,8 +271,6 @@ public class GameController : MonoBehaviour {
 	public int moneyMultiplier{
 		get{
 			int temp = 1;
-			SoftwareController sControl = SoftwareController.instance;
-			HardwareController hControl = HardwareController.instance;
 			List<SoftwareProject> relevantSoftware = sControl.AllCompletedSoftware.Where(x => x.moneyMult> 0).ToList();
             List<HardwareProject> relevantHardware = hControl.AllCompletedGenericHardware.Where(x => x.moneyMult > 0).ToList();
 			foreach(SoftwareProject item in relevantSoftware){
@@ -299,9 +289,9 @@ public class GameController : MonoBehaviour {
 
 	public void addPointsPerSecond(){
 		int toAdd = pointsPerSecond * pointsMult;
-		if (ResearchController.instance.researchSet) {
+		if (rControl.researchSet) {
 			addResearchPoints (toAdd);
-		} else if (SoftwareController.instance.isSoftwareSet) {
+		} else if (sControl.isSoftwareSet) {
 			addResearchPoints(toAdd);
 		}
 	}
@@ -344,6 +334,11 @@ public class GameController : MonoBehaviour {
 	//-----------------------------------------UNITY METHODS
 
 	void Awake() {
+		rControl = new ResearchController ();
+		sControl = new SoftwareController ();
+		hControl = new HardwareController ();
+		pControl = new PartController ();
+		compControl = new ComputerController ();
 		score = GameObject.Find("PointsText").GetComponent<Text>();
 		moneyScore = GameObject.Find ("MoneyText").GetComponent<Text> ();
 		powerLevel = GameObject.Find ("PowerText").GetComponent<Text> ();
@@ -390,7 +385,6 @@ public class GameController : MonoBehaviour {
 					allHardwareProjects.Add(h.ID,h);
 				}
 				else{
-					ComputerController compControl = ComputerController.instance; 
 					compControl.AllCompletedComputers.Add (h);
 					compControl.setMannedComputer(h);
 
@@ -402,9 +396,7 @@ public class GameController : MonoBehaviour {
 					allSoftwareProjects.Add(p.ID,p);
 				}
 				else{
-					ComputerController compControl = ComputerController.instance; 
-					SoftwareController softControl = SoftwareController.instance;
-					softControl.AllCompletedOS.Add (p);
+					sControl.AllCompletedOS.Add (p);
 					compControl.mannedComputer.primaryOS = p;
 					
 				}
@@ -415,7 +407,7 @@ public class GameController : MonoBehaviour {
 
 	    }
 		foreach (Research r in allResearch) {
-			ResearchController.instance.AllUncompleteResearch.Add(r.ID,r);
+			rControl.AllUncompleteResearch.Add(r.ID,r);
 		} 
 		PickerController.instance.setChapterToNone ();
 

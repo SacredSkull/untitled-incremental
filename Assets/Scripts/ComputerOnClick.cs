@@ -18,9 +18,7 @@ public class ComputerOnClick : MonoBehaviour {
 	//research has been set, then they produce only the points necessary to finish it.
 	public void OnMouseDown(){
 		GameController game = GameController.instance;
-		ResearchController rControl = ResearchController.instance;
-		SoftwareController sControl = SoftwareController.instance;
-		if (rControl.isResearchSet()||sControl.isSoftwareSet) {
+		if (game.rControl.isResearchSet()||game.sControl.isSoftwareSet) {
 			game.addResearchPoints (game.pointsPerClick); 
 		} else {
 			if(game.justFinished == 0){

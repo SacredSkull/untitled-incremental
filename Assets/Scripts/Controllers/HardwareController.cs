@@ -8,16 +8,6 @@ using Incremental.Database;
 
 public class HardwareController : MonoBehaviour {
 
-	private static HardwareController _instance;
-	
-	public static HardwareController instance {
-		get {
-			if (_instance == null)
-				_instance = GameObject.FindObjectOfType<HardwareController>();
-			return _instance;
-		}
-	}
-
 	public Dictionary<int,HardwareProject> UnstartedHardware {
 		get {
 			Dictionary<int,HardwareProject> temp = new Dictionary<int,HardwareProject>();
@@ -65,14 +55,14 @@ public class HardwareController : MonoBehaviour {
 	
 	private void useRequiredParts(HardwareProject project){
 		foreach (Part item in project.Parts) {
-			PartController.instance.use(item, item.quantity);
+			GameController.instance.pControl.use(item, item.quantity);
 		}
 	}
 	
 	public void makeHardware(HardwareProject project){
 		if (project.canDoMultiple) {
 			if(project.HardwareType == HardwareProject.type.Computer){
-				ComputerController.instance.AllCompletedComputers.Add(project);
+				GameController.instance.compControl.AllCompletedComputers.Add(project);
 			}
 			else{
 				AllCompletedGenericHardware.Add(project);
@@ -86,7 +76,7 @@ public class HardwareController : MonoBehaviour {
 		else{
 			if (GameController.instance.allHardwareProjects[project.ID].uses > 0) {
 				if(project.HardwareType == HardwareProject.type.Computer){
-					ComputerController.instance.AllCompletedComputers.Add(project);
+					GameController.instance.compControl.AllCompletedComputers.Add(project);
 				}
 				else{
 					AllCompletedGenericHardware.Add(project);

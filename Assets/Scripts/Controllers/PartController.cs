@@ -8,16 +8,6 @@ using Incremental.Database;
 
 public class PartController : MonoBehaviour {
 
-	private static PartController _instance;
-	
-	public static PartController instance {
-		get {
-			if (_instance == null)
-				_instance = GameObject.FindObjectOfType<PartController>();
-			return _instance;
-		}
-	}
-
 	public Dictionary<int,Part> allBuyableParts{
 		get {
 			Dictionary<int,Part> temp = new Dictionary<int,Part>();

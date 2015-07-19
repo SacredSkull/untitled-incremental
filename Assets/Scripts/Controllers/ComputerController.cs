@@ -10,16 +10,6 @@ public class ComputerController : MonoBehaviour {
 
 	public List<HardwareProject> AllCompletedComputers = new List<HardwareProject>();
 
-	private static ComputerController _instance;
-	
-	public static ComputerController instance {
-		get {
-			if (_instance == null)
-				_instance = GameObject.FindObjectOfType<ComputerController>();
-			return _instance;
-		}
-	}
-
 	public Computer mannedComputer {
 		get;
 		set;
@@ -29,6 +19,7 @@ public class ComputerController : MonoBehaviour {
 		Computer parse = new Computer();
 		parse.computerBuild = comp;
 		parse.manned = true;
+		mannedComputer = parse;
 	}
 
 	public List<Computer> activeUnmannedComputers = new List<Computer> ();
