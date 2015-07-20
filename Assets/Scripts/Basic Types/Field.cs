@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Field : MonoBehaviour {
 
-	public enum field:int
+	public enum field : int
 	{
 		SoftwareDeveloper = 1,
 		Researcher = 2,

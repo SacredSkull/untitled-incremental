@@ -15,7 +15,7 @@ public class Employee : Asset {
     // When this is being serialized (or stored somewhere), you merely need to cast it to int to 
     // retrieve the value: 
     // e.g. int asd = (int)field.Programmer;
-	public Dictionary<Field.field,int> fieldPotential = new Dictionary<Field.field, int> ();
+    public Dictionary<Field.field, int> fieldPotential = new Dictionary<Field.field, int>();
 
     // Generate a full name (with prefix) only if it remains unassigned
     private string _name;
@@ -28,23 +28,6 @@ public class Employee : Asset {
         }
         set {
             _name = value;
-        }
-    }
-
-    // Pick an enumerator at random
-    private Field.field? _jobField;
-    public Field.field? jobField {
-        get {
-            if (_jobField == null) {
-                Array values = Enum.GetValues(typeof(Field.field));
-                Random random = new Random();
-                Field.field randomField = (Field.field)values.GetValue(random.Next(values.Length));
-                _jobField = randomField;
-            }
-            return _jobField;
-        }
-        set {
-            _jobField = value;
         }
     }
 
