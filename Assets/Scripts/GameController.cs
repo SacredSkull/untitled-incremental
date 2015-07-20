@@ -1,16 +1,12 @@
 ﻿#define DEBUG
 using UnityEngine;
 using UnityEngine.UI;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Incremental.Database;
 
-using UnityEngine.EventSystems;
-
 #if DEBUG
-//using System.Diagnostics;
+using System.Diagnostics;
 #endif
 
 /**
@@ -26,7 +22,7 @@ using UnityEngine.EventSystems;
  * @updated 26/06/2015
  */
 
-public class GameController : MonoBehaviour {
+public sealed class GameController : MonoBehaviour {
 
 	//called whenever research is finished, set to a high number, prevents click spamming opening the browser
 	public int justFinished = 0;
@@ -43,8 +39,11 @@ public class GameController : MonoBehaviour {
 	public ComputerController compControl;
 	public List<Research> allResearch;
 
+    // Prevents initialisation; the static instance MUST be used
+    private GameController() {
+        
+    }
 
-    // See http://unitypatterns.com/singletons/ for more details. Alternatively, google C# singleton.
     private static GameController _instance;
 
     /**
@@ -53,11 +52,13 @@ public class GameController : MonoBehaviour {
      * @brief   Gets the singleton instance of the GameController (this) class.
      * @return  The instance.
      */
-
     public static GameController instance {
         get {
 			if (_instance == null){
 				_instance = GameObject.FindObjectOfType<GameController>();
+			    if (_instance == null) {
+			        Utility.UnityLog("Could not find singular GameController instance! Are you sure the GameController gameobject exists?", LogLevels.ERROR);
+			    }
 			}
            
             return _instance;
