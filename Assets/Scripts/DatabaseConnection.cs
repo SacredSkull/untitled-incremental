@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 
 using Mono.Data.Sqlite;
 using Dapper;
@@ -77,17 +78,32 @@ namespace Incremental.Database {
         }
 
         public ICollection<string> GetTypes(Startable s) {
-           string sql = string.Format(@"SELECT t.Name name FROM {0}Types as st INNER JOIN( SELECT stt.TypeID, stt.{0}ID FROM {0}_Type as swt WHERE stt.{0}ID = @SID)as stt ON stt.TypeID = st.ID;", s.GetType().ToString());
+            string sql = string.Format(@"SELECT st.Name name FROM {0}Types as st
+                                    INNER JOIN( 
+	                                    SELECT stt.TypeID, stt.{0}ID 
+	                                    FROM {0}_Type as stt 
+	                                    WHERE stt.{0}ID = @SID
+                                    ) as stt ON stt.TypeID = st.ID;", s.GetType().ToString());
             return connection.Query<string>(sql, new { SID = s.ID }).ToList();
         }
 
         public ICollection<string> GetFields(Startable s) {
             string sql = string.Format(@"SELECT f.Name name FROM Field as f INNER JOIN( SELECT sf.FieldID, sf.{0}ID FROM {0}_Field as sf WHERE sf.{0}ID = @SID)as sf ON sf.FieldID = f.ID;", s.GetType().ToString());
             return connection.Query<String>(sql, new { SID = s.ID }).ToList();
-        } 
+        }
 
         public void Dispose() {
             connection.Close();
+        }
+
+        public ICollection<Research> GetResearchChildren(Research r) {
+            const string sql = @"SELECT r.* FROM Research as r 
+                                INNER JOIN(
+	                                SELECT rJunction.ResearchID 
+	                                FROM Research_Dependencies as rJunction 
+	                                WHERE rJunction.ResearchDependencyID = @RID
+                                ) as rJunction ON rJunction.ResearchID = r.ID;";
+            return connection.Query<Research>(sql, new { RID = r.ID }).ToList();
         }
     }
 }
