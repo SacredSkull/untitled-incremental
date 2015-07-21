@@ -30,25 +30,18 @@ using Incremental.Database;
     * @date    23/03/2015
     */
 
-public class Part : Startable, IComparable<Part> {
+public class Part : Asset, IComparable<Part> {
     public int ID { get; set; }
     public int cost { get; set; }
     public int quantity { get; set; }
     public override string name { get; set; }
 
 	private ICollection<Research> _Research;
-	
 	public ICollection<Research> Research {
 		get {
 			if (_Research == null) {
 				using (DatabaseConnection con = new DatabaseConnection()) {
-					const string sql = @"SELECT r.* FROM Research as r 
-                                INNER JOIN(
-	                                SELECT rJunction.ResearchID 
-	                                FROM Part_Research as rJunction 
-	                                WHERE rJunction.PartID = @RID
-                                ) as rJunction ON rJunction.ResearchID = r.ID;";
-					_Research = con.connection.Query<Research>(sql, new { RID = ID }).ToList();
+				    _Research = con.GetPartResearch(this);
 				}
 			}
 			return _Research;
@@ -120,59 +113,4 @@ public class Part : Startable, IComparable<Part> {
 		}
 		return true;
 	}
-
-    /**
-        * @fn  public override void complete()
-        *
-        * @brief   Completes this part(?). Should never have a body!
-        *
-        * @todo    Evaluate the need for parts to implement Startable- or if Startable should derive a base class that doesn't include these methods.
-        * @author  Peter
-        * @date    29/03/2015
-        */
-
-    public override void complete() {
-        throw new NotSupportedException();
-    }
-
-    /**
-        * @fn  public override void abandon()
-        *
-        * @brief   Abandons this part(?). Should never have a body!
-        *          
-        * @todo    Evaluate the need for parts to implement Startable- or if Startable should derive a base class that doesn't include these methods.
-        *
-        * @author  Peter
-        * @date    29/03/2015
-        */
-
-    public override void abandon() {
-        //TODO: This is required by interface Startable
-        throw new NotSupportedException();
-    }
-
-    /**
-        * @fn  public override void start()
-        *
-        * @brief   Starts this part(?). Should never have a body!
-        *          
-        * @todo    Evaluate the need for parts to implement Startable- or if Startable should derive a base class that doesn't include these methods.
-        *
-        * @author  Peter
-        * @date    29/03/2015
-        */
-
-    public override void start() {
-        throw new NotSupportedException();
-    }
-
-    /**
-        * @property    public override string name
-        *
-        * @brief   Gets or sets the name.
-        *          
-        * @detail  The set automatic property converts spaces to hyphens (-).
-        *
-        * @return  The name.
-        */
 }

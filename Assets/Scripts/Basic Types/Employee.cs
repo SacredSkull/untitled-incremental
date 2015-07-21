@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Faker;
 
@@ -43,7 +44,7 @@ public class Employee : Asset {
 	//only need to put in the research at the limit of their undertanding
 	public List<Research> completedResearch = new List<Research>();
 	public ResearchController employeeResearch = new ResearchController ();
-	public SoftwareController employeeSoftware = new SoftwareController();
+	public SoftwareController employeeSoftware = new SoftwareController ();
 	//0.00 - 1.00
 	public double loyalty{ get; set;}
 
@@ -79,16 +80,17 @@ public class Employee : Asset {
 	public double security{
 		get{
 			double catalyst = 1.00 - loyalty;
-			return  100 -(catalyst * (100-happiness));
+			return  100 - (catalyst * (100-happiness));
 		}
 	}
 
-	void addDependecies(List<Research> depends){
-		if (depends.Count==0) {
+	void addDependecies(ICollection<Research> depends){
+		if (depends.Count == 0) {
 			return;
 		} else {
 			foreach(Research r in depends){
 				if(employeeResearch.AllCompleteResearch.ContainsKey(r.ID)){
+                    // todo: Should this not be `continue`?
 					return;
 				}
 				else{

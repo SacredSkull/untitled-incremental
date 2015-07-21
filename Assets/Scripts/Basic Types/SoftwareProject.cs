@@ -40,15 +40,13 @@ public class SoftwareProject : Project {
 		NoType
 	}
 
-	public type _SoftwareType = type.None;
-	
+	private type _SoftwareType = type.None;
 	public type SoftwareType{
 		get{
 			if(_SoftwareType == type.None){
 				IEnumerable<String> parseable;
-				using (DatabaseConnection conn = new DatabaseConnection()){
-					const string sql = @"SELECT t.Name name FROM SoftwareType as t INNER JOIN( SELECT swr.TypeID, swr.SoftwareProjectID FROM SoftwareProject_Type as swr WHERE swr.SoftwareProjectID = @PID)as swr ON swr.TypeID = t.ID;";
-					parseable = conn.connection.Query<String>(sql, new { PID = ID });
+				using (DatabaseConnection con = new DatabaseConnection()) {
+				    parseable = con.GetTypes(this);
 				}
 				if(parseable.Any ()){
 					foreach (type item in Enum.GetValues(typeof(type))){
@@ -65,16 +63,14 @@ public class SoftwareProject : Project {
 		}
 	}
 
-	public Field.field _SoftwareField = Field.field.None;
-	
+	private Field.field _SoftwareField = Field.field.None;
 	public Field.field SoftwareField{
 		get{
 			GameController game = GameController.instance;
 			if(_SoftwareField == Field.field.None){
 				IEnumerable<String> parseable;
-				using (DatabaseConnection conn = new DatabaseConnection()){
-					const string sql = @"SELECT t.Name name FROM Field as t INNER JOIN( SELECT swr.FieldID, swr.SoftwareID FROM SoftwareProject_Field as swr WHERE swr.SoftwareID = @PID)as swr ON swr.FieldID = t.ID;";
-					parseable = conn.connection.Query<String>(sql, new { PID = ID });
+				using (DatabaseConnection con = new DatabaseConnection()){
+				    parseable = con.GetFields(this);
 				}
 				if(parseable.Any ()){
 					foreach (Field.field item in Enum.GetValues(typeof(Field.field))){

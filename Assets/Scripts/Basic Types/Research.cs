@@ -37,31 +37,23 @@ public class Research : Startable, IComparable<Research> {
 	}
 
     /**
-        * @property    public List<Startable> Dependencies
+        * @property    public IEnumerable<Research> Dependencies
         *
         * @brief   Gets the dependencies of this research.
         *          
         * @note    Research only depends on other research.
         *          
-        * @detail  Iterates over every dependency for this object and finds the research by it's string name.
+        * @detail  Pulls dependencies from the database.
         *
-        * @return  The list of <Startable> dependencies.
+        * @return  The IEnumerable of <Research> dependencies.
         */
 
-    private List<Research> _Dependencies;
-
-    public List<Research> Dependencies {
+    private ICollection<Research> _Dependencies;
+    public ICollection<Research> Dependencies {
         get {
             if (_Dependencies == null) {
                 using (DatabaseConnection con = new DatabaseConnection()) {
-                    _Dependencies = new List<Research>();
-                    const string sql = @"SELECT r.* FROM Research as r 
-                                INNER JOIN(
-	                                SELECT rJunction.ResearchDependencyID 
-	                                FROM Research_Dependencies as rJunction 
-	                                WHERE rJunction.ResearchID = @RID
-                                ) as rJunction ON rJunction.ResearchDependencyID = r.ID;";
-                    _Dependencies = con.connection.Query<Research>(sql, new { RID = ID }).ToList();
+                    _Dependencies = con.GetResearchDependencies(this);
                 }
             }
             return _Dependencies;
@@ -212,9 +204,8 @@ public class Research : Startable, IComparable<Research> {
 		get{
 			if(_ResearchField == Field.field.None){
 				IEnumerable<String> parseable;
-				using (DatabaseConnection conn = new DatabaseConnection()){
-					const string sql = @"SELECT t.Name name FROM Field as t INNER JOIN( SELECT swr.FieldID, swr.ResearchID FROM Research_Field as swr WHERE swr.ResearchID = @PID)as swr ON swr.FieldID = t.ID;";
-					parseable = conn.connection.Query<String>(sql, new { PID = ID });
+				using (DatabaseConnection con = new DatabaseConnection()) {
+				    parseable = con.GetFields(this);
 				}
 				if(parseable.Any ()){
 					foreach (Field.field item in Enum.GetValues(typeof(Field.field))){

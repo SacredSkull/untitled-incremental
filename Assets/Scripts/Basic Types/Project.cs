@@ -51,31 +51,12 @@ public abstract class Project : Startable {
         get {
             if (_Research == null) {
                 using (DatabaseConnection con = new DatabaseConnection()) {
-                    // This wizardry results in the deriving classes using the tables as they should, assuming the table name is _exactly_ equal to the class name.
-                    string sql = string.Format(@"SELECT r.* FROM Research as r INNER JOIN( SELECT junction.ResearchID FROM {0}_Research as junction WHERE junction.{0}ID = @PID) as junction ON junction.ResearchID = ID;", this.GetType().Name);
-                    _Research = con.connection.Query<Research>(sql, new { PID = ID }).ToList();
+                    _Research = con.GetProjectResearch(this);
                 }
             }
             return _Research;
         }
     }
-
-    /**
-        * @fn  public Project()
-        *
-        * @brief   Default constructor.
-        *          
-        * @details Initialises the dependsOnField(?) 
-        *          
-        * @todo    Static methods getProjectByID & getProjectByName are missing. 
-        *          Additionally, so is the static list holding all Projects.
-        *          When complete, this constructor will add **this** to the static list of all Projects.
-        *          
-        * 
-        *
-        * @author  Peter
-        * @date    23/03/2015
-        */
 
     /**
         * @property    public bool canDoMultiple
