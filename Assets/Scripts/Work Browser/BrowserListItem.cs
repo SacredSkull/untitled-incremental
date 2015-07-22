@@ -42,7 +42,7 @@ public class BrowserListItem : MonoBehaviour {
 		switch (projectPicker.chapter) {
 		    case PickerController.pickedType.Research:
 		        if (ID!=null&& GameController.instance.rControl.AllUncompleteResearch.ContainsKey ((int)ID)) {
-					GameController.instance.rControl.startResearch (GameController.instance.rControl.AllUncompleteResearch [(int)ID]);
+					GameController.instance.rControl.startResearch ((int)ID);
 		        }
 		        break;
 			case PickerController.pickedType.Software:

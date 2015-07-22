@@ -101,22 +101,7 @@ public class Research : Startable, IComparable<Research> {
         throw new NotImplementedException();
     }
 
-    /**
-    * @fn  public bool hasBeenDone()
-    *
-    * @brief   Query if research (this object) has been done.
-    *
-    * @author  Conal
-    * @author  Peter
-    * @date    01/04/2015
-    * @updated 27/06/2015
-    *
-    * @return  true if been done, false if not.
-    */
-
-    public bool hasBeenDone() {
-		return GameController.instance.rControl.AllCompleteResearch.ContainsKey(this.ID);
-    }
+    
 
     /**
  * @fn  public bool canBeDone()
@@ -129,13 +114,13 @@ public class Research : Startable, IComparable<Research> {
  * @return  true if it can be done, false if not.
  */
 
-    public bool canBeDone() {
+    public bool canBeDone(ResearchController profile) {
 		if (this.processReq > GameController.instance.processingPower) {
 			Utility.UnityLog(GameController.instance.processingPower.ToString(),1);
             return false;
         }
         foreach (Research depends in this.Dependencies) {
-            if (!depends.hasBeenDone()) {
+			if (!profile.hasBeenDone(depends)) {
 				return false;
             }
         }
@@ -163,9 +148,9 @@ public class Research : Startable, IComparable<Research> {
     * @return  true if there are no dependencies to fullfil, false if requirements are not met. The missingResearch list (empty or not) is always returned.
     */
 
-    public bool canBeDone(ref List<Research> missingResearch) {
+    public bool canBeDone(ref List<Research> missingResearch, ResearchController profile) {
         foreach (Research depends in this.Dependencies) {
-            if (!depends.hasBeenDone()) {
+            if (!profile.hasBeenDone(depends)) {
                 missingResearch.Add(depends);
                 depends.canBeDone(ref missingResearch);
             }

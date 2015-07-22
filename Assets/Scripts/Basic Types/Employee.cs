@@ -11,6 +11,40 @@ public class Employee : Asset {
 	private const double RESEARCH_POINTS_PAY = 1000;
 	private const double COURSE_POINTS_PAY = 100;
 
+	private int _ID;
+	public override int ID{
+		get{
+			if(_ID == null){
+				_ID = GameController.instance.empID;
+				GameController.instance.empID++;
+			}
+			return _ID;
+		}
+		set{
+			_ID = value;
+		}
+	}
+
+	private int _points;
+	public int points {
+		get{
+			if(_points == null){
+				_points = 0;
+			}
+			return points;
+		}
+		set{
+			_points = value;
+		}
+	}
+
+	public Computer empComp {
+		get;
+		private set;
+	}
+
+	public bool hired;
+
     // This looks convuluted, but it's required if we want to set this automagically via dapper.
     // Basically this assigns an integer value (quite obviously) which is stored in the database.
     // When this is being serialized (or stored somewhere), you merely need to cast it to int to 
@@ -44,6 +78,8 @@ public class Employee : Asset {
 	//only need to put in the research at the limit of their undertanding
 	public List<Research> completedResearch = new List<Research>();
 	public ResearchController employeeResearch = new ResearchController ();
+
+
 	public SoftwareController employeeSoftware = new SoftwareController ();
 	//0.00 - 1.00
 	public double loyalty{ get; set;}
@@ -103,6 +139,8 @@ public class Employee : Asset {
 		}
 	}
 
+
+
 	//called when object is first created
 	public void completeProfile(){
 		foreach (Research r in completedResearch) {
@@ -137,7 +175,6 @@ public class Employee : Asset {
 			}
 		}
 	}
-
 
 
 }

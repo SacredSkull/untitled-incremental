@@ -50,6 +50,31 @@ public class ResearchController : MonoBehaviour {
     public event StartedResearchHandler onStartedResearch;
     public event StoppedResearchHandler onStoppedResearch;
     public event CompletedResearchHandler onCompletedResearch;
+
+	public int pointCostByID(int ID){
+		if (AllUncompleteResearch.ContainsKey (ID)) {
+			return AllUncompleteResearch [ID].cost;
+		} else {
+			return AllCompleteResearch [ID].cost;
+		}
+	}
+
+	/**
+    * @fn  public bool hasBeenDone()
+    *
+    * @brief   Query if research (this object) has been done.
+    *
+    * @author  Conal
+    * @author  Peter
+    * @date    01/04/2015
+    * @updated 27/06/2015
+    *
+    * @return  true if been done, false if not.
+    */
+	
+	public bool hasBeenDone(Research query) {
+		return AllCompleteResearch.ContainsKey(query.ID);
+	}
 	
 	/**
      * @fn  public void startResearch(Research research)
@@ -62,10 +87,10 @@ public class ResearchController : MonoBehaviour {
      * @param   research    The research to start.
      */
 	
-	public void startResearch(Research research){
+	public void startResearch(int ID){
 		GameController.instance.justFinished = 0;
 		researchSet = true;
-		currentResearch = research;
+		currentResearch = AllUncompleteResearch[ID];
 
         // Check that there are listeners, if so call event
         if(onStartedResearch != null)
