@@ -1,8 +1,11 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
 public class EmployeeController : MonoBehaviour {
+
+	//stores all information on the users progress
+	public Employee Player = new Employee ();
 
 	//All Employees that have been randomly created this game
 	public List<Employee> AllEmployees = new List<Employee> ();
@@ -13,6 +16,10 @@ public class EmployeeController : MonoBehaviour {
 	//All employees that have not been hired by anyone
 	public List<Employee> AllAvailableEmployees = new List<Employee>();
 
+	public Dictionary<int,Team> AllActiveTeams = new Dictionary<int,Team> ();
+
+	public List<int> LeaderIDs = new List<Int> ();
+
 	public int totalWages{
 		get{
 			int cost = 0;
@@ -22,34 +29,25 @@ public class EmployeeController : MonoBehaviour {
 		}
 	}
 
-	//calculates the cost of doing research for a group of people, with bonuses 
-	//for more people doing it, and people who already know it helping. Algorithm 
-	//is hidden from user. GUI should be designed so that every time someone is added 
-	//to the team we see cost change 
-	public int groupCost(List<Employee> team, bool bossHelp, int ID){
-		int points = 0;
-		int teacher = 0;
-		int students = 0;
-		int cost = GameController.instance.rControl.hasBeenDone(ID);
-		foreach (Employee e in team) {
-			if(e.employeeResearch.hasBeenDone(ID)){
-				teacher ++;
-				students ++;
-			}
-			else{
-				points += cost;
-			}
-		}
+	public void createTeam(List<ID> team, bool bossHelp){
+		List<Employee> members;
+		foreach (int id in team) {
+			members.Add(AllEmployees.Find (x => x.ID == id));
+		} 
 		if(bossHelp){
-			if(GameController.instance.rControl.hasBeenDone(ID)){
-				points += cost;
-				students ++;
-			}
-			else{
-				teacher ++;
-			} 
+			members.Add (Player);
 		}
-		return (points / 2) + ((points / 2) / ((teacher * 2) + (students)));
-
+		Team temp = new Team (members);
+		AllActiveTeams.Add (temp.ID, temp);
+		LeaderIDs.Add (temp.ID);
+		
 	}
+
+
+
+	public void awake(){
+		Player.me = true;
+	}
+
+
 }

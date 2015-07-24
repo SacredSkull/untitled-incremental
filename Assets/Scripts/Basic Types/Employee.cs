@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,6 +10,10 @@ public class Employee : Asset {
 	private const double COURSE_PAY = 5;
 	private const double RESEARCH_POINTS_PAY = 1000;
 	private const double COURSE_POINTS_PAY = 100;
+
+	public bool me;
+
+	public List<Employee> team = new List<Employee> ();
 
 	private int _ID;
 	public override int ID{

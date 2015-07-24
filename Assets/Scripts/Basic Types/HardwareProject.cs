@@ -69,7 +69,7 @@ public class HardwareProject : Project {
     {
         Utility.UnityLog(this.HardwareType.ToString() + "  " + name);
         foreach (Research r in this.Research) {
-            if (!r.hasBeenDone()) {
+            if (!GameController.instance.rControl.hasBeenDone(r.ID)) {
 				return false;
             }
         }
