@@ -127,36 +127,7 @@ public class Research : Startable, IComparable<Research> {
         return true;
     }
 
-    /**
-    * @fn  public bool canBeDone(ref List<Research> missingResearch)
-    *
-    * @brief   Recursive variant of canBeDone() which goes up the entire chain of dependencies, 
-    * filling a list that must be met before this can be done. 
-    *
-    * One particular use in mind for this function (and those like it for Projects, etc.) is that of the hierarchy list, which would high
-    * -light the required nodes needed to start this research. 
-    * 
-    * @author  Peter
-    * @date    28/06/2015
-    *
-    * @param   missingResearch Reference to the List<Research> of requirements not met. As a ref, 
-    * this must be instantiated BEFORE passing it into the method.  
-    * 
-    * @warning This method iterates into each unfilled dependency, and walks out its unfilled dependencies and so on, which obviously
-    * results in a longer processing time than the standard canBeDone().
-    * 
-    * @return  true if there are no dependencies to fullfil, false if requirements are not met. The missingResearch list (empty or not) is always returned.
-    */
-
-    public bool canBeDone(ref List<Research> missingResearch, ResearchController profile) {
-        foreach (Research depends in this.Dependencies) {
-            if (!profile.hasBeenDone(depends)) {
-                missingResearch.Add(depends);
-                depends.canBeDone(ref missingResearch);
-            }
-        }
-        return missingResearch.Count == 0;
-    }
+    
 
     /**
         * @fn  public int CompareTo(Research b)

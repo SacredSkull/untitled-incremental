@@ -13,6 +13,7 @@ public class Team : MonoBehaviour {
 	public goalType goal;
 	public Research researchProject;
 	public SoftwareProject softProject;
+	public int pointCost;
 
 	public List<Employee> members = new List<Employee> ();
 
@@ -32,15 +33,20 @@ public class Team : MonoBehaviour {
 		}
 	}
 
-	public void setResearch(int ID){
-		researchProject = GameController.instance.allResearch.Find (r => r.ID == researchProject.ID);
+	public void setProject(int ID, goalType go){
+		if(go = goalType.Research){
+			researchProject = GameController.instance.allResearch.Find (r => r.ID == researchProject.ID);
+			pointCost = groupResearchCost();
+			goal = go;
+		}
+
 	}
 
 	//calculates the cost of doing research for a group of people, with bonuses 
 	//for more people doing it, and people who already know it helping. Algorithm 
 	//is hidden from user. GUI should be designed so that every time someone is added 
 	//to the team we see cost change 
-	public int groupResearchCost(){
+	int groupResearchCost(){
 		int points = 0;
 		int teacher = 0;
 		int students = 0;
@@ -65,6 +71,93 @@ public class Team : MonoBehaviour {
 		}
 		return (points / 2) + ((points / 2) / ((teacher * 2) + (students)));
 		
+	}
+
+	public List<Research> possibleTeamResearch{
+		get{
+			List<Research> possible = new List<Research>();
+			foreach(Research r in GameController.instance.allResearch){
+				if(canTeamDoResearch(r.ID)){
+					possible.Add(r);
+				}
+			}
+			return possible;
+		}
+	}
+
+	//atLeastOne person must not have already done the research
+	public bool canTeamDoResearch(int ID){
+		bool atLeastOne = false;
+		foreach(Employee e in members){
+			if(e.employeeResearch.canBeDone(ID)){
+				if(!atLeastOne || !e.employeeResearch.hasBeenDone){
+					atLeastOne = true;
+				}
+			}
+			else{
+				return false;
+			}
+		}
+		if(atLeastOne){
+			return true;
+		}
+		return false;
+	}
+
+	public bool canTeamDoSoftware(int ID){
+		SoftwareProject test = GameController.instance.allSoftwareProjects[ID];
+		foreach(Research r in test.Research){
+			bool met = false;
+			foreach(Employee e in members){
+				if(e.employeeResearch.hasBeenDone(r.ID)){
+					met = true;
+				}
+			}
+			if(met == false){
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public List<SoftwareProject> possibleTeamSoftware{
+		get{
+			List<SoftwareProject> possible = new List<SoftwareProject>();
+			foreach(SoftwareProject r in GameController.instance.allSoftwareProjects.Values){
+				if(canTeamDoSoftware(r.ID)){
+					possible.Add(r);
+				}
+			}
+			return possible;
+		}
+	}
+
+	public bool canTeamDoHardware(int ID){
+		HardwareProject test = GameController.instance.allHardwareProjects[ID];
+		foreach(Research r in test.Research){
+			bool met = false;
+			foreach(Employee e in members){
+				if(e.employeeResearch.hasBeenDone(r.ID)){
+					met = true;
+				}
+			}
+			if(met == false){
+				return false;
+			}
+		}
+		return GameController.instance.pControl.hasParts(test.Parts);
+	}
+	
+	public List<HardwareProject> possibleTeamHardware{
+		get{
+			List<HardwareProject> possible = new List<HardwareProject>();
+			foreach(HardwareProject r in GameController.instance.allHardwareProjects.Values){
+				if(canTeamDoHardware(r.ID)){
+					possible.Add(r);
+				}
+			}
+			return possible;
+		}
 	}
 
 }

@@ -82,8 +82,7 @@ public class Employee : Asset {
 	//only need to put in the research at the limit of their undertanding
 	public List<Research> completedResearch = new List<Research>();
 	public ResearchController employeeResearch = new ResearchController ();
-
-
+	public HardwareController employeeHardware = new HardwareController ();
 	public SoftwareController employeeSoftware = new SoftwareController ();
 	//0.00 - 1.00
 	public double loyalty{ get; set;}

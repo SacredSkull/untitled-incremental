@@ -405,6 +405,9 @@ public sealed class GameController : MonoBehaviour {
 			}
 	        allResearch = connection.GetAllResearch().ToList();
 	        allParts = connection.GetAllParts().ToList();
+			foreach(Part p in allParts){
+				pControl.partInventory.Add(p.ID,0);
+			}
 
 	    }
 		PickerController.instance.setChapterToNone ();

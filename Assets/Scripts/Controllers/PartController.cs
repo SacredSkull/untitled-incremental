@@ -47,4 +47,13 @@ public class PartController : MonoBehaviour {
 	public void use(Part p, int number){
 		partInventory[p.ID] -= number;
 	}
+
+	public bool hasParts(List<Part> req){
+		foreach (Part p in req) {
+			if(!partInventory[p.ID] >= p.quantity){
+				return false;
+			}
+		}
+		return true;
+	}
 }

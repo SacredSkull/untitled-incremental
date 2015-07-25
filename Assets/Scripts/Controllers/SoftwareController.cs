@@ -37,27 +37,9 @@ public class SoftwareController : MonoBehaviour {
 	
 	public List<SoftwareProject> AllCompletedOS = new List<SoftwareProject> ();
 	
-	public List<SoftwareProject> AllCompletedCourses = new List<SoftwareProject> ();
+	public Dictionary<SoftwareProject.type,SoftwareProject> AllCompletedCourses = new Dictionary<SoftwareProject.type,SoftwareProject> ();
 
 	public List<SoftwareProject> AllCompletedSoftwareProjects = new List<SoftwareProject>();
-	
-	/**
-    * @property    public List<SoftwareProject> PossibleSoftware
-    *
-    * @brief   All Software that has its dependencies filled
-    *          
-    * @warning Iterator; should not be called every tick!
-    *
-    * @return  The potential software.
-    */
-	
-	public List<SoftwareProject> PossibleSoftware{
-		get{
-			List<Startable> requirements = new List<Startable>();
-			List<SoftwareProject> temp = UnstartedSoftware.Values.ToList ().Where(x => x.possible(out requirements)).ToList();
-			return temp;
-		}
-	}
 	
 	/**
      * @property    public bool isSoftware
