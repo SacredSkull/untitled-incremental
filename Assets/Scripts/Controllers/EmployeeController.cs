@@ -29,7 +29,7 @@ public class EmployeeController : MonoBehaviour {
 		}
 	}
 
-	public void createTeam(List<ID> team, bool bossHelp){
+	public void createTeam(List<int> team, bool bossHelp){
 		List<Employee> members;
 		foreach (int id in team) {
 			members.Add(AllEmployees.Find (x => x.ID == id));
