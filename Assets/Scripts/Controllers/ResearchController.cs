@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Incremental.Database;
 
-public class ResearchController : MonoBehaviour {
+public class ResearchController : ScriptableObject {
 
 	/** @brief   If research is set or not */
 	public bool researchSet = false;

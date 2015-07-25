@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Incremental.Database;
 
-public class ComputerController : MonoBehaviour {
+public class ComputerController : ScriptableObject {
 
 	public List<HardwareProject> AllCompletedComputers = new List<HardwareProject>();
 

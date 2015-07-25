@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Incremental.Database;
 
-public class PartController : MonoBehaviour {
+public class PartController : ScriptableObject {
 
 	public Dictionary<int,Part> allBuyableParts{
 		get {

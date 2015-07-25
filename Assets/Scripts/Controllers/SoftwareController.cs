@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Incremental.Database;
 
-public class SoftwareController : MonoBehaviour {
+public class SoftwareController : ScriptableObject {
 
 	/**
      * @property    public List<SoftwawreProject> UnstartedSoftware

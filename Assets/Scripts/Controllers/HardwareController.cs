@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Incremental.Database;
 
-public class HardwareController : MonoBehaviour {
+public class HardwareController : ScriptableObject {
 
 	public Dictionary<int,HardwareProject> UnstartedHardware {
 		get {
