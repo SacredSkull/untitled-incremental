@@ -13,8 +13,6 @@ public class Employee : Asset {
 
 	public bool me;
 
-	public List<Employee> team = new List<Employee> ();
-
 	private int _ID;
 	public override int ID{
 		get{
@@ -142,7 +140,48 @@ public class Employee : Asset {
 		}
 	}
 
+	public int pointsPerTick(Field.field f){
+		int point = 0;
+		int mult = 0;
+		List<SoftwareProject> course = employeeSoftware.AllCompletedCourses [f];
+		foreach(SoftwareProject s in employeeSoftware.AllCompletedCourses[Field.field.Fieldless]){
+			course.Add(s);
+		}
+		foreach(SoftwareProject c in course){
+			if(c.pointsPerTick > 0){
+				point += c.pointsPerTick;
+			}
+			if(c.pointMult > 0){
+				mult += c.pointMult;
+			}
 
+		}
+		if (me) {
+			return empComp.pointsPerTick (point, mult, f);
+		} else {
+			return empComp.pointsPerTick (point, mult, f) + pointsPerClick(f);
+		}
+
+	}
+
+	public int pointsPerClick(Field.field f){
+		int point = 0;
+		int mult = 0;
+		List<SoftwareProject> course = employeeSoftware.AllCompletedCourses [f];
+		foreach(SoftwareProject s in employeeSoftware.AllCompletedCourses[Field.field.Fieldless]){
+			course.Add(s);
+		}
+		foreach (SoftwareProject c in course) {
+			if (c.pointsPerClick > 0) {
+				point += c.pointsPerTick;
+			}
+			if (c.pointMultPerClick > 0) {
+				mult += c.pointMult;
+			}
+		}
+		return empComp.pointsPerClick (point, mult, f);
+
+	}
 
 	//called when object is first created
 	public void completeProfile(){
@@ -152,7 +191,7 @@ public class Employee : Asset {
 			addDependecies(r.Dependencies);
 		}
 		foreach (SoftwareProject s in courses){
-			employeeSoftware.AllCompletedCourses.Add(s);
+			employeeSoftware.AllCompletedCourses.Add(s.SoftwareField,s);
 			employeeSoftware.UnstartedSoftware.Remove(s.ID);
 		}
 		foreach (Field.field item in Enum.GetValues(typeof(Field.field)) ){

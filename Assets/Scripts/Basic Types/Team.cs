@@ -160,4 +160,22 @@ public class Team : MonoBehaviour {
 		}
 	}
 
+	public int pointsPerSecond(){
+		int point = 0;
+		foreach(Employee e in members){
+			if(goal == goalType.Research){
+				point += e.pointsPerTick(researchProject.ResearchField);
+			}
+			else if(goal == goalType.Software){
+				point += e.pointsPerTick(softProject.SoftwareField);
+			}
+		}
+		if(goal == goalType.Research){
+			point += leader.pointsPerTick(researchProject.ResearchField);
+		}
+		else if(goal == goalType.Software){
+			point += leader.pointsPerTick(softProject.SoftwareField);
+		}
+		return point;
+	}
 }

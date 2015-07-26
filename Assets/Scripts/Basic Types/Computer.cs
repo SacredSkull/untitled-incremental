@@ -86,31 +86,31 @@ public class Computer : MonoBehaviour {
 		}
 	}
 
-	public int pointsPerTick{
-		get{
-			int points = 0;
-			int multiplier = 0;
-			foreach(SoftwareProject s in InstalledPrograms){
-				if(s.pointsPerTick>0){
+	public int pointsPerTick(int employeePoints, int employeeMult, Field.field f){
+		int points = employeePoints;
+		int multiplier = employeeMult;
+		foreach(SoftwareProject s in InstalledPrograms){
+			if(s.SoftwareField == Field.field.Fieldless  || s.SoftwareField == f){
+				if(s.pointsPerTick > 0){
 					points+=s.pointsPerTick;
 				}
 				if(s.pointMult>0){
 					multiplier+=s.pointMult;
 				}
 			}
-			if (secondaryOS == null) {
-				points += primaryOS.pointsPerTick;
-				multiplier += primaryOS.pointMult;
-			} else {
-				points += ((primaryOS.pointsPerTick/2) + (secondaryOS.pointsPerTick/2));
-				multiplier += ((primaryOS.pointMult/2) + (secondaryOS.pointsPerTick/2));
-			}
-			if(manned){
-				return (points * multiplier);
-			}
-			else{
-				return ((points * multiplier)/2);
-			}
+		}
+		if (secondaryOS == null) {
+			points += primaryOS.pointsPerTick;
+			multiplier += primaryOS.pointMult;
+		} else {
+			points += ((primaryOS.pointsPerTick/2) + (secondaryOS.pointsPerTick/2));
+			multiplier += ((primaryOS.pointMult/2) + (secondaryOS.pointsPerTick/2));
+		}
+		if(manned){
+			return (points * multiplier);
+		}
+		else{
+			return ((points * multiplier)/2);
 		}
 	}
 
@@ -142,17 +142,19 @@ public class Computer : MonoBehaviour {
 		}
 	}
 
-	public int pointsPerClick{
-		get{
-			int points = 0;
-			int multiplier = 0;
+	public int pointsPerClick(int employeePoints,int employeeMult,Field.field f){
+
+			int points = employeePoints;
+			int multiplier = employeeMult;
 			foreach(SoftwareProject s in InstalledPrograms){
-				if(s.pointsPerClick > 0){
-					points+=s.pointsPerClick;
-				}
-				if(s.pointMultPerClick>0){
-					multiplier+=s.pointMultPerClick;
-				}
+				if(s.SoftwareField == Field.field.Fieldless  || s.SoftwareField == f){
+					if(s.pointsPerClick > 0){
+						points+=s.pointsPerClick;
+					}
+					if(s.pointMultPerClick>0){
+						multiplier+=s.pointMultPerClick;
+					}
+			}
 			}
 			if (secondaryOS == null) {
 				points += primaryOS.pointsPerClick;
@@ -167,7 +169,7 @@ public class Computer : MonoBehaviour {
 			else{
 				return 0;
 			}
-		}
+
 
 	}
 }

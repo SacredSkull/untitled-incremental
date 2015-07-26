@@ -37,7 +37,7 @@ public class SoftwareController : MonoBehaviour {
 	
 	public List<SoftwareProject> AllCompletedOS = new List<SoftwareProject> ();
 	
-	public Dictionary<SoftwareProject.type,SoftwareProject> AllCompletedCourses = new Dictionary<SoftwareProject.type,SoftwareProject> ();
+	public Dictionary<Field.field,SoftwareProject> AllCompletedCourses = new Dictionary<Field.field,SoftwareProject> ();
 
 	public List<SoftwareProject> AllCompletedSoftwareProjects = new List<SoftwareProject>();
 	
