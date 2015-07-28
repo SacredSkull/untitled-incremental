@@ -22,7 +22,7 @@ public class SoftwareController : MonoBehaviour {
 	{
 		get {
 			Dictionary<int,SoftwareProject> temp = new Dictionary<int, SoftwareProject>();
-			foreach (SoftwareProject item in GameController.instance.allSoftwareProjects.Values.ToList()) {
+			foreach (SoftwareProject item in GameController.instance.allSoft.Values.ToList()) {
 				if(item.uses > 0 || item.uses == -1){
 					temp.Add(item.ID,item);
 				}
@@ -31,13 +31,15 @@ public class SoftwareController : MonoBehaviour {
 		}
 	}
 
+	public Dictionary<int,SoftwareProject> AllIncompleteCourses = new Dictionary<int,SoftwareProject> ();
+
 	public List<SoftwareProject> AllCompletedGenericProjects = new List<SoftwareProject> ();
 	
 	public List<SoftwareProject> AllCompletedSoftware = new List<SoftwareProject>();
 	
 	public List<SoftwareProject> AllCompletedOS = new List<SoftwareProject> ();
 	
-	public Dictionary<Field.field,SoftwareProject> AllCompletedCourses = new Dictionary<Field.field,SoftwareProject> ();
+	public Dictionary<Field.field,List<SoftwareProject>> AllCompletedCourses = new Dictionary<Field.field,List<SoftwareProject>> ();
 
 	public List<SoftwareProject> AllCompletedSoftwareProjects = new List<SoftwareProject>();
 	
@@ -68,63 +70,121 @@ public class SoftwareController : MonoBehaviour {
     public event StoppedSoftwareHandler onStoppedSoftware;
     public event CompletedSoftwareHandler onCompletedSoftware;
 	
-	public void startSoftware(SoftwareProject project){
-		GUITools.setGameObjectActive (GameController.instance.picker, false);
-		GUITools.setGameObjectActive (GameController.instance.inProgress, true);
-		currentSoftware = project;
+	public void startSoftware(SoftwareProject project, bool player){
+		if (player) {
+			GUITools.setGameObjectActive (GameController.instance.picker, false);
+			GUITools.setGameObjectActive (GameController.instance.inProgress, true);
+			currentSoftware = project;
+			
+			// Check if there are listeners, if so, call event
+			if (onStartedSoftware != null)
+				onStartedSoftware (currentSoftware, EventArgs.Empty);
+			
+			isSoftwareSet = true;
+			GameObject.Find ("CurrentResearch").GetComponent<Text> ().text = currentSoftware.name;
+			GameObject.Find ("Description").GetComponent<Text> ().text = currentSoftware.description;
+		} else {
+			currentSoftware = project;
+			isSoftwareSet = true;
+		}
+	}
 
-        // Check if there are listeners, if so, call event
-        if(onStartedSoftware != null)
-            onStartedSoftware(currentSoftware, EventArgs.Empty);
+	public bool courseHasBeenDone(int ID){
+		if(AllIncompleteCourses.ContainsKey(ID)){
+			return false;
+		}
+		return true;
+	}
 
-		isSoftwareSet = true;
-		GameObject.Find ("CurrentResearch").GetComponent<Text>().text = currentSoftware.name;
-		GameObject.Find ("Description").GetComponent<Text> ().text = currentSoftware.description;
+	public bool canDoCourse(int ID, ResearchController r){
+		if (courseHasBeenDone (ID)) {
+			return false;
+		}
+		foreach(Research d in GameController.instance.courses[ID].Research){
+			if(!r.hasBeenDone(d)){
+				return false;
+			}
+		}
+		return true;
 	}
 	
-	public void finishSoftware(){
-		GameController.instance.justFinished = 8;
-		if(currentSoftware.canDoMultiple){
+	public void finishSoftware(bool player){
+		if (player) {
+			GameController.instance.justFinished = 8;
 			switch (currentSoftware.SoftwareType) {
-			    case SoftwareProject.type.Course:
-			        AllCompletedCourses.Add (currentSoftware);
-			        break;
-			    case SoftwareProject.type.OS:
-			        AllCompletedOS.Add(currentSoftware);
-			        break;
-			    case SoftwareProject.type.Software:
-			        AllCompletedSoftware.Add(currentSoftware);
-			        break;
-			    default:
-			        AllCompletedGenericProjects.Add(currentSoftware);
-			        break;
+			case SoftwareProject.type.Course:
+				AllCompletedCourses.Add (currentSoftware);
+				break;
+			case SoftwareProject.type.OS:
+				AllCompletedOS.Add (currentSoftware);
+				break;
+			case SoftwareProject.type.Software:
+				AllCompletedSoftware.Add (currentSoftware);
+				break;
+			default:
+				AllCompletedGenericProjects.Add (currentSoftware);
+				break;
 			}
-		}
-		else{
+			if (!currentSoftware.canDoMultiple) {
+				currentSoftware.uses -= 1;
+				GameController.instance.allSoft.Remove (currentSoftware.ID);
+				GameController.instance.allSoft.Add (currentSoftware.ID, currentSoftware);
+			}
+			if(currentSoftware.SoftwareType = SoftwareProject.type.Course){
+				AllIncompleteCourses.Remove(currentSoftware.ID);
+				AllCompletedCourses.Add (currentSoftware.ID,currentSoftware);
+			}
+			else{
+				if (!currentSoftware.canDoMultiple) {
+					currentSoftware.uses -= 1;
+					GameController.instance.allSoft.Remove (currentSoftware.ID);
+					GameController.instance.allSoft.Add (currentSoftware.ID, currentSoftware);
+				}
+				AllCompletedSoftwareProjects.Add (currentSoftware);
+			}
+			// Check if there are listeners, if so, call event
+			if (onCompletedSoftware != null)
+				onCompletedSoftware (currentSoftware, EventArgs.Empty);
+			currentSoftware = null;
+			isSoftwareSet = false;
+			PickerController.instance.showPicker ();
+		} else {
 			switch (currentSoftware.SoftwareType) {
-			    case SoftwareProject.type.Course:
-			        AllCompletedCourses.Add (currentSoftware);
-			        break;
-			    case SoftwareProject.type.OS:
-			        AllCompletedOS.Add(currentSoftware);
-			        break;
-			    case SoftwareProject.type.Software:
-			        AllCompletedSoftware.Add(currentSoftware);
-			        break;
-			    default:
-			        AllCompletedGenericProjects.Add(currentSoftware);
-			        break;
+			case SoftwareProject.type.Course:
+				AllCompletedCourses.Add (currentSoftware);
+				break;
+			case SoftwareProject.type.OS:
+				AllCompletedOS.Add (currentSoftware);
+				break;
+			case SoftwareProject.type.Software:
+				AllCompletedSoftware.Add (currentSoftware);
+				break;
+			default:
+				AllCompletedGenericProjects.Add (currentSoftware);
+				break;
 			}
-			currentSoftware.uses -=1;
-			GameController.instance.allSoftwareProjects.Remove(currentSoftware.ID);
-			GameController.instance.allSoftwareProjects.Add (currentSoftware.ID,currentSoftware);
+			if(currentSoftware.SoftwareType = SoftwareProject.type.Course){
+				AllIncompleteCourses.Remove(currentSoftware.ID);
+				AllCompletedCourses.Add (currentSoftware.ID,currentSoftware);
+			}
+			else{
+				if (!currentSoftware.canDoMultiple) {
+					currentSoftware.uses -= 1;
+					GameController.instance.allSoft.Remove (currentSoftware.ID);
+					GameController.instance.allSoft.Add (currentSoftware.ID, currentSoftware);
+				}
+				AllCompletedSoftwareProjects.Add (currentSoftware);
+			}
+			currentSoftware = null;
+			isSoftwareSet = false;
 		}
-        AllCompletedSoftwareProjects.Add (currentSoftware);
-        // Check if there are listeners, if so, call event
-        if (onCompletedSoftware != null)
-            onCompletedSoftware(currentSoftware, EventArgs.Empty);
-		currentSoftware = null;
-		isSoftwareSet = false;
-		PickerController.instance.showPicker ();
+		
+	}
+
+	void awake(){
+		foreach (SoftwareProject s in GameController.instance.courses) {
+			AllIncompleteCourses.Add(s.ID,s);
+		}
+
 	}
 }

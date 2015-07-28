@@ -191,7 +191,7 @@ public class Employee : Asset {
 			addDependecies(r.Dependencies);
 		}
 		foreach (SoftwareProject s in courses){
-			employeeSoftware.AllCompletedCourses.Add(s.SoftwareField,s);
+			employeeSoftware.AllCompletedCourses[s.SoftwareField].Add(s);
 			employeeSoftware.UnstartedSoftware.Remove(s.ID);
 		}
 		foreach (Field.field item in Enum.GetValues(typeof(Field.field)) ){
@@ -200,7 +200,7 @@ public class Employee : Asset {
 			fieldPotential.Add(item,rand);
 			employeeFields.Add (item,0.00);
 		}
-		foreach (SoftwareProject sDone in employeeSoftware.AllCompletedCourses) {
+		foreach (SoftwareProject sDone in employeeSoftware.AllCompletedCourses.Values) {
 			int catalyst = fieldPotential[sDone.SoftwareField];
 			double points = (double)(sDone.pointCost/catalyst);
 			employeeFields[sDone.SoftwareField] += points;

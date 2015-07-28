@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using System;
 using System.Collections;
@@ -87,18 +87,23 @@ public class ResearchController : MonoBehaviour {
      * @param   research    The research to start.
      */
 	
-	public void startResearch(int ID){
-		GameController.instance.justFinished = 0;
-		researchSet = true;
-		currentResearch = AllUncompleteResearch[ID];
-
-        // Check that there are listeners, if so call event
-        if(onStartedResearch != null)
-            onStartedResearch(currentResearch, EventArgs.Empty);
-		GUITools.setGameObjectActive (GameController.instance.picker, false);
-		GUITools.setGameObjectActive (GameController.instance.inProgress, true);
-		GameObject.Find ("CurrentResearch").GetComponent<Text>().text = currentResearch.name;
-		GameObject.Find ("Description").GetComponent<Text> ().text = currentResearch.description;
+	public void startResearch(int ID, bool player){
+		if (player) {
+			GameController.instance.justFinished = 0;
+			researchSet = true;
+			currentResearch = AllUncompleteResearch [ID];
+			
+			// Check that there are listeners, if so call event
+			if (onStartedResearch != null)
+				onStartedResearch (currentResearch, EventArgs.Empty);
+			GUITools.setGameObjectActive (GameController.instance.picker, false);
+			GUITools.setGameObjectActive (GameController.instance.inProgress, true);
+			GameObject.Find ("CurrentResearch").GetComponent<Text> ().text = currentResearch.name;
+			GameObject.Find ("Description").GetComponent<Text> ().text = currentResearch.description;
+		} else {
+			researchSet = true;
+			currentResearch = AllUncompleteResearch [ID];
+		}
 	}
 	
 	//removes from UncompleteResearch, adds to completedResearch
@@ -112,24 +117,34 @@ public class ResearchController : MonoBehaviour {
      * @date    01/04/2015
      */
 	
-	public void finishResearch(){
-		GameController.instance.justFinished = 8;
-		GUITools.setGameObjectActive (GameController.instance.inProgress, false);
-		researchSet = false;
-		int index = currentResearch.ID;
-		AllUncompleteResearch.Remove (index);
-
-        // If there are listeners, call the event
-        if(onCompletedResearch != null)
-	        onCompletedResearch(currentResearch, EventArgs.Empty);
-
-		currentResearch.complete();
-		AllCompleteResearch.Add(currentResearch.ID, currentResearch);
-		lastCompleted = currentResearch;
-		currentResearch = null;
-		AllPossibleResearchByKey = SortResearchByKey (AllPossibleResearch);
-		PickerController.instance.showPicker ();
-		
+	public void finishResearch(bool player){
+		if (player) {
+			GameController.instance.justFinished = 8;
+			GUITools.setGameObjectActive (GameController.instance.inProgress, false);
+			researchSet = false;
+			int index = currentResearch.ID;
+			AllUncompleteResearch.Remove (index);
+			
+			// If there are listeners, call the event
+			if (onCompletedResearch != null)
+				onCompletedResearch (currentResearch, EventArgs.Empty);
+			
+			currentResearch.complete ();
+			AllCompleteResearch.Add (currentResearch.ID, currentResearch);
+			lastCompleted = currentResearch;
+			currentResearch = null;
+			AllPossibleResearchByKey = SortResearchByKey (AllPossibleResearch);
+			PickerController.instance.showPicker ();
+		} else {
+			researchSet = false;
+			int index = currentResearch.ID;
+			AllUncompleteResearch.Remove (index);
+			currentResearch.complete ();
+			AllCompleteResearch.Add (currentResearch.ID, currentResearch);
+			lastCompleted = currentResearch;
+			currentResearch = null;
+			AllPossibleResearchByKey = SortResearchByKey (AllPossibleResearch);
+		}
 	}
 	
 	//currently useless
@@ -259,12 +274,14 @@ public class ResearchController : MonoBehaviour {
 		get;
 		private set;
 	}
+
 	//Method to be called whenever the list is needed
 	public Dictionary<int,Research> AllPossibleResearch{
 		get{
 			return PossibleResearch(storePossibleResearch);
 		}
 	}
+
 	//where the sorted list is to be stored, to prevent all these bothersome
 	//methods from being repeatedly called.
 	public List<Research> AllPossibleResearchByKey {
@@ -293,7 +310,5 @@ public class ResearchController : MonoBehaviour {
 			AllUncompleteResearch.Add (r.ID,r);
 		}
 	}
-
-
 
 }

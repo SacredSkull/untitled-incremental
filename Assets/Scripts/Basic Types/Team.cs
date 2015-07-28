@@ -39,7 +39,9 @@ public class Team : MonoBehaviour {
 			pointCost = groupResearchCost();
 			goal = go;
 		}
+		if(go = goalType.Software){
 
+		}
 	}
 
 	//calculates the cost of doing research for a group of people, with bonuses 
@@ -53,7 +55,7 @@ public class Team : MonoBehaviour {
 		int cost = GameController.instance.allResearch.Find(r => r.ID == researchProject.ID).cost;
 		foreach (Employee e in members) {
 			if(e.me){
-				if(GameController.instance.rControl.hasBeenDone(researchProject.ID)){
+				if(!GameController.instance.userRControl.hasBeenDone(researchProject.ID)){
 					points += cost;
 					students ++;
 				}
@@ -61,7 +63,7 @@ public class Team : MonoBehaviour {
 					teacher ++;
 				} 
 			}
-			else if(e.employeeResearch.hasBeenDone(researchProject.ID)){
+			else if(!e.employeeResearch.hasBeenDone(researchProject.ID)){
 				teacher ++;
 				students ++;
 			}
@@ -71,6 +73,24 @@ public class Team : MonoBehaviour {
 		}
 		return (points / 2) + ((points / 2) / ((teacher * 2) + (students)));
 		
+	}
+
+	int groupCourseCost(){
+		int points = 0;
+		int teacher = 0;
+		int students = 0;
+		int cost = GameController.instance.courses[softProject.ID].pointCost;
+		foreach (Employee e in members) {
+			if(e.employeeSoftware.courseHasBeenDone(softProject.ID)){
+				teacher ++;
+
+			}
+			else{
+				students ++;
+				points += cost;
+			}
+		}
+		return (points / 2) + ((points / 2) / ((teacher * 2) + (students)));
 	}
 
 	public List<Research> possibleTeamResearch{
@@ -104,8 +124,9 @@ public class Team : MonoBehaviour {
 		return false;
 	}
 
+
 	public bool canTeamDoSoftware(int ID){
-		SoftwareProject test = GameController.instance.allSoftwareProjects[ID];
+		SoftwareProject test = GameController.instance.allSoft[ID];
 		foreach(Research r in test.Research){
 			bool met = false;
 			foreach(Employee e in members){
@@ -120,10 +141,35 @@ public class Team : MonoBehaviour {
 		return true;
 	}
 
+	public bool canTeamDoCourse(int ID){
+		bool atLeastOne = false;
+		foreach(Employee e in members){
+			if(e.employeeSoftware.canDoCourse(ID,e.employeeResearch)){
+				atLeastOne = true;
+			}
+			else if(e.employeeSoftware.courseHasBeenDone(ID)){
+				return false;
+			}
+		}
+		return atLeastOne;
+	}
+
 	public List<SoftwareProject> possibleTeamSoftware{
 		get{
 			List<SoftwareProject> possible = new List<SoftwareProject>();
-			foreach(SoftwareProject r in GameController.instance.allSoftwareProjects.Values){
+			foreach(SoftwareProject r in GameController.instance.allSoft.Values){
+				if(canTeamDoSoftware(r.ID)){
+					possible.Add(r);
+				}
+			}
+			return possible;
+		}
+	}
+
+	public List<SoftwareProject> possibleTeamCourses{
+		get{
+			List<SoftwareProject> possible = new List<SoftwareProject>();
+			foreach(SoftwareProject r in GameController.instance.allSoft.Values){
 				if(canTeamDoSoftware(r.ID)){
 					possible.Add(r);
 				}

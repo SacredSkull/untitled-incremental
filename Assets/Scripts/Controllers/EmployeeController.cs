@@ -18,7 +18,7 @@ public class EmployeeController : MonoBehaviour {
 
 	public Dictionary<int,Team> AllActiveTeams = new Dictionary<int,Team> ();
 
-	public List<int> LeaderIDs = new List<Int> ();
+	public List<int> LeaderIDs = new List<int> ();
 
 	public int totalWages{
 		get{
