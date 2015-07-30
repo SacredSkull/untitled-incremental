@@ -1,4 +1,4 @@
-﻿#define DEBUG
+#define DEBUG
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
@@ -35,22 +35,15 @@ public sealed class GameController : MonoBehaviour {
 	public Dictionary<int,HardwareProject> allHardwareProjects = new Dictionary<int, HardwareProject>();
     Dictionary<int,SoftwareProject> allSoftwareProjects = new Dictionary<int,SoftwareProject >();
 	public Dictionary<int,SoftwareProject> courses = new Dictionary<int,SoftwareProject> ();
-	public Dictionary<int,SoftwareProject> allSoft = new Dictionary<int,SoftwareProject> ();
+
 	public ResearchController userRControl{
 		get{
 			return empControl.Player.employeeResearch;
 		}
 	}
-	public SoftwareController userSControl{
-		get{
-			return empControl.Player.employeeSoftware;
-		}
-	}
-	public HardwareController userHControl{
-		get{
-			return empControl.Player.employeeHardware;
-		}
-	}
+
+	public SoftwareController userSControl; 
+	public HardwareController userHControl;
 	public PartController pControl;
 	public ComputerController compControl;
 	public EmployeeController empControl;
@@ -114,213 +107,13 @@ public sealed class GameController : MonoBehaviour {
 
 	//-----------------------------------------------------CORE METHODS
 
-	//adds points if you should be able to add points:
-	//1.Research has been set
-	//2. Research hasn't been finished.
-
-    /**
-     * @fn  public void addResearchPoints(int points)
-     *
-     * @brief   Adds research points.
-     *          
-     * @details Adds research points if the research you are currently researching costs 
-     * more than you currently have. If it costs less and isn't software, your current research 
-     * is halted and your research points are set to zero. Finally, if any other 
-     * condition (should only be software research) , your software is finished and points are set to zero.
-     *
-     * @author  Conal
-     * @date    05/04/2015
-     *
-     * @param   points  The points to add.
-     */
-
-	public void addResearchPoints(int points){
-		if(userRControl.isResearchSet()){
-			if ((userRControl.currentResearch.cost > researchPoints+points) || debugResearchPoints) {
-				researchPoints += points;
-			} 
-			 else {
-				userRControl.finishResearch();
-				researchPoints = 0;
-			}
-		}
-		else if(userSControl.isSoftwareSet){
-			if ((userSControl.currentSoftware.pointCost > researchPoints+points) || debugResearchPoints) {
-				researchPoints += points;
-			}
-			else {
-				userSControl.finishSoftware();
-				researchPoints = 0;
-			}
-		}
-
-
-	}
-
-    /**
-     * @property    public int pointsPerTick
-     *
-     * @brief   Adds up and returns the points per second of all completed software/hardware research.     
-     * 
-     * @todo    Calculate sum of all multipliers, points etc in projects,      
-     * 
-     * @todo    Add this to the update method, then we'll have a game!
-     *          
-     * 
-     * @return  The points per second.
-     */
-
-    int pointsPerSecond{
-		get{
-			int temp = 0;
-			List<SoftwareProject> relevantSoftware = userSControl.AllCompletedSoftware.Where(x => x.pointsPerTick> 0).ToList();
-			List<HardwareProject> relevantHardware = userHControl.AllCompletedGenericHardware.Where(x => x.pointsPerTick> 0).ToList();
-			foreach(SoftwareProject project in relevantSoftware){
-				temp += project.pointsPerTick;
-			}
-			foreach(HardwareProject project in relevantHardware){
-				temp += project.pointsPerTick;
-			}
-			return temp;
-		}
-	}
-
-    /**
-     * @property    public int pointsPerClick
-     *
-     * @brief   Gets the points per click.
-     *
-     * @return  The points per click.
-     */
-
-	 public int pointsPerClick{
-		get{
-			int temp = BASE_POINTS_PER_CLICK;
-			List<SoftwareProject> relevantSoftware = userSControl.AllCompletedSoftware.Where(x => x.pointsPerClick> 0).ToList();
-			List<HardwareProject> relevantHardware = userHControl.AllCompletedGenericHardware.Where(x => x.pointsPerClick> 0).ToList();
-			foreach(SoftwareProject item in relevantSoftware){
-				temp+=  item.pointsPerClick;
-			}
-			foreach(HardwareProject item in relevantHardware){
-				temp+=  item.pointsPerClick;
-			}
-			return temp;
-		}
-	}
-
-    /**
-     * @property    public int pointsMult
-     *
-     * @brief   Gets the points multiplier.
-     *
-     * @return  The points multiplier.
-     */
-
-    public int pointsMult{
-		get{
-			int temp = 1;
-			List<SoftwareProject> relevantSoftware = userSControl.AllCompletedSoftware.Where(x => x.pointMult> 0).ToList();
-            List<HardwareProject> relevantHardware = userHControl.AllCompletedGenericHardware.Where(x => x.pointMult > 0).ToList();
-			foreach(SoftwareProject item in relevantSoftware){
-				temp += item.pointMult;
-			}
-			foreach(HardwareProject item in relevantHardware){
-				temp += item.pointMult;
-			}
-			return temp;
-		}
-	}
-
-    /**
-     * @property    public double processingPower
-     *
-     * @brief   Gets the processing power.
-     *
-     * @return  The processing power.
-     */
-
-    public double processingPower{
-		get{
-			double temp = BASE_PROCESSING_POWER;
-			List<SoftwareProject> relevantSoftware = userSControl.AllCompletedSoftware.Where(x => x.processIncrease> 0.00).ToList();
-			List<HardwareProject> relevantHardware = userHControl.AllCompletedGenericHardware.Where(x => x.processIncrease> 0.00).ToList();
-			foreach(SoftwareProject item in relevantSoftware){
-				temp += item.processIncrease;
-			}
-			foreach(HardwareProject item in relevantHardware){
-				temp += item.processIncrease;
-			}
-			return temp;
-		}
-	}
-
-
-    /**
-     * @property    public double moneyPerTick
-     *
-     * @brief   Gets money per second.
-     *
-     * @return  The money per second.
-     */
-
-	public double moneyPerSecond{
-		get{
-			int temp = 0;
-			List<SoftwareProject> relevantSoftware = userSControl.AllCompletedCourses.Where(x => x.moneyPerTick> 0).ToList();
-            List<HardwareProject> relevantHardware = userHControl.AllCompletedGenericHardware.Where(x => x.moneyPerTick > 0).ToList();
-			foreach(SoftwareProject item in relevantSoftware){
-				temp+=  item.moneyPerTick;
-			}
-			foreach(HardwareProject item in relevantHardware){
-				temp+=  item.moneyPerTick;
-			}
-			temp += compControl.getMoneyPerTick;
-			return temp;
-		}
-	}
-
-    /**
-     * @property    public int moneyMultiplier
-     *
-     * @brief   Gets the money multiplier.
-     *
-     * @return  The money multiplier.
-     */
-
-	public int moneyMultiplier{
-		get{
-			int temp = 1;
-			List<SoftwareProject> relevantSoftware = userSControl.AllCompletedSoftware.Where(x => x.moneyMult> 0).ToList();
-            List<HardwareProject> relevantHardware = userHControl.AllCompletedGenericHardware.Where(x => x.moneyMult > 0).ToList();
-			foreach(SoftwareProject item in relevantSoftware){
-				temp+=  item.moneyMult;
-			}
-			foreach(HardwareProject item in relevantHardware){
-				temp+=  item.moneyMult;
-			}
-			return temp;
-		}
-	}
-
-	public void addMoneyPerSecond(){
-		money += moneyPerSecond * moneyMultiplier;
-	}
-
 	public void addPointsPerSecond(){
-		int toAdd = pointsPerSecond * pointsMult;
-		if (userRControl.researchSet) {
-			addResearchPoints (toAdd);
-		} else if (userSControl.isSoftwareSet) {
-			addResearchPoints(toAdd);
-		}
+		empControl.addPoints (false);
 	}
 
-
-
-
-
-      
-
+	public void addPointsPerClick(){
+		empControl.addPoints (true);
+	}
 
 	//-----------------------------------------------------TICK METHODS AND DATA
 	// A tick is the baseline time measure but it really depends on the speed of the CPU
@@ -353,7 +146,6 @@ public sealed class GameController : MonoBehaviour {
 	//-----------------------------------------UNITY METHODS
 
 	void Awake() {
-		userRControl = new ResearchController ();
 		userSControl = new SoftwareController ();
 		userHControl = new HardwareController ();
 		pControl = new PartController ();
@@ -385,7 +177,6 @@ public sealed class GameController : MonoBehaviour {
 	void Start () {
         incrementalTickTime = 1;
 		incrementalTickIterations = 40;
-		InvokeRepeating ("addMoneyPerSecond", 0f, 1.0f);
 		InvokeRepeating ("addPointsPerSecond", 0f, 1.0f);
 		outProject.Add (r1);
 		outProject.Add (r2);
@@ -431,7 +222,7 @@ public sealed class GameController : MonoBehaviour {
 				courses.Add(s.ID,s);
 			}
 			else{
-				allSoft.Add (s.ID,s);
+				allSoftwareProjects.Add (s.ID,s);
 			}
 		}
 
@@ -454,10 +245,7 @@ public sealed class GameController : MonoBehaviour {
 			// Ticks every 10 frames
 			score.text = researchPoints.ToString ()+"RP";
 			moneyScore.text = "$"+ money.ToString();
-			powerLevel.text = processingPower.ToString()+"MHz";
-			ppc.text = (pointsPerClick).ToString()+" Points/Click";
-			ppt.text = (pointsPerSecond * pointsMult).ToString()+" Points/Second";
-			mpt.text = (moneyPerSecond * moneyMultiplier).ToString()+" Money/Second";
+
 
 		}
 		if (ticker == Priority.LOW) {

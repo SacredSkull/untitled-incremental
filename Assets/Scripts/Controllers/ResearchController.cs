@@ -91,8 +91,9 @@ public class ResearchController : MonoBehaviour {
 		if (player) {
 			GameController.instance.justFinished = 0;
 			researchSet = true;
-			currentResearch = AllUncompleteResearch [ID];
-			
+			if(!AllCompleteResearch.ContainsKey(ID)){
+				currentResearch = AllUncompleteResearch [ID];
+			}
 			// Check that there are listeners, if so call event
 			if (onStartedResearch != null)
 				onStartedResearch (currentResearch, EventArgs.Empty);
@@ -102,7 +103,9 @@ public class ResearchController : MonoBehaviour {
 			GameObject.Find ("Description").GetComponent<Text> ().text = currentResearch.description;
 		} else {
 			researchSet = true;
-			currentResearch = AllUncompleteResearch [ID];
+			if(AllCompleteResearch.ContainsKey(ID)){
+				currentResearch = AllUncompleteResearch [ID];
+			}
 		}
 	}
 	
@@ -122,28 +125,35 @@ public class ResearchController : MonoBehaviour {
 			GameController.instance.justFinished = 8;
 			GUITools.setGameObjectActive (GameController.instance.inProgress, false);
 			researchSet = false;
-			int index = currentResearch.ID;
-			AllUncompleteResearch.Remove (index);
+			if(!currentResearch == null){
+				int index = currentResearch.ID;
+				AllUncompleteResearch.Remove (index);
+				currentResearch.complete ();
+				AllCompleteResearch.Add (currentResearch.ID, currentResearch);
+				lastCompleted = currentResearch;
+				currentResearch = null;
+				AllPossibleResearchByKey = SortResearchByKey (AllPossibleResearch);
+			}
+
 			
 			// If there are listeners, call the event
 			if (onCompletedResearch != null)
 				onCompletedResearch (currentResearch, EventArgs.Empty);
 			
-			currentResearch.complete ();
-			AllCompleteResearch.Add (currentResearch.ID, currentResearch);
-			lastCompleted = currentResearch;
-			currentResearch = null;
-			AllPossibleResearchByKey = SortResearchByKey (AllPossibleResearch);
+
 			PickerController.instance.showPicker ();
 		} else {
 			researchSet = false;
-			int index = currentResearch.ID;
-			AllUncompleteResearch.Remove (index);
-			currentResearch.complete ();
-			AllCompleteResearch.Add (currentResearch.ID, currentResearch);
-			lastCompleted = currentResearch;
-			currentResearch = null;
-			AllPossibleResearchByKey = SortResearchByKey (AllPossibleResearch);
+			if(!currentResearch == null){
+				int index = currentResearch.ID;
+				AllUncompleteResearch.Remove (index);
+				currentResearch.complete ();
+				AllCompleteResearch.Add (currentResearch.ID, currentResearch);
+				lastCompleted = currentResearch;
+				currentResearch = null;
+				AllPossibleResearchByKey = SortResearchByKey (AllPossibleResearch);
+			}
+
 		}
 	}
 	

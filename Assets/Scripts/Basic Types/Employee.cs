@@ -13,6 +13,8 @@ public class Employee : Asset {
 
 	public bool me;
 
+	public bool working = false;
+
 	private int _ID;
 	public override int ID{
 		get{
@@ -80,8 +82,7 @@ public class Employee : Asset {
 	//only need to put in the research at the limit of their undertanding
 	public List<Research> completedResearch = new List<Research>();
 	public ResearchController employeeResearch = new ResearchController ();
-	public HardwareController employeeHardware = new HardwareController ();
-	public SoftwareController employeeSoftware = new SoftwareController ();
+	public CourseController employeeCourses = new CourseController();
 	//0.00 - 1.00
 	public double loyalty{ get; set;}
 
@@ -143,8 +144,8 @@ public class Employee : Asset {
 	public int pointsPerTick(Field.field f){
 		int point = 0;
 		int mult = 0;
-		List<SoftwareProject> course = employeeSoftware.AllCompletedCourses [f];
-		foreach(SoftwareProject s in employeeSoftware.AllCompletedCourses[Field.field.Fieldless]){
+		List<SoftwareProject> course = employeeCourses.AllCompletedCourses [f];
+		foreach(SoftwareProject s in employeeCourses.AllCompletedCourses[Field.field.Fieldless]){
 			course.Add(s);
 		}
 		foreach(SoftwareProject c in course){
@@ -167,8 +168,8 @@ public class Employee : Asset {
 	public int pointsPerClick(Field.field f){
 		int point = 0;
 		int mult = 0;
-		List<SoftwareProject> course = employeeSoftware.AllCompletedCourses [f];
-		foreach(SoftwareProject s in employeeSoftware.AllCompletedCourses[Field.field.Fieldless]){
+		List<SoftwareProject> course = employeeCourses.AllCompletedCourses [f];
+		foreach(SoftwareProject s in employeeCourses.AllCompletedCourses[Field.field.Fieldless]){
 			course.Add(s);
 		}
 		foreach (SoftwareProject c in course) {
@@ -191,8 +192,8 @@ public class Employee : Asset {
 			addDependecies(r.Dependencies);
 		}
 		foreach (SoftwareProject s in courses){
-			employeeSoftware.AllCompletedCourses[s.SoftwareField].Add(s);
-			employeeSoftware.UnstartedSoftware.Remove(s.ID);
+			employeeCourses.AllCompletedCourses[s.SoftwareField].Add(s);
+			employeeCourses.AllIncompleteCourses.Remove(s.ID);
 		}
 		foreach (Field.field item in Enum.GetValues(typeof(Field.field)) ){
 			Random rnd = new Random();
@@ -200,13 +201,16 @@ public class Employee : Asset {
 			fieldPotential.Add(item,rand);
 			employeeFields.Add (item,0.00);
 		}
-		foreach (SoftwareProject sDone in employeeSoftware.AllCompletedCourses.Values) {
-			int catalyst = fieldPotential[sDone.SoftwareField];
-			double points = (double)(sDone.pointCost/catalyst);
-			employeeFields[sDone.SoftwareField] += points;
-			if(employeeFields[sDone.SoftwareField]>100){
-				employeeFields[sDone.SoftwareField] = 100;
+		foreach (List<SoftwareProject> s in employeeCourses.AllCompletedCourses.Values) {
+			foreach(SoftwareProject sDone in s ){
+				int catalyst = fieldPotential[sDone.SoftwareField];
+				double points = (double)(sDone.pointCost/catalyst);
+				employeeFields[sDone.SoftwareField] += points;
+				if(employeeFields[sDone.SoftwareField]>100){
+					employeeFields[sDone.SoftwareField] = 100;
+				}
 			}
+
 		}
 		foreach (Research rDone in employeeResearch.AllCompleteResearch.Values) {
 			int catalyst = fieldPotential[rDone.ResearchField];

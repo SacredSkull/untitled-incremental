@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -7,13 +7,16 @@ public class Team : MonoBehaviour {
 	{
 		None,
 		Research,
-		Software
+		Software, 
+		Course
 	}
 
 	public goalType goal;
 	public Research researchProject;
 	public SoftwareProject softProject;
+	public SoftwareProject courseProject;
 	public int pointCost;
+	public int currentPoints = 0;
 
 	public List<Employee> members = new List<Employee> ();
 
@@ -21,7 +24,6 @@ public class Team : MonoBehaviour {
 
 	public Team(List<Employee> group){
 		leader = group [0];
-		group.Remove (leader);
 		foreach (Employee e in group) {
 			members.Add (e);
 		}
@@ -33,15 +35,73 @@ public class Team : MonoBehaviour {
 		}
 	}
 
-	public void setProject(int ID, goalType go){
-		if(go = goalType.Research){
-			researchProject = GameController.instance.allResearch.Find (r => r.ID == researchProject.ID);
-			pointCost = groupResearchCost();
-			goal = go;
+	public bool containsPlayer(){
+		foreach(Employee e in members){
+			if(e.me){
+				return true;
+			}
 		}
-		if(go = goalType.Software){
+		return false;
+	}
 
+	public void startResearch(int ID){
+		researchProject = GameController.instance.allResearch.Find (x => x.ID = ID);
+		foreach(Employee e in members){
+			e.employeeResearch.startResearch(researchProject,e.me);
 		}
+		goal = goalType.Research;
+		pointCost = groupResearchCost ();
+	}
+
+	public void finishResearch(){
+		foreach(Employee e in members){
+			e.employeeResearch.finishResearch(e.me);
+		}
+		researchProject = null;
+		goal = goalType.None;
+	}
+
+	public void startSoftware(int ID){
+		softProject = GameController.instance.userSControl.allSoft [ID];
+		GameController.instance.userSControl.startSoftware (softProject, containsPlayer());
+		goal = goalType.Software;
+		pointCost = groupSoftwareCost ();
+	}
+
+	public void finishSoftware(){
+		GameController.instance.userSControl.finishSoftware (containsPlayer ());
+		softProject = null;
+		goal = goalType.None;
+	}
+
+	public void startCourse(int ID){
+		courseProject = GameController.instance.courses [ID];
+		foreach(Employee e in members){
+			e.employeeCourses.startCourse(courseProject, e.me);
+		}
+		goal = goalType.Course;
+		pointCost = groupCourseCost ();
+	}
+	
+	public void finishCourse(){
+		foreach(Employee e in members){
+			e.employeeCourses.finishCourse(e.me);
+		}
+		softProject = null;
+		goal = goalType.None;
+	}
+
+	public bool canAddPoints(int points){
+		if((currentPoints + points) >= pointCost){
+			return false;
+		}
+		return true;
+	}
+
+	// will only be called after first checking canAddPoints
+	public void addPoints(int points){
+		currentPoints += points;
+
 	}
 
 	//calculates the cost of doing research for a group of people, with bonuses 
@@ -52,23 +112,14 @@ public class Team : MonoBehaviour {
 		int points = 0;
 		int teacher = 0;
 		int students = 0;
-		int cost = GameController.instance.allResearch.Find(r => r.ID == researchProject.ID).cost;
+		int cost = researchProject.cost;
 		foreach (Employee e in members) {
-			if(e.me){
-				if(!GameController.instance.userRControl.hasBeenDone(researchProject.ID)){
-					points += cost;
-					students ++;
-				}
-				else{
-					teacher ++;
-				} 
-			}
-			else if(!e.employeeResearch.hasBeenDone(researchProject.ID)){
-				teacher ++;
+			if(!e.employeeResearch.hasBeenDone(researchProject.ID)){
+				points += cost;
 				students ++;
 			}
 			else{
-				points += cost;
+				teacher ++;
 			}
 		}
 		return (points / 2) + ((points / 2) / ((teacher * 2) + (students)));
@@ -79,9 +130,9 @@ public class Team : MonoBehaviour {
 		int points = 0;
 		int teacher = 0;
 		int students = 0;
-		int cost = GameController.instance.courses[softProject.ID].pointCost;
+		int cost = courseProject.pointCost;
 		foreach (Employee e in members) {
-			if(e.employeeSoftware.courseHasBeenDone(softProject.ID)){
+			if(e.employeeCourses.courseHasBeenDone(softProject.ID)){
 				teacher ++;
 
 			}
@@ -91,6 +142,22 @@ public class Team : MonoBehaviour {
 			}
 		}
 		return (points / 2) + ((points / 2) / ((teacher * 2) + (students)));
+	}
+
+	int groupSoftwareCost(){
+		int knowledge = 0;
+		int totalResearch = 0;
+		int cost = softProject.pointCost;
+		foreach (Employee e in members) {
+			foreach(Research d in softProject.Research){
+				if(e.employeeResearch.hasBeenDone(d)){
+					knowledge++;
+				}
+				totalResearch++;
+			}
+		}
+		return (cost / 2) + ((cost / totalResearch)*knowledge) ;
+		
 	}
 
 	public List<Research> possibleTeamResearch{
@@ -144,10 +211,10 @@ public class Team : MonoBehaviour {
 	public bool canTeamDoCourse(int ID){
 		bool atLeastOne = false;
 		foreach(Employee e in members){
-			if(e.employeeSoftware.canDoCourse(ID,e.employeeResearch)){
+			if(e.employeeCourses.canDoCourse(ID,e.employeeResearch)){
 				atLeastOne = true;
 			}
-			else if(e.employeeSoftware.courseHasBeenDone(ID)){
+			else if(e.employeeCourses.courseHasBeenDone(ID)){
 				return false;
 			}
 		}
@@ -169,8 +236,8 @@ public class Team : MonoBehaviour {
 	public List<SoftwareProject> possibleTeamCourses{
 		get{
 			List<SoftwareProject> possible = new List<SoftwareProject>();
-			foreach(SoftwareProject r in GameController.instance.allSoft.Values){
-				if(canTeamDoSoftware(r.ID)){
+			foreach(SoftwareProject r in GameController.instance.courses.Values){
+				if(canTeamDoCourse(r.ID)){
 					possible.Add(r);
 				}
 			}
@@ -215,12 +282,6 @@ public class Team : MonoBehaviour {
 			else if(goal == goalType.Software){
 				point += e.pointsPerTick(softProject.SoftwareField);
 			}
-		}
-		if(goal == goalType.Research){
-			point += leader.pointsPerTick(researchProject.ResearchField);
-		}
-		else if(goal == goalType.Software){
-			point += leader.pointsPerTick(softProject.SoftwareField);
 		}
 		return point;
 	}

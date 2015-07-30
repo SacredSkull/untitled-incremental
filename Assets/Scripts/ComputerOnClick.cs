@@ -19,7 +19,7 @@ public class ComputerOnClick : MonoBehaviour {
 	public void OnMouseDown(){
 		GameController game = GameController.instance;
 		if (game.userRControl.isResearchSet()||game.userSControl.isSoftwareSet) {
-			game.addResearchPoints (game.pointsPerClick); 
+			game.addPointsPerClick();
 		} else {
 			if(game.justFinished == 0){
 				game.picker.active=false;

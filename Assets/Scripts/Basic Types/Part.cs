@@ -107,7 +107,7 @@ public class Part : Asset, IComparable<Part> {
 	public bool isBuyable()
 	{
 		foreach (Research r in this.Research) {
-			if (!r.hasBeenDone()) {
+			if (GameController.instance.userRControl.hasBeenDone(r)) {
 				return false;
 			}
 		}

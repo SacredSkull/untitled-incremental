@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using System;
 using System.Collections;
@@ -31,18 +31,17 @@ public class SoftwareController : MonoBehaviour {
 		}
 	}
 
-	public Dictionary<int,SoftwareProject> AllIncompleteCourses = new Dictionary<int,SoftwareProject> ();
 
+	public Dictionary<int,SoftwareProject> allSoft = new Dictionary<int,SoftwareProject> ();
+	public Dictionary<int,SoftwareProject> allCompletedSoft = new Dictionary<int, SoftwareProject> ();
 	public List<SoftwareProject> AllCompletedGenericProjects = new List<SoftwareProject> ();
 	
 	public List<SoftwareProject> AllCompletedSoftware = new List<SoftwareProject>();
 	
 	public List<SoftwareProject> AllCompletedOS = new List<SoftwareProject> ();
 	
-	public Dictionary<Field.field,List<SoftwareProject>> AllCompletedCourses = new Dictionary<Field.field,List<SoftwareProject>> ();
 
-	public List<SoftwareProject> AllCompletedSoftwareProjects = new List<SoftwareProject>();
-	
+
 	/**
      * @property    public bool isSoftware
      *
@@ -89,70 +88,14 @@ public class SoftwareController : MonoBehaviour {
 		}
 	}
 
-	public bool courseHasBeenDone(int ID){
-		if(AllIncompleteCourses.ContainsKey(ID)){
-			return false;
-		}
-		return true;
-	}
 
-	public bool canDoCourse(int ID, ResearchController r){
-		if (courseHasBeenDone (ID)) {
-			return false;
-		}
-		foreach(Research d in GameController.instance.courses[ID].Research){
-			if(!r.hasBeenDone(d)){
-				return false;
-			}
-		}
-		return true;
-	}
 	
 	public void finishSoftware(bool player){
-		if (player) {
-			GameController.instance.justFinished = 8;
-			switch (currentSoftware.SoftwareType) {
-			case SoftwareProject.type.Course:
-				AllCompletedCourses.Add (currentSoftware);
-				break;
-			case SoftwareProject.type.OS:
-				AllCompletedOS.Add (currentSoftware);
-				break;
-			case SoftwareProject.type.Software:
-				AllCompletedSoftware.Add (currentSoftware);
-				break;
-			default:
-				AllCompletedGenericProjects.Add (currentSoftware);
-				break;
-			}
-			if (!currentSoftware.canDoMultiple) {
-				currentSoftware.uses -= 1;
-				GameController.instance.allSoft.Remove (currentSoftware.ID);
-				GameController.instance.allSoft.Add (currentSoftware.ID, currentSoftware);
-			}
-			if(currentSoftware.SoftwareType = SoftwareProject.type.Course){
-				AllIncompleteCourses.Remove(currentSoftware.ID);
-				AllCompletedCourses.Add (currentSoftware.ID,currentSoftware);
-			}
-			else{
-				if (!currentSoftware.canDoMultiple) {
-					currentSoftware.uses -= 1;
-					GameController.instance.allSoft.Remove (currentSoftware.ID);
-					GameController.instance.allSoft.Add (currentSoftware.ID, currentSoftware);
-				}
-				AllCompletedSoftwareProjects.Add (currentSoftware);
-			}
-			// Check if there are listeners, if so, call event
-			if (onCompletedSoftware != null)
-				onCompletedSoftware (currentSoftware, EventArgs.Empty);
-			currentSoftware = null;
-			isSoftwareSet = false;
+		if(player){
 			PickerController.instance.showPicker ();
-		} else {
-			switch (currentSoftware.SoftwareType) {
-			case SoftwareProject.type.Course:
-				AllCompletedCourses.Add (currentSoftware);
-				break;
+			GameController.instance.justFinished = 8;
+		}
+		switch (currentSoftware.SoftwareType) {
 			case SoftwareProject.type.OS:
 				AllCompletedOS.Add (currentSoftware);
 				break;
@@ -163,28 +106,13 @@ public class SoftwareController : MonoBehaviour {
 				AllCompletedGenericProjects.Add (currentSoftware);
 				break;
 			}
-			if(currentSoftware.SoftwareType = SoftwareProject.type.Course){
-				AllIncompleteCourses.Remove(currentSoftware.ID);
-				AllCompletedCourses.Add (currentSoftware.ID,currentSoftware);
-			}
-			else{
-				if (!currentSoftware.canDoMultiple) {
-					currentSoftware.uses -= 1;
-					GameController.instance.allSoft.Remove (currentSoftware.ID);
-					GameController.instance.allSoft.Add (currentSoftware.ID, currentSoftware);
-				}
-				AllCompletedSoftwareProjects.Add (currentSoftware);
-			}
-			currentSoftware = null;
-			isSoftwareSet = false;
-		}
+		currentSoftware.uses -= 1;
+		allSoft.Remove (currentSoftware.ID);
+		allSoft.Add (currentSoftware.ID, currentSoftware);
+		currentSoftware = null;
+		isSoftwareSet = false;
+
 		
 	}
 
-	void awake(){
-		foreach (SoftwareProject s in GameController.instance.courses) {
-			AllIncompleteCourses.Add(s.ID,s);
-		}
-
-	}
 }

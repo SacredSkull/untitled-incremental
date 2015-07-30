@@ -69,11 +69,10 @@ public class HardwareProject : Project {
     {
         Utility.UnityLog(this.HardwareType.ToString() + "  " + name);
         foreach (Research r in this.Research) {
-            if (!GameController.instance.rControl.hasBeenDone(r.ID)) {
+            if (!GameController.instance.userRControl.hasBeenDone(r)) {
 				return false;
             }
         }
-        GameController game = GameController.instance;
         foreach (Part part in this.Parts)
         {
             bool contains = GameController.instance.pControl.partInventory.ContainsKey(part.ID);
