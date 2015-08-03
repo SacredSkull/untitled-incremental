@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class EmployeeController : MonoBehaviour {
 
+	public OfficeController offControl = new OfficeController();
+
 	//stores all information on the users progress
 	public Employee Player = new Employee ();
 

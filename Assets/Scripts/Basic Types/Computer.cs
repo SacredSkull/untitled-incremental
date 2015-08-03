@@ -9,7 +9,7 @@ using UnityEngine.EventSystems;
 
 // a Computer is hardware with a computer tag, it contains a list of
 //software installed, as well as information on its operating system.
-public class Computer : MonoBehaviour {
+public class Computer : Placable {
 
 	public bool manned {
 		get;

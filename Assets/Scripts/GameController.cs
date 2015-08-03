@@ -27,6 +27,7 @@ public sealed class GameController : MonoBehaviour {
 	//called whenever research is finished, set to a high number, prevents click spamming opening the browser
 	public int justFinished = 0;
 	public int empID = 0;
+	public int offID = 0;
 	public GameObject picker;
 	public GameObject inProgress;
 	public GameObject browser;
