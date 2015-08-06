@@ -31,7 +31,6 @@ public abstract class Project : Startable {
     //public int upkeepCost(will not be used);
 
     //public List<Part> requiredParts = new List<Part>();
-    public string name { get; set; }
     public string description { get; set; }
     public int upkeep { get; set; }
     public int uses { get; set; }

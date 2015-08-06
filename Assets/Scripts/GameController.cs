@@ -363,6 +363,34 @@ public sealed class GameController : MonoBehaviour {
 		info.active = false;
 		researchPoints = 0;
 		money = 0;
+
+        using (DatabaseConnection connection = new DatabaseConnection()) {
+            List<HardwareProject> parseableHardware = connection.GetAllHardwareProjects().ToList();
+            List<SoftwareProject> parseableSoftware = connection.GetAllSoftwareProjects().ToList();
+            foreach (HardwareProject h in parseableHardware) {
+                if (h.ID != 3) {
+                    allHardwareProjects.Add(h.ID, h);
+                } else {
+                    compControl.AllCompletedComputers.Add(h);
+                    compControl.setMannedComputer(h);
+
+                }
+
+            }
+            foreach (SoftwareProject p in parseableSoftware) {
+                if (p.ID != 42) {
+                    allSoftwareProjects.Add(p.ID, p);
+                } else {
+                    sControl.AllCompletedOS.Add(p);
+                    compControl.mannedComputer.primaryOS = p;
+
+                }
+
+            }
+            allResearch = connection.GetAllResearch().ToList();
+            allParts = connection.GetAllParts().ToList();
+
+        }
 	}
 
     // Use this for initialization
@@ -377,35 +405,6 @@ public sealed class GameController : MonoBehaviour {
 		outProject.Add (r4);
 		outProject.Add (r5);
 
-	    using (DatabaseConnection connection = new DatabaseConnection()) {
-	        List<HardwareProject> parseableHardware = connection.GetAllHardwareProjects().ToList();
-			List<SoftwareProject> parseableSoftware = connection.GetAllSoftwareProjects().ToList();
-			foreach(HardwareProject h in parseableHardware){
-				if(h.ID !=3){
-					allHardwareProjects.Add(h.ID,h);
-				}
-				else{
-					compControl.AllCompletedComputers.Add (h);
-					compControl.setMannedComputer(h);
-
-				}
-				
-			}
-			foreach(SoftwareProject p in parseableSoftware){
-				if(p.ID !=42){
-					allSoftwareProjects.Add(p.ID,p);
-				}
-				else{
-					sControl.AllCompletedOS.Add (p);
-					compControl.mannedComputer.primaryOS = p;
-					
-				}
-				
-			}
-	        allResearch = connection.GetAllResearch().ToList();
-	        allParts = connection.GetAllParts().ToList();
-
-	    }
 		PickerController.instance.setChapterToNone ();
 
 
