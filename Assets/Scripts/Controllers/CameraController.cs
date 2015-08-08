@@ -21,12 +21,13 @@ public class CameraController : MonoBehaviour {
     public float maxZoom;
     public float zoomSensitivity;
     public float zoomDamping;
+    public Screen screen;
 
     private Camera camera;
     private bool debugCamera;
     private Vector3 lastPosition;
-    private Vector3 hierarchyTopRight;
-    private Vector3 hierarchyBottomLeft;
+    private Vector3 screenTopRight;
+    private Vector3 screenBottomLeft;
     private float zoom;
 
     // Use this for initialization
@@ -35,6 +36,9 @@ public class CameraController : MonoBehaviour {
         bMainScreen = false;
         bHierarchy = true;
         camera = this.GetComponent<Camera>();
+
+        if(screen != null)
+            screen.Start();
 
         // Get (and store amount) children (rows) of hierarchy grid
 
@@ -57,12 +61,12 @@ public class CameraController : MonoBehaviour {
         // grid bottom right = x: width, y : -height
         // grid bottom left = y : -height
 
-        hierarchyTopRight = new Vector3(hierarchyScreen.position.x + (gridWidth / 2), hierarchyScreen.position.y + (gridHeight / 2), 0);
-        hierarchyBottomLeft = new Vector3(hierarchyScreen.position.x - (gridWidth / 2), hierarchyScreen.position.y - (gridHeight / 2));
+        screenTopRight = new Vector3(hierarchyScreen.position.x + (gridWidth / 2), hierarchyScreen.position.y + (gridHeight / 2), 0);
+        screenBottomLeft = new Vector3(hierarchyScreen.position.x - (gridWidth / 2), hierarchyScreen.position.y - (gridHeight / 2));
 
         // You may have to half these if you're using the pivot point of the hierarchyScreen, which lies in the middle!
 
-        //camera.transform.position = hierarchyBottomLeft;
+        //camera.transform.position = screenBottomLeft;
 
         debugCamera = (GameObject.Find("DebugCamera") != null && GameObject.Find("DebugCamera").activeSelf);
     }
@@ -74,10 +78,10 @@ public class CameraController : MonoBehaviour {
         texture.Apply();
         GUI.skin.box.normal.background = texture;
         Rect background = new Rect {
-            xMin = hierarchyBottomLeft.x,
-            xMax = hierarchyTopRight.x,
-            yMin = hierarchyTopRight.y,
-            yMax = hierarchyBottomLeft.y
+            xMin = screenBottomLeft.x,
+            xMax = screenTopRight.x,
+            yMin = screenTopRight.y,
+            yMax = screenBottomLeft.y
         };
         GUI.Box(background, GUIContent.none);
     }
@@ -100,27 +104,22 @@ public class CameraController : MonoBehaviour {
             Vector3 cameraBottomLeft = camera.ViewportToWorldPoint(new Vector3(0, 0, camera.nearClipPlane));
 
 	        if (debugCamera) {
-                GameObject.Find("xbottomcheck").GetComponent<TextMesh>().text = (cameraBottomLeft.x - hierarchyBottomLeft.x).ToString();
-                GameObject.Find("ybottomcheck").GetComponent<TextMesh>().text = (cameraBottomLeft.y - hierarchyBottomLeft.y).ToString();
-                GameObject.Find("xtopcheck").GetComponent<TextMesh>().text = (hierarchyTopRight.x - cameraTopRight.x).ToString();
-                GameObject.Find("ytopcheck").GetComponent<TextMesh>().text = (hierarchyTopRight.y - cameraTopRight.y).ToString();
+                GameObject.Find("xbottomcheck").GetComponent<TextMesh>().text = (cameraBottomLeft.x - screenBottomLeft.x).ToString();
+                GameObject.Find("ybottomcheck").GetComponent<TextMesh>().text = (cameraBottomLeft.y - screenBottomLeft.y).ToString();
+                GameObject.Find("xtopcheck").GetComponent<TextMesh>().text = (screenTopRight.x - cameraTopRight.x).ToString();
+                GameObject.Find("ytopcheck").GetComponent<TextMesh>().text = (screenTopRight.y - cameraTopRight.y).ToString();
 	        }
 
-	        //Bounds hBounds = hierarchyScreen.GetComponent<Renderer>().bounds;
-
-//            Vector3 hierarchyTopRight = new Vector3(hierarchyScreen.position.x + (hierarchyBounds.center.x), hierarchyScreen.position.y + (hierarchyBounds.center.y / 2), 0);
-//            Vector3 hierarchyBottomLeft = new Vector3(hierarchyScreen.position.x - (hierarchyBounds.center.x), hierarchyScreen.position.y - (hierarchyBounds.center.y / 2), 0);
-//
 	        if (GameObject.Find("topright") == null) {
 	            GameObject topright = new GameObject("topright");
-	            topright.transform.position = hierarchyTopRight;
+	            topright.transform.position = screenTopRight;
                 topright.AddComponent<TextMesh>().text = string.Format("x: {0}\ny: {1}", topright.transform.position.x, topright.transform.position.y);
                 topright.GetComponent<TextMesh>().fontSize = 1000;
 	        }
 
             if (GameObject.Find("bottomleft") == null) {
                 GameObject bottomleft = new GameObject("bottomleft");
-                bottomleft.transform.position = hierarchyBottomLeft;
+                bottomleft.transform.position = screenBottomLeft;
                 bottomleft.AddComponent<TextMesh>().text = string.Format("x: {0}\ny: {1}", bottomleft.transform.position.x, bottomleft.transform.position.y);
                 bottomleft.GetComponent<TextMesh>().fontSize = 1000;
             }
@@ -135,28 +134,28 @@ public class CameraController : MonoBehaviour {
             // If cameraTopRight.x equals or is greater than hBounds.x, block movement
             // If cameraTopRight.y equals or is greater than hBounds.y
 
-	        if ((cameraBottomLeft.x - hierarchyBottomLeft.x) < tolerance) {
+	        if ((cameraBottomLeft.x - screenBottomLeft.x) < tolerance) {
                 camera.transform.position = new Vector3(camera.transform.position.x + (tolerance * speedMult), camera.transform.position.y, camera.transform.position.z);
 	            if (debugCamera)
 	                GameObject.Find("xbottomcheck").GetComponent<TextMesh>().text = "false";
 	            return;
 	        }
 
-	        if ((cameraBottomLeft.y - hierarchyBottomLeft.y) < tolerance) {
+	        if ((cameraBottomLeft.y - screenBottomLeft.y) < tolerance) {
                 camera.transform.position = new Vector3(camera.transform.position.x, camera.transform.position.y + (tolerance * speedMult), camera.transform.position.z);
                 if (debugCamera)
                     GameObject.Find("ybottomcheck").GetComponent<TextMesh>().text = "false";
 	            return;
 	        }
 
-	        if ((hierarchyTopRight.x - cameraTopRight.x) < tolerance) {
+	        if ((screenTopRight.x - cameraTopRight.x) < tolerance) {
                 camera.transform.position = new Vector3(camera.transform.position.x - (tolerance * speedMult), camera.transform.position.y, camera.transform.position.z);
                 if (debugCamera)
                     GameObject.Find("xtopcheck").GetComponent<TextMesh>().text = "false";
                 return;
 	        }
 
-            if ((hierarchyTopRight.y - cameraTopRight.y) < tolerance) {
+            if ((screenTopRight.y - cameraTopRight.y) < tolerance) {
                 camera.transform.position = new Vector3(camera.transform.position.x, camera.transform.position.y - (tolerance * speedMult), camera.transform.position.z);
                 if (debugCamera)
                     GameObject.Find("ytopcheck").GetComponent<TextMesh>().text = "false";
