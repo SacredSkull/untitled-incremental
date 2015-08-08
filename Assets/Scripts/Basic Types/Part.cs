@@ -31,7 +31,6 @@ using Incremental.Database;
     */
 
 public class Part : Asset, IComparable<Part> {
-    public int ID { get; set; }
     public int cost { get; set; }
     public int quantity { get; set; }
     public override string name { get; set; }

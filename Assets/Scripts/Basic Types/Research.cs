@@ -18,7 +18,6 @@ using UnityEngine;
     */
 
 public class Research : Startable, IComparable<Research> {
-    public int ID { get; set; }
 	public string description;
 	public int cost;
 	public double processReq;
@@ -39,11 +38,11 @@ public class Research : Startable, IComparable<Research> {
     /**
         * @property    public IEnumerable<Research> Dependencies
         *
-        * @brief   Gets the dependencies of this research.
+        * @brief   Gets the dependencies (parents) of this research.
         *          
         * @note    Research only depends on other research.
         *          
-        * @detail  Pulls dependencies from the database.
+        * @detail  Pulls dependencies from the database, effectively giving this Research's parents.
         *
         * @return  The IEnumerable of <Research> dependencies.
         */
@@ -57,6 +56,30 @@ public class Research : Startable, IComparable<Research> {
                 }
             }
             return _Dependencies;
+        }
+    }
+
+    private ICollection<Research> _Children;
+    public ICollection<Research> Children {
+        get {
+            if (_Children == null) {
+                using (DatabaseConnection con = new DatabaseConnection()) {
+                    _Children = con.GetResearchChildren(this);
+                }
+            }
+            return _Children;
+        }
+    }
+
+    public bool isParent {
+        get {
+            return this.Children.Count != 0;
+        }
+    }
+
+    public bool isOrphan {
+        get {
+            return this.Dependencies.Count == 0;
         }
     }
 
@@ -199,7 +222,6 @@ public class Research : Startable, IComparable<Research> {
     }
 
 	public Field.field _ResearchField = Field.field.None;
-	
 	public Field.field ResearchField{
 		get{
 			if(_ResearchField == Field.field.None){

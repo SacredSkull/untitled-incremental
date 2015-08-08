@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c15bf938ceb8d73459a87e4185158583
+timeCreated: 1438736121
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - researchNodePrefab: {fileID: 105272, guid: c612d1918ab522e4186ab234f451ca6f, type: 2}
+  - researchRowPrefab: {fileID: 169780, guid: e20be49c2eea7d6448d29bf8115307c6, type: 2}
+  - researchGrid: {instanceID: 0}
+  executionOrder: 50
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
