@@ -2442,7 +2442,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 883142635}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2758, y: -469, z: -720}
+  m_LocalPosition: {x: 163, y: 180, z: -720}
   m_LocalScale: {x: 6005.83252, y: 4429.22754, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
@@ -2492,7 +2492,7 @@ MonoBehaviour:
   bHierarchy: 1
   minZoom: 20
   maxZoom: 2000
-  zoomSensitivity: 300
+  zoomSensitivity: 2000
   zoomDamping: 2
 --- !u!1 &885202831
 GameObject:
