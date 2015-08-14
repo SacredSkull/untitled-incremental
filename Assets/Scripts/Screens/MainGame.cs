@@ -1,15 +1,18 @@
-﻿using UnityEngine;
-using System.Collections;
-
+﻿// ReSharper disable RedundantOverridenMember
 public class MainGame : Screen {
 	// Use this for initialization
-	public override void Start () {
+    protected override void Start() {
 	    base.Start();
-        
+        Utility.UnityLog("MAIN SCREEN START L(((((((((((((((((((((((");
 	}
+
+    protected override void LateUpdate() {
+        base.LateUpdate();
+    }
 	
 	// Update is called once per frame
-    public override void Update() {
+    protected override void Update() {
+        base.Update();
 	    Utility.UnityLog("MAIN SCREEN :DDDDDD");
 	}
 }
