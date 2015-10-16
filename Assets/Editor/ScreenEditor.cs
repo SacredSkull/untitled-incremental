@@ -14,6 +14,9 @@ public class ScreenEditor : Editor {
 
         EditorGUILayout.LabelField(new GUIContent("<b>Screen</b>"), richTextStyle);
         EditorGUI.indentLevel++;
+        if (string.IsNullOrEmpty(targetScreen.ScreenName))
+            targetScreen.ScreenName = targetScreen.name;
+        targetScreen.ScreenName = EditorGUILayout.TextField("Name", targetScreen.ScreenName);
         targetScreen.hideOnStart = EditorGUILayout.Toggle(new GUIContent("Starts Hidden", "If true, this screen should be hidden until it is active."), targetScreen.hideOnStart);
         EditorGUI.indentLevel++;
         targetScreen.hideFadeReveal = EditorGUILayout.Toggle("Fade In", targetScreen.hideFadeReveal);
@@ -24,6 +27,7 @@ public class ScreenEditor : Editor {
             targetScreen.StartingTransform = (Transform)EditorGUILayout.ObjectField("Custom Spawn", targetScreen.StartingTransform, typeof(Transform), true);
             EditorGUI.indentLevel--;
         }
+        targetScreen.lockCursor = (CursorLockMode)EditorGUILayout.EnumPopup("Cursor Mode", targetScreen.lockCursor);
         EditorGUI.indentLevel--;
 
         EditorGUILayout.LabelField(new GUIContent("<b>Camera</b>"), richTextStyle);
@@ -82,12 +86,12 @@ public class ScreenEditor : Editor {
                                        new GUIContent("Reset Speed Mult.",
                                                       "The camera will reset back to a border by this speed multiplier. If you want a slow reset time, set a low speed."),
                                        targetScreen.limitResetSpeedMultiplier, 0, 600);
-            targetScreen.limitCustomObject =
+            targetScreen.limitUseCustomObject =
                 EditorGUILayout.Toggle(
                                        new GUIContent("Use Other Bounds",
                                                       "Use another object's boundaries to automatically set the screen size."),
-                                       targetScreen.limitCustomObject);
-            if (targetScreen.limitCustomObject)
+                                       targetScreen.limitUseCustomObject);
+            if (targetScreen.limitUseCustomObject)
                 targetScreen.limitObjectBounds = (GameObject)EditorGUILayout.ObjectField("Object", targetScreen.limitObjectBounds, typeof(GameObject), true);
             EditorGUI.indentLevel--;
         }

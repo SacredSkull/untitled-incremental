@@ -9,8 +9,13 @@ public class MainGame : Screen {
     protected override void LateUpdate() {
         base.LateUpdate();
     }
-	
-	// Update is called once per frame
+
+    public override void transitionOut(string nextScreenName) {
+        //throw new System.NotImplementedException();
+        Utility.UnityLog("AMAZING TRANSITION");
+    }
+
+    // Update is called once per frame
     protected override void Update() {
         base.Update();
 	    Utility.UnityLog("MAIN SCREEN :DDDDDD");

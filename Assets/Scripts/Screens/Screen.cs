@@ -24,13 +24,15 @@ public abstract class Screen : MonoBehaviour {
     public bool dragControls = false;
     public bool zoomControls = false;
     public bool autoLimitBoundaries = false;
-    public bool limitCustomObject = false;
+    public bool limitUseCustomObject = false;
     public bool hideOnStart = false;
     public bool hideFadeReveal = false;
     public bool debugScreen = false;
     public bool dragForceCameraZ = false;
+    public CursorLockMode lockCursor = CursorLockMode.None;
 
     // Specifics
+    public string ScreenName;
     public Transform StartingTransform;
     public Vector3 startingRotation = Vector3.zero;
     public GameObject limitObjectBounds;
@@ -77,10 +79,12 @@ public abstract class Screen : MonoBehaviour {
             }
         }
 
-        if (limitObjectBounds == null && autoLimitBoundaries) {
+        if (limitObjectBounds == null || !limitUseCustomObject) {
             Utility.UnityLog("Assuming current object is the correct bounding object");
             limitObjectBounds = this.gameObject;
         }
+
+        Cursor.lockState = lockCursor;
     }
 
     [UsedImplicitly]
@@ -222,7 +226,7 @@ public abstract class Screen : MonoBehaviour {
             dragLastPosition = Input.mousePosition;
         }
     }
-
+    
     protected virtual void handleZoomMovement() {
 
         //todo: handle checking for zooming in a boundary, like drag does
@@ -244,5 +248,22 @@ public abstract class Screen : MonoBehaviour {
 //            zoomCurrent -= Input.GetAxis("Mouse ScrollWheel") * zoomSensitivity;
             camera.fieldOfView = Mathf.Lerp(camera.fieldOfView, zoomCurrent, Time.deltaTime * zoomDamping);
         }
+    }
+
+    public virtual void transitionIn(string previousScreenName) {
+        switch(previousScreenName)
+        {
+            case "MainScreen":
+                break;
+            case "ResearchHierarchy":
+                break;
+            default:
+                break;
+
+        }
+    }
+
+    public virtual void transitionOut(string nextScreenName) {
+        
     }
 }
