@@ -233,11 +233,9 @@ public class ResearchController : ScriptableObject {
 	}
 
 	void Awake(){
-		foreach (Research r in GameController.instance.allResearch) {
-			AllUncompleteResearch.Add (r.ID,r);
-		}
+        if(Application.isPlaying)
+		    foreach (Research r in GameController.instance.allResearch) {
+			    AllUncompleteResearch.Add (r.ID,r);
+		    }
 	}
-
-
-
 }

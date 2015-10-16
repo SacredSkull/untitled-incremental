@@ -10,9 +10,9 @@ PlayerSettings:
   targetResolution: 0
   accelerometerFrequency: 60
   companyName: DefaultCompany
-  productName: temp
+  productName: untitled-incremental
   defaultCursor: {fileID: 0}
-  cursorHotspot: {x: 0, y: 0}
+  cursorHotspot: {x: -9.5442058e+30, y: -9.5442058e+30}
   m_ShowUnitySplashScreen: 1
   defaultScreenWidth: 1024
   defaultScreenHeight: 768
@@ -78,12 +78,12 @@ PlayerSettings:
   metroEnableLowLatencyPresentationAPI: 0
   xboxOneDisableKinectGpuReservation: 0
   virtualRealitySupported: 0
-  productGUID: 906d73334fd805e4c92016a2e72065c5
+  productGUID: b3176b2f53d9c634fb34e03f0f828d94
   AndroidBundleVersionCode: 1
   AndroidMinSdkVersion: 9
   AndroidPreferredInstallLocation: 1
   aotOptions: 
-  apiCompatibilityLevel: 1
+  apiCompatibilityLevel: 2
   iPhoneStrippingLevel: 0
   iPhoneScriptCallOptimization: 0
   ForceInternetPermission: 0
@@ -114,8 +114,8 @@ PlayerSettings:
   iOSLaunchScreenLandscape: {fileID: 0}
   iOSLaunchScreenBackgroundColor:
     serializedVersion: 2
-    rgba: 0
-  iOSLaunchScreenFillPct: 1
+    rgba: 4059032828
+  iOSLaunchScreenFillPct: 100
   iOSLaunchScreenSize: 100
   iOSLaunchScreenCustomXibPath: 
   AndroidTargetDevice: 0
@@ -132,16 +132,9 @@ PlayerSettings:
     banner: {fileID: 0}
   androidGamepadSupportLevel: 0
   resolutionDialogBanner: {fileID: 0}
-  m_BuildTargetIcons:
-  - m_BuildTarget: 
-    m_Icons:
-    - m_Icon: {fileID: 0}
-      m_Size: 128
+  m_BuildTargetIcons: []
   m_BuildTargetBatching: []
-  m_BuildTargetGraphicsAPIs:
-  - m_BuildTarget: AndroidPlayer
-    m_APIs: 08000000
-    m_Automatic: 0
+  m_BuildTargetGraphicsAPIs: []
   webPlayerTemplate: APPLICATION:Default
   m_TemplateCustomTags: {}
   actionOnDotNetUnhandledException: 1
@@ -228,7 +221,7 @@ PlayerSettings:
   psp2LiveAreaTrialPath: 
   psp2PatchChangeInfoPath: 
   psp2PatchOriginalPackage: 
-  psp2PackagePassword: 
+  psp2PackagePassword: F69AzBlax3CF3EDNhm3soLBPh71Yexui
   psp2KeystoneFile: 
   psp2MemoryExpansionMode: 0
   psp2DRMType: 0
@@ -260,7 +253,7 @@ PlayerSettings:
   psmSplashimage: {fileID: 0}
   spritePackerPolicy: 
   scriptingDefineSymbols: {}
-  metroPackageName: temp
+  metroPackageName: untitled-incremental
   metroPackageLogo: 
   metroPackageLogo140: 
   metroPackageLogo180: 
@@ -271,7 +264,7 @@ PlayerSettings:
   metroCertificateSubject: 
   metroCertificateIssuer: 
   metroCertificateNotAfter: 0000000000000000
-  metroApplicationDescription: temp
+  metroApplicationDescription: untitled-incremental
   metroStoreTileLogo80: 
   metroStoreTileLogo: 
   metroStoreTileLogo140: 
@@ -386,17 +379,19 @@ PlayerSettings:
   WP8::ScriptingBackend: 2
   WebGL::ScriptingBackend: 1
   WebGL::audioCompressionFormat: 4
-  WebGL::exceptionSupport: 0
+  WebGL::exceptionSupport: 1
   WebGL::memorySize: 256
   iOS::Architecture: 2
-  iOS::ScriptingBackend: 0
+  iOS::ScriptingBackend: 1
   boolPropertyNames:
   - WebGL::analyzeBuildSize
   - WebGL::dataCaching
   - WebGL::useEmbeddedResources
+  - XboxOne::enus
   WebGL::analyzeBuildSize: 0
   WebGL::dataCaching: 0
   WebGL::useEmbeddedResources: 0
+  XboxOne::enus: 1
   stringPropertyNames:
   - WebGL::emscriptenArgs
   - WebGL::template

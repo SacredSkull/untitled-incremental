@@ -143,6 +143,6 @@ public class SoftwareController : ScriptableObject {
             onCompletedSoftware(currentSoftware, EventArgs.Empty);
 		currentSoftware = null;
 		isSoftwareSet = false;
-		PickerController.instance.showPicker ();
+		PickerController.instance.showPicker();
 	}
 }
